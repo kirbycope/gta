@@ -1,3 +1,5 @@
+![Preview](./assets/gta.png)
+
 # Godot Tim's Automobile (GTA) for Godot 4.8+
 
 Driving for the [3D Player Controller](../3d_player_controller/README.md): a rideable `Vehicle` with a GTA V style handling model (traction curve, drive and brake bias, handbrake slides, counter-steer assist, drag, downforce, anti-roll bars), a five-gear transmission with RPM-driven engine audio, flip / burn / explode damage, first-person look, the GTA chase camera and a speedometer. The vehicle owns all of it; the Player lends its body and its input through the controller's `Riding` state, which plays the enter and exit clips the vehicle names, makes its camera current and turns the driver's collision off for the seat. The vehicle touches no Player flags and no Player UI.
