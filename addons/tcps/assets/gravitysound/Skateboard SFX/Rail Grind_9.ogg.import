@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dm7e8bxhgiixb"
+path="res://.godot/imported/Rail Grind_9.ogg-232bde45397189fd10ad3b8028e7b247.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Rail Grind_9.ogg"
+dest_files=["res://.godot/imported/Rail Grind_9.ogg-232bde45397189fd10ad3b8028e7b247.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bca0lgpqpjvyw"
+path="res://.godot/imported/Fail Trick_14.ogg-4fe0019e514a526b67ce1e87023ce986.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Fail Trick_14.ogg"
+dest_files=["res://.godot/imported/Fail Trick_14.ogg-4fe0019e514a526b67ce1e87023ce986.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

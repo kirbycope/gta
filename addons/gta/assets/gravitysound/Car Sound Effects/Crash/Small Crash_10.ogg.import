@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dd301ek27ogm4"
+path="res://.godot/imported/Small Crash_10.ogg-7312bedeca805396a045bb08c3d1d221.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Crash/Small Crash_10.ogg"
+dest_files=["res://.godot/imported/Small Crash_10.ogg-7312bedeca805396a045bb08c3d1d221.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

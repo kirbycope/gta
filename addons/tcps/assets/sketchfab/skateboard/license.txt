@@ -1,0 +1,11 @@
+Model Information:
+* title:	Skateboard
+* source:	https://sketchfab.com/3d-models/skateboard-0f7b8ea366654674b217a743959798e7
+* author:	Jamoues (https://sketchfab.com/Jamoues)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Skateboard" (https://sketchfab.com/3d-models/skateboard-0f7b8ea366654674b217a743959798e7) by Jamoues (https://sketchfab.com/Jamoues) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

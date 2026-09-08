@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://wt8tfwuvf44c"
+path="res://.godot/imported/Ollie_11.ogg-22795beef1b00f0ad7824a0d85aa243c.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Ollie_11.ogg"
+dest_files=["res://.godot/imported/Ollie_11.ogg-22795beef1b00f0ad7824a0d85aa243c.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

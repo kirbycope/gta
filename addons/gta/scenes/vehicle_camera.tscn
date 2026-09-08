@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/scripts/vehicle_camera.gd" id="1_cam"]
+
+[node name="VehicleCamera" type="Node3D"]
+script = ExtResource("1_cam")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="."]
+spring_length = 5.5
+margin = 0.3
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="FollowTimer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true

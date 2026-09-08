@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dlju1upk16dg8"
+path="res://.godot/imported/Roll on Concrete_9.ogg-ddfad972b653f51f8d4723c0c1df1033.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Roll on Concrete_9.ogg"
+dest_files=["res://.godot/imported/Roll on Concrete_9.ogg-ddfad972b653f51f8d4723c0c1df1033.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

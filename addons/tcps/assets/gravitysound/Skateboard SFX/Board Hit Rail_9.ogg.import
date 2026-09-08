@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b73d5il75lmf2"
+path="res://.godot/imported/Board Hit Rail_9.ogg-8bc58ccc59ec4fc59467267ca3720aa4.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Board Hit Rail_9.ogg"
+dest_files=["res://.godot/imported/Board Hit Rail_9.ogg-8bc58ccc59ec4fc59467267ca3720aa4.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

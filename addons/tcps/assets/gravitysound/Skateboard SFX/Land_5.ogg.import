@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cd658xip4if2d"
+path="res://.godot/imported/Land_5.ogg-a6a9d4727946c000f6360e4dd7b81199.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Land_5.ogg"
+dest_files=["res://.godot/imported/Land_5.ogg-a6a9d4727946c000f6360e4dd7b81199.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

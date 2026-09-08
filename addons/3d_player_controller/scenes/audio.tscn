@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://df238kae0f5ab"]
+
+[ext_resource type="Script" uid="uid://bnjeahxlhwfvb" path="res://addons/3d_player_controller/scripts/audio.gd" id="1_audio"]
+[ext_resource type="AudioStream" uid="uid://dnlidn43nrbed" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Dirt/Dirt Run 1.ogg" id="2_dirt1"]
+[ext_resource type="AudioStream" uid="uid://bleguj4vm8xif" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Dirt/Dirt Run 2.ogg" id="3_dirt2"]
+[ext_resource type="AudioStream" uid="uid://dygdp8cr02bdl" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Dirt/Dirt Run 3.ogg" id="4_dirt3"]
+[ext_resource type="AudioStream" uid="uid://bmuy24ll0agyd" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Dirt/Dirt Run 4.ogg" id="5_dirt4"]
+[ext_resource type="AudioStream" uid="uid://bxo66pgg6ey83" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Dirt/Dirt Run 5.ogg" id="6_dirt5"]
+[ext_resource type="AudioStream" uid="uid://d1g6dahq4dpob" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Stone/Stone Run 1.ogg" id="12_stone1"]
+[ext_resource type="AudioStream" uid="uid://c058ym2eupuea" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Stone/Stone Run 2.ogg" id="13_stone2"]
+[ext_resource type="AudioStream" uid="uid://dnotm8hmw0gfh" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Stone/Stone Run 3.ogg" id="14_stone3"]
+[ext_resource type="AudioStream" uid="uid://cfhbaocx6ld26" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Stone/Stone Run 4.ogg" id="15_stone4"]
+[ext_resource type="AudioStream" uid="uid://bstvnojm6riyu" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Stone/Stone Run 5.ogg" id="16_stone5"]
+[ext_resource type="AudioStream" uid="uid://duw88igh3lhib" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Wood/Wood Run 1.ogg" id="17_wood1"]
+[ext_resource type="AudioStream" uid="uid://6olut58msfrx" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Wood/Wood Run 2.ogg" id="18_wood2"]
+[ext_resource type="AudioStream" uid="uid://boxq8r8cv2hlv" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Wood/Wood Run 3.ogg" id="19_wood3"]
+[ext_resource type="AudioStream" uid="uid://b874yoqtyxpi8" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Wood/Wood Run 4.ogg" id="20_wood4"]
+[ext_resource type="AudioStream" uid="uid://dr2fv4y1wyedo" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Wood/Wood Run 5.ogg" id="21_wood5"]
+[ext_resource type="AudioStream" uid="uid://be8js7dd77v6i" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Water/Water Run 1.ogg" id="22_water1"]
+[ext_resource type="AudioStream" uid="uid://dt3kw7023ijgw" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Water/Water Run 2.ogg" id="23_water2"]
+[ext_resource type="AudioStream" uid="uid://c5ebmmb6mgu02" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Water/Water Run 3.ogg" id="24_water3"]
+[ext_resource type="AudioStream" uid="uid://1iwbvyhw012s" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Water/Water Run 4.ogg" id="25_water4"]
+[ext_resource type="AudioStream" uid="uid://dlrv2l48nonrm" path="res://addons/3d_player_controller/assets/tommusic/fantasy_sfx/Footsteps/Water/Water Run 5.ogg" id="26_water5"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_grass"]
+streams_count = 5
+stream_0/stream = ExtResource("2_dirt1")
+stream_1/stream = ExtResource("3_dirt2")
+stream_2/stream = ExtResource("4_dirt3")
+stream_3/stream = ExtResource("5_dirt4")
+stream_4/stream = ExtResource("6_dirt5")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_stone"]
+streams_count = 5
+stream_0/stream = ExtResource("12_stone1")
+stream_1/stream = ExtResource("13_stone2")
+stream_2/stream = ExtResource("14_stone3")
+stream_3/stream = ExtResource("15_stone4")
+stream_4/stream = ExtResource("16_stone5")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_water"]
+streams_count = 5
+stream_0/stream = ExtResource("22_water1")
+stream_1/stream = ExtResource("23_water2")
+stream_2/stream = ExtResource("24_water3")
+stream_3/stream = ExtResource("25_water4")
+stream_4/stream = ExtResource("26_water5")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_wood"]
+streams_count = 5
+stream_0/stream = ExtResource("17_wood1")
+stream_1/stream = ExtResource("18_wood2")
+stream_2/stream = ExtResource("19_wood3")
+stream_3/stream = ExtResource("20_wood4")
+stream_4/stream = ExtResource("21_wood5")
+
+[node name="Audio" type="Node3D" unique_id=1498112001]
+script = ExtResource("1_audio")
+
+[node name="SFX_Footsteps_Grass" type="AudioStreamPlayer3D" parent="." unique_id=734951217]
+stream = SubResource("AudioStreamRandomizer_grass")
+bus = &"SFX"
+
+[node name="SFX_Footsteps_Slide" type="AudioStreamPlayer3D" parent="." unique_id=422765804]
+stream = SubResource("AudioStreamRandomizer_stone")
+bus = &"SFX"
+
+[node name="SFX_Footsteps_Stone" type="AudioStreamPlayer3D" parent="." unique_id=2001684523]
+stream = SubResource("AudioStreamRandomizer_stone")
+bus = &"SFX"
+
+[node name="SFX_Footsteps_Water" type="AudioStreamPlayer3D" parent="." unique_id=519547480]
+stream = SubResource("AudioStreamRandomizer_water")
+bus = &"SFX"
+
+[node name="SFX_Footsteps_Wood" type="AudioStreamPlayer3D" parent="." unique_id=1143168822]
+stream = SubResource("AudioStreamRandomizer_wood")
+bus = &"SFX"

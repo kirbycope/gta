@@ -1,0 +1,11 @@
+{
+	"dirs": [
+		"res://addons/gta/tests",
+		"res://addons/garp/tests"
+	],
+	"include_subdirs": false,
+	"prefix": "test_",
+	"suffix": ".gd",
+	"should_exit": false,
+	"should_exit_on_success": true
+}

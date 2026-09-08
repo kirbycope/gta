@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://djmc1g38smk35"
+path="res://.godot/imported/Speed Up_6.ogg-c5a370d1a2267fdf47d6f0fe0e80c073.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Speed Up_6.ogg"
+dest_files=["res://.godot/imported/Speed Up_6.ogg-c5a370d1a2267fdf47d6f0fe0e80c073.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

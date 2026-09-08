@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bc2mo5tt050ml"
+path="res://.godot/imported/Roll on Wood_2.ogg-9523032340ab425479015af97e3d2c0a.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Roll on Wood_2.ogg"
+dest_files=["res://.godot/imported/Roll on Wood_2.ogg-9523032340ab425479015af97e3d2c0a.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

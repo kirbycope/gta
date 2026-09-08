@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b0chwy3k5jg8d"
+path="res://.godot/imported/Snap Board_1.ogg-17ccb6c65815c228d27cbdacbff0f9ae.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Snap Board_1.ogg"
+dest_files=["res://.godot/imported/Snap Board_1.ogg-17ccb6c65815c228d27cbdacbff0f9ae.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

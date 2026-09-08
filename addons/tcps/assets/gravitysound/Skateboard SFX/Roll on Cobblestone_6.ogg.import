@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cpuge8fb0pr62"
+path="res://.godot/imported/Roll on Cobblestone_6.ogg-7c562f02a64cae8902b97ba0d84b7e8b.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Roll on Cobblestone_6.ogg"
+dest_files=["res://.godot/imported/Roll on Cobblestone_6.ogg-7c562f02a64cae8902b97ba0d84b7e8b.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

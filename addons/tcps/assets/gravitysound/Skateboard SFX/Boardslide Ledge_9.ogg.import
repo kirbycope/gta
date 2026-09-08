@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dygh8ktcijui2"
+path="res://.godot/imported/Boardslide Ledge_9.ogg-8f9334996192f03d9bf2e416bb2ee05f.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Boardslide Ledge_9.ogg"
+dest_files=["res://.godot/imported/Boardslide Ledge_9.ogg-8f9334996192f03d9bf2e416bb2ee05f.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

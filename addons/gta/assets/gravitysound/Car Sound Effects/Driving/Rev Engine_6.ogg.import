@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cqwk86atbrfbn"
+path="res://.godot/imported/Rev Engine_6.ogg-c46dbad16f49f530b2d16f1e379449b0.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Rev Engine_6.ogg"
+dest_files=["res://.godot/imported/Rev Engine_6.ogg-c46dbad16f49f530b2d16f1e379449b0.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

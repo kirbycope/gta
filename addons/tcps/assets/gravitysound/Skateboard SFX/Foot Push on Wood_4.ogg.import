@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cyufnm5233577"
+path="res://.godot/imported/Foot Push on Wood_4.ogg-f2654289a6b1bdb74a094b5bd63e7548.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/tcps/assets/gravitysound/Skateboard SFX/Foot Push on Wood_4.ogg"
+dest_files=["res://.godot/imported/Foot Push on Wood_4.ogg-f2654289a6b1bdb74a094b5bd63e7548.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

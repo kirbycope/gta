@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dx8388fj2chc"]
+
+[ext_resource type="Texture2D" uid="uid://dk2bqr78rk4gn" path="res://addons/gta/assets/libertycity/2024_Honda_CRV/pack__baller_hi_vehicle_generic_glasswindows2.png" id="1_g6ewd"]
+
+[resource]
+resource_name = "vehicle_generic_glasswindows2"
+transparency = 4
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.78431374)
+albedo_texture = ExtResource("1_g6ewd")
+roughness = 0.8
+metadata/_gltf_primary_texture_coord = 0
