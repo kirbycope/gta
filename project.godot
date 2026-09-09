@@ -28,3 +28,11 @@ enabled=PackedStringArray("res://addons/3d_player_controller/plugin.cfg", "res:/
 [physics]
 
 3d/physics_engine="Jolt Physics"
+
+[importer_defaults]
+
+texture={
+&"compress/mode": 1,
+&"detect_3d/compress_to": 0,
+&"process/size_limit": 512
+}
