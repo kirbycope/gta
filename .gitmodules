@@ -1,9 +1,6 @@
 [submodule "addons/3d_player_controller"]
 	path = addons/3d_player_controller
 	url = https://github.com/kirbycope/godot-3d-player-controller-addon.git
-[submodule "addons/garp"]
-	path = addons/garp
-	url = https://github.com/kirbycope/garp-addon.git
 [submodule "addons/gta"]
 	path = addons/gta
 	url = https://github.com/kirbycope/gta-addon.git
