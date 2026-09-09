@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://fmjou6v5qm2c"
+path="res://.godot/imported/Door Close_6.ogg-2492647dc61cb3508bb166226023240f.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Utilities/Door Close_6.ogg"
+dest_files=["res://.godot/imported/Door Close_6.ogg-2492647dc61cb3508bb166226023240f.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

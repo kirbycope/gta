@@ -1,4 +1,4 @@
-![Preview](./addons/gta/assets/gta.png)
+![Preview](./assets/gta.png)
 
 # Godot Tim's Automobile (GTA) for Godot 4.8+
 
@@ -19,6 +19,27 @@ Open and run **`res://addons/gta/scenes/demo/demo.tscn`**: an asphalt lot with a
 | `Ramp` (`CSGPolygon3D`) | A wedge to jump. |
 | `HondaCRV` | `honda_crv.tscn`, nothing to set. |
 | `Player` | `player.tscn`, nothing to set. |
+
+---
+
+## Playing the demo
+
+This repository is private, and GitHub Pages will not serve a private repository on this plan, so there is no
+published demo yet. The `Demo on Pages` workflow is here and ready: make the repository public, or move to a
+plan with private Pages, and it exports on the next push to `main`. The export is never committed either way,
+because this repository is a submodule of the projects that use the addon and a web export is tens of megabytes
+that git cannot compress.
+
+`demo/` is the project that export is built from. It expects the addon at `res://addons/gta/`, which is
+where a consuming project puts it, so nothing in the addon needs a second set of paths. `demo/addons/` is
+ignored by git; fill it before running the demo locally:
+
+```powershell
+robocopy . demo/addons/gta /MIR /XD .git .github demo /XF .gitignore .gitattributes
+git clone --depth 1 https://github.com/kirbycope/godot-3d-player-controller-addon.git demo/addons/3d_player_controller
+```
+
+Then open `demo/` in Godot.
 
 ---
 

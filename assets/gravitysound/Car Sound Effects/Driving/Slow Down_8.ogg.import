@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://5b8ypl177ebm"
+path="res://.godot/imported/Slow Down_8.ogg-e942f06ef5076889c9cdbc003fd5f3cb.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Slow Down_8.ogg"
+dest_files=["res://.godot/imported/Slow Down_8.ogg-e942f06ef5076889c9cdbc003fd5f3cb.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://boj4c7ctnnso2"
+path="res://.godot/imported/Slow Down Inside Car_3.ogg-06139f59cde7edd7de799ab5cbf77e99.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Slow Down Inside Car_3.ogg"
+dest_files=["res://.godot/imported/Slow Down Inside Car_3.ogg-06139f59cde7edd7de799ab5cbf77e99.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://6axa1ou43bqb"
+path="res://.godot/imported/Seatbelt_6.ogg-6255996c767c1069d3e55a2e0bd031bc.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Utilities/Seatbelt_6.ogg"
+dest_files=["res://.godot/imported/Seatbelt_6.ogg-6255996c767c1069d3e55a2e0bd031bc.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

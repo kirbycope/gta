@@ -1,0 +1,25 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cgpr4kxxo0q4i"]
+
+[sub_resource type="Gradient" id="Gradient_burned"]
+colors = PackedColorArray(0.25, 0.25, 0.27, 1, 0.65, 0.65, 0.68, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_burned"]
+noise_type = 3
+frequency = 0.05
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_burned"]
+noise = SubResource("FastNoiseLite_burned")
+color_ramp = SubResource("Gradient_burned")
+seamless = true
+
+[resource]
+resource_name = "Burned"
+albedo_color = Color(0.22, 0.22, 0.23, 1)
+metallic = 0.15
+metallic_specular = 0.2
+roughness = 0.82
+roughness_texture = SubResource("NoiseTexture2D_burned")
+detail_enabled = true
+detail_blend_mode = 1
+detail_albedo = SubResource("NoiseTexture2D_burned")

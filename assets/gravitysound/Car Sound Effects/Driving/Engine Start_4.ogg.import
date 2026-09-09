@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cj44xcer37el2"
+path="res://.godot/imported/Engine Start_4.ogg-fa1212a29a49cbb23c55649edf4324c5.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Start_4.ogg"
+dest_files=["res://.godot/imported/Engine Start_4.ogg-fa1212a29a49cbb23c55649edf4324c5.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

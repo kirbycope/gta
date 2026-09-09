@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bh62a6s656623"
+path="res://.godot/imported/Honk_3.ogg-89008d3f08bab059e035b99500703cc2.oggvorbisstr"
+
+[deps]
+
+source_file="res://addons/gta/assets/gravitysound/Car Sound Effects/Utilities/Honk_3.ogg"
+dest_files=["res://.godot/imported/Honk_3.ogg-89008d3f08bab059e035b99500703cc2.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
