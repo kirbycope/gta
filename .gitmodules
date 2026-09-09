@@ -1,0 +1,3 @@
+[submodule "demo/addons/3d_player_controller"]
+	path = demo/addons/3d_player_controller
+	url = https://github.com/kirbycope/godot-3d-player-controller-addon.git
