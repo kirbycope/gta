@@ -22,6 +22,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          # The demo project runs on the player controller and the Controls addon, both submodules.
+          submodules: recursive
       - name: Install Godot runtime deps
         shell: bash
         run: |

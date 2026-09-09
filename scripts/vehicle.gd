@@ -523,7 +523,7 @@ func _show_prompt(_player: Player) -> void:
 	player = _player
 	if action_prompt:
 		action_prompt.update_text()
-		action_prompt.show_for(player, "Get In")
+		action_prompt.show_for(player.controls, "Get In")
 	menu_displayed = true
 
 
@@ -535,7 +535,7 @@ func _hide_prompt() -> void:
 			action_prompt.hide()
 		return
 	if action_prompt:
-		action_prompt.hide_for(player)
+		action_prompt.hide_for(player.controls)
 	player = null
 
 

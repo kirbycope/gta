@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bnuhx6pjxygby" path="res://addons/3d_player_controller/assets/mixamo/characters/y_bot_root.glb" id="3_sbl7x"]
 [ext_resource type="AnimationLibrary" uid="uid://dnsos1fdevv0t" path="res://addons/3d_player_controller/assets/mixamo/animations/root_motion/Driving.glb" id="4_jr6ab"]
 [ext_resource type="AnimationLibrary" uid="uid://hfmvc78vy0pd" path="res://addons/3d_player_controller/assets/mixamo/animations/root_motion/Entering Car.glb" id="5_4cf6d"]
-[ext_resource type="PackedScene" uid="uid://dokp6v1sufknx" path="res://addons/3d_player_controller/scenes/action_prompt.tscn" id="6_0nenl"]
+[ext_resource type="PackedScene" uid="uid://dokp6v1sufknx" path="res://addons/controls/action_prompt.tscn" id="6_0nenl"]
 [ext_resource type="AudioStream" uid="uid://i8id81xj4u0r" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Start_3.ogg" id="13_wce3k"]
 [ext_resource type="AudioStream" uid="uid://bmrtnkeyh0vku" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Rev Engine_1.ogg" id="14_wpc8q"]
 [ext_resource type="AudioStream" uid="uid://cej6jp4vtmxk4" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Slow Down Inside Car_1.ogg" id="15_cvkma"]

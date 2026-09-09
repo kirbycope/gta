@@ -5,7 +5,7 @@
 Driving for the [3D Player Controller](../3d_player_controller/README.md): a rideable `Vehicle` with a GTA V style handling model (traction curve, drive and brake bias, handbrake slides, counter-steer assist, drag, downforce, anti-roll bars), a five-gear transmission with RPM-driven engine audio, flip / burn / explode damage, first-person look, the GTA chase camera and a speedometer. The vehicle owns all of it; the Player lends its body and its input through the controller's `Riding` state, which plays the enter and exit clips the vehicle names, makes its camera current and turns the driver's collision off for the seat. The vehicle touches no Player flags and no Player UI.
 
 > [!NOTE]
-> Requires `addons/3d_player_controller` (the `Player`, its `Riding` state, `ActionPrompt`, the `EnteringCar` / `Driving` / `ExitingCar` animation clips in `player.tscn`, and `PlayerSettingsResource` for the SFX volume). `Vehicle` and `VehicleCamera` register their class names on their own; enabling the plugin only adds the vehicle to the Create New Node dialog.
+> Requires `addons/3d_player_controller` (the `Player`, its `Riding` state, the `EnteringCar` / `Driving` / `ExitingCar` animation clips in `player.tscn`, and `PlayerSettingsResource` for the SFX volume) and, through it, [`addons/controls`](https://github.com/kirbycope/godot-controls), which is where `ActionPrompt` and the on-screen button hints live. `Vehicle` and `VehicleCamera` register their class names on their own; enabling the plugin only adds the vehicle to the Create New Node dialog.
 
 ---
 
@@ -29,9 +29,12 @@ no published demo. `demo/` is the project one is built from; fill its ignored `a
 Godot:
 
 ```powershell
-robocopy . demo/addons/gta /MIR /XD .git .github demo /XF .gitignore .gitattributes
-git clone --depth 1 https://github.com/kirbycope/godot-3d-player-controller-addon.git demo/addons/3d_player_controller
+robocopy . demoddons\gta /MIR /XD "$PWD\.git" "$PWD\.github" "$PWD\demo" /XF .gitignore .gitattributes
+git submodule update --init --recursive
 ```
+
+The player controller and the Controls addon are submodules of `demo/addons/`, which is what the second line
+fills in.
 
 ---
 
@@ -42,7 +45,7 @@ git clone --depth 1 https://github.com/kirbycope/godot-3d-player-controller-addo
 | `Vehicle` (instance `scenes/honda_crv.tscn`, or the script on your own `VehicleBody3D`) | In your level, on the ground | The handling exports (`max_acceleration_force`, `drive_bias_front`, `traction_curve_*`, `max_steering_angle`, ...), `wheels`, the drive action exports; children `DriverSeat`, `EnterCar`, optional `ExitCar` markers, `PlayerDetection` area, the engine `AudioStreamPlayer3D`s, `FirstPersonCamera`, `VehicleCamera` (instance `scenes/vehicle_camera.tscn`) and `DrivingUI` (instance `scenes/driving_ui.tscn` with `vehicle` set) |
 | Damage effects (optional) | A scene that inherits the car and adds them | Children named `Fire_05` (with a `FireSFX` player) and `VFXGroundExplosion_01` (with an `ExplosionSFX` player); without them the car still flips and locks up but never burns. The host project's `scenes/honda_crv.tscn` is that inherited scene. |
 
-Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels (`"joypad_button_0": "Exit"`).
+Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player.controls, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels (`"joypad_button_0": "Exit"`).
 
 ---
 
