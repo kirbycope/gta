@@ -1,7 +1,7 @@
 {
 	"dirs": [
 		"res://addons/gta/tests",
-		"res://addons/3d_player_controller/garp/tests"
+		"res://addons/3d_player_controller/inventory/tests"
 	],
 	"include_subdirs": false,
 	"prefix": "test_",
