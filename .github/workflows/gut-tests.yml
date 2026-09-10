@@ -26,8 +26,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          # The demo takes its dependencies as submodules; without this they check out empty.
-          submodules: recursive
+      - name: Fetch the addon dependencies
+        shell: bash
+        run: python tools/pull_addons.py
+
 
       - name: Install Godot
         shell: bash

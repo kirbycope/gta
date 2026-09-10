@@ -1,0 +1,16 @@
+{
+  "3d_player_controller": {
+    "commit": "e37d00a07eb2a8f51f222978934fb84e2cb8c710",
+    "pulled": "2026-09-10T21:57:50Z",
+    "ref": "main",
+    "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
+    "subject": "Ship the README with the addon, and fix the tool paths"
+  },
+  "controls": {
+    "commit": "a670d73c100bf28a78c77daf467c6fd867406b12",
+    "pulled": "2026-09-10T21:57:57Z",
+    "ref": "main",
+    "repo": "https://github.com/kirbycope/godot-controls.git",
+    "subject": "Restructure to the Godot Asset Library layout"
+  }
+}

@@ -16,3 +16,8 @@ export_credentials.cfg
 data_*/
 mono_crash.*.json
 .mcp/
+
+# Fetched by tools/pull_addons.py, never committed here.
+.addon_cache/
+addons/3d_player_controller/
+addons/controls/

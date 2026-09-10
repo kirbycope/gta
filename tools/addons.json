@@ -1,0 +1,15 @@
+{
+  "_comment": "Dependencies of this repository's demo project, fetched into addons/ by tools/pull_addons.py. They are git-ignored: run the script after cloning.",
+  "addons": [
+    {
+      "name": "3d_player_controller",
+      "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
+      "ref": "main"
+    },
+    {
+      "name": "controls",
+      "repo": "https://github.com/kirbycope/godot-controls.git",
+      "ref": "main"
+    }
+  ]
+}

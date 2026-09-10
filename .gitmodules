@@ -1,8 +1,0 @@
-[submodule "addons/3d_player_controller"]
-	path = addons/3d_player_controller
-	url = https://github.com/kirbycope/godot-3d-player-controller-addon.git
-	branch = main
-[submodule "addons/controls"]
-	path = addons/controls
-	url = https://github.com/kirbycope/godot-controls.git
-	branch = main
