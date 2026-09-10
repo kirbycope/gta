@@ -18,6 +18,18 @@
 .PARAMETER Commit
     After a default run, stage and commit the pointers that moved. Does not push.
 
+.PARAMETER Push
+    The outgoing direction, for work edited here rather than in the addon's own checkout. Every
+    submodule holding uncommitted file changes is committed with -Message and pushed to its own
+    repository, along with any commits it already had waiting. The bumped pointers are then staged
+    here, ready for one commit of your own. This repository is never committed or pushed for you.
+
+.PARAMETER Message
+    The commit message used in each submodule that -Push commits. Required with -Push.
+
+.PARAMETER DryRun
+    With -Push, print what would be committed and pushed without doing any of it.
+
 .EXAMPLE
     tools\sync_submodules.ps1
     Bring every submodule up to date and list what moved.
@@ -29,17 +41,39 @@
 .EXAMPLE
     tools\sync_submodules.ps1 -Pinned
     Put every submodule back on the commit this repository records.
+
+.EXAMPLE
+    tools\sync_submodules.ps1 -Push -Message "fix the swim ledge ray"
+    Commit and push every addon edited here, then stage the new pointers.
 #>
 [CmdletBinding()]
 param(
     [switch]$Pinned,
-    [switch]$Commit
+    [switch]$Commit,
+    [switch]$Push,
+    [string]$Message,
+    [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
 
 if ($Pinned -and $Commit) {
     Write-Error "-Commit applies to the default direction only; -Pinned moves submodules back to what is already recorded."
+    exit 1
+}
+
+if ($Push -and ($Pinned -or $Commit)) {
+    Write-Error "-Push is its own direction; do not combine it with -Pinned or -Commit."
+    exit 1
+}
+
+if ($Push -and -not $Message) {
+    Write-Error "-Push needs -Message ""...""; it is the commit message used in each submodule."
+    exit 1
+}
+
+if ($DryRun -and -not $Push) {
+    Write-Error "-DryRun applies to -Push only."
     exit 1
 }
 
@@ -66,6 +100,83 @@ foreach ($path in $paths) {
         Write-Host ("{0,-34} not checked out, initialising" -f (Split-Path $path -Leaf))
         git submodule update --init --recursive --quiet -- $path
     }
+}
+
+if ($Push) {
+    $pushed = [System.Collections.Generic.List[object]]::new()
+    $blocked = [System.Collections.Generic.List[object]]::new()
+
+    foreach ($path in $paths) {
+        $name = Split-Path $path -Leaf
+        $branch = git -C $path branch --show-current
+
+        $dirty = git -C $path status --porcelain --ignore-submodules=all
+        $ahead = if ($branch) { [int](git -C $path rev-list --count "origin/$branch..HEAD") } else { 0 }
+
+        if (-not $dirty -and $ahead -eq 0) {
+            Write-Host ("{0,-34} nothing to push" -f $name) -ForegroundColor DarkGray
+            continue
+        }
+
+        # A detached checkout has no branch to push to. The pull direction puts one back.
+        if (-not $branch) {
+            $blocked.Add([pscustomobject]@{ Name = $name; Reason = "detached HEAD, run the script with no flags first" })
+            Write-Host ("{0,-34} detached, cannot push" -f $name) -ForegroundColor Red
+            continue
+        }
+
+        $fileCount = ($dirty | Measure-Object).Count
+
+        if ($DryRun) {
+            $what = @()
+            if ($fileCount -gt 0) { $what += "commit $fileCount file(s)" }
+            if ($ahead -gt 0) { $what += "push $ahead existing commit(s)" }
+            Write-Host ("{0,-34} would {1}" -f $name, ($what -join ", ")) -ForegroundColor Cyan
+            $dirty | ForEach-Object { Write-Host "      $_" -ForegroundColor DarkCyan }
+            continue
+        }
+
+        if ($fileCount -gt 0) {
+            git -C $path add -A
+            git -C $path commit -q -m $Message
+        }
+
+        git -C $path push origin $branch --quiet
+        $head = (git -C $path rev-parse --short HEAD).Trim()
+
+        $pushed.Add([pscustomobject]@{ Path = $path; Name = $name; Head = $head })
+        Write-Host ("{0,-34} {1} pushed to {2}" -f $name, $head, $branch) -ForegroundColor Green
+    }
+
+    Write-Host ""
+
+    if ($blocked.Count -gt 0) {
+        Write-Host "Could not push:" -ForegroundColor Red
+        foreach ($b in $blocked) { Write-Host "  $($b.Name)  $($b.Reason)" }
+        Write-Host ""
+    }
+
+    if ($DryRun) {
+        Write-Host "Dry run, nothing was committed or pushed."
+        exit 0
+    }
+
+    if ($pushed.Count -eq 0) {
+        Write-Host "No submodule had anything to push."
+        exit 0
+    }
+
+    # Stage the new pointers, but leave the commit here to the caller: this repository's history is
+    # theirs to write, and the addon change usually lands beside project changes in one commit.
+    $changed = @($pushed | ForEach-Object { $_.Path })
+    git add -- $changed
+
+    Write-Host "$($pushed.Count) addon(s) pushed. Their new pointers are staged here:"
+    foreach ($p in $pushed) { Write-Host "  $($p.Path)  -> $($p.Head)" }
+    Write-Host ""
+    Write-Host "Commit and push this repository when ready:"
+    Write-Host "  git commit -m ""..."" ; git push origin $(git branch --show-current)"
+    exit 0
 }
 
 $moved = [System.Collections.Generic.List[object]]::new()
