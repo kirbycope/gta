@@ -1,11 +1,13 @@
 {
 	"dirs": [
-		"res://addons/gta/tests",
-		"res://addons/3d_player_controller/inventory/tests"
+		"res://addons/gta/tests"
 	],
 	"include_subdirs": false,
 	"prefix": "test_",
 	"suffix": ".gd",
 	"should_exit": false,
-	"should_exit_on_success": true
+	"should_exit_on_success": true,
+	"configured_dirs": [
+		"res://addons/gta/tests"
+	]
 }
