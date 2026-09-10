@@ -9,6 +9,7 @@
 config_version=5
 
 [application]
+config/version="3.0.1"
 
 config/name="Godot Tim's Automobile"
 run/main_scene="res://addons/gta/scenes/demo/demo.tscn"
