@@ -1,3 +1,5 @@
+![Preview](addons/gta/assets/gta.png)
+
 # Godot Tim's Automobile (GTA) for Godot 4.8+
 
 Drivable vehicles with GTA V style handling: a five-speed box, traction curves, a handbrake and a chase camera.
