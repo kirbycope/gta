@@ -84,7 +84,7 @@ jobs:
             --audio-driver Dummy \
             --path "$PWD" \
             -s addons/gut/gut_cmdln.gd \
-            -gconfig=res://addons/gta/.gutconfig.json \
+            -gconfig=res://.gutconfig.json \
             -gjunit_xml_file=test-results/gut-junit.xml \
             -gcompact_mode \
             -gexit
