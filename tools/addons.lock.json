@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "bc94c4801d523aa66456002f511de677d2d58eee",
-    "pulled": "2026-09-11T23:02:19Z",
+    "commit": "7a1fea0cea905af67f90d8ac44e9707883829e5d",
+    "pulled": "2026-09-11T23:14:19Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Take the HUD with its labels blank"
+    "subject": "Take the screenshot button named, and Sony's Share glyph"
   },
   "controls": {
-    "commit": "26f391adec064695d1e90a21e386aa7924646982",
-    "pulled": "2026-09-11T23:02:21Z",
+    "commit": "2b3a11bc0806d6ff0fbe9678922f7866ce101ccf",
+    "pulled": "2026-09-11T23:14:22Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Name the screenshot button after what it does, and give Sony the Share glyph"
+    "subject": "Show PlayStation the button that actually takes the screenshot"
   }
 }
