@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "38b4cfd56ad4e59199a557943faa2c98f2442e2b",
-    "pulled": "2026-09-11T22:23:11Z",
+    "commit": "1097d8884acfdad5887c27095a13bed526b04267",
+    "pulled": "2026-09-11T22:39:09Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Add the seated typing pose and a head-only look-at"
+    "subject": "Take the controls HUD and world prompt spacing fixes"
   },
   "controls": {
-    "commit": "b4ad573582c5c2181306981c9afc6f21ccd74ac8",
-    "pulled": "2026-09-11T22:23:19Z",
+    "commit": "374e3813d624c6faebb7de21f720aa86a36a739b",
+    "pulled": "2026-09-11T22:39:11Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Space the HUD and the world prompt from what is actually in them"
+    "subject": "Show in the editor what the HUD will actually look like"
   }
 }
