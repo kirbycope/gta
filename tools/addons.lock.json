@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "42b4547c2e2bb5c8a36d0d6e12ae3ee01bca6354",
-    "pulled": "2026-09-11T00:16:17Z",
+    "commit": "38b4cfd56ad4e59199a557943faa2c98f2442e2b",
+    "pulled": "2026-09-11T22:23:11Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Give every root README the same shape, preview included"
+    "subject": "Add the seated typing pose and a head-only look-at"
   },
   "controls": {
-    "commit": "004ca46df86b1e1ef1714377af04a7fa6841fa2c",
-    "pulled": "2026-09-11T00:16:19Z",
+    "commit": "b4ad573582c5c2181306981c9afc6f21ccd74ac8",
+    "pulled": "2026-09-11T22:23:19Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Give every root README the same shape, preview included"
+    "subject": "Space the HUD and the world prompt from what is actually in them"
   }
 }
