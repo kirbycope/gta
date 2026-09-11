@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "1097d8884acfdad5887c27095a13bed526b04267",
-    "pulled": "2026-09-11T22:39:09Z",
+    "commit": "29a824774451003a4ea53c8f898e6f4327e2f8b3",
+    "pulled": "2026-09-11T22:46:56Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Take the controls HUD and world prompt spacing fixes"
+    "subject": "Take the HUD looking the same in the editor as in the game"
   },
   "controls": {
-    "commit": "374e3813d624c6faebb7de21f720aa86a36a739b",
-    "pulled": "2026-09-11T22:39:11Z",
+    "commit": "245fb4fe291f63777e20b115f23619185970bddb",
+    "pulled": "2026-09-11T22:46:58Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Show in the editor what the HUD will actually look like"
+    "subject": "Let the game name its own buttons, and leave the labels blank"
   }
 }
