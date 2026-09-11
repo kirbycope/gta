@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "c58042d50e5d82fae6698d17d0dcd51707792423",
-    "pulled": "2026-09-10T22:42:09Z",
+    "commit": "42b4547c2e2bb5c8a36d0d6e12ae3ee01bca6354",
+    "pulled": "2026-09-11T00:16:17Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Restore the README, preview image and all"
+    "subject": "Give every root README the same shape, preview included"
   },
   "controls": {
-    "commit": "29b92c66195a580bb5c558481d782a6fa1ba514e",
-    "pulled": "2026-09-10T22:42:10Z",
+    "commit": "004ca46df86b1e1ef1714377af04a7fa6841fa2c",
+    "pulled": "2026-09-11T00:16:19Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Restore the README, preview image and all"
+    "subject": "Give every root README the same shape, preview included"
   }
 }
