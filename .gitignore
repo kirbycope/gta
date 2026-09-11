@@ -21,3 +21,7 @@ mono_crash.*.json
 .addon_cache/
 addons/3d_player_controller/
 addons/controls/
+
+# Python bytecode caches from the scripts in tools/
+__pycache__/
+*.pyc
