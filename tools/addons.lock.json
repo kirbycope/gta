@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "7a1fea0cea905af67f90d8ac44e9707883829e5d",
-    "pulled": "2026-09-11T23:14:19Z",
+    "commit": "36ec249450c6cb85cc938a8532b618f3318431ad",
+    "pulled": "2026-09-12T03:49:02Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Take the screenshot button named, and Sony's Share glyph"
+    "subject": "Name the buttons the HUD stopped naming"
   },
   "controls": {
-    "commit": "2b3a11bc0806d6ff0fbe9678922f7866ce101ccf",
-    "pulled": "2026-09-11T23:14:22Z",
+    "commit": "88900e9dda5ea1ef8b3bac6652ad68bd5fadfb55",
+    "pulled": "2026-09-12T03:49:04Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Show PlayStation the button that actually takes the screenshot"
+    "subject": "Keep both slots' events when two of them name one action"
   }
 }
