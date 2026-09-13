@@ -166,7 +166,21 @@ func set_driver(driver: Player) -> void:
 func _hand_authority_to(peer_id: int) -> void:
 	if multiplayer.get_peers().is_empty():
 		_set_authority(peer_id)
+	elif multiplayer.is_server():
+		_set_authority.rpc(peer_id)
 	else:
+		# A client only asks. Were it to take the wheel itself, the server would keep sending the car's sync for a
+		# round trip and the client, already the authority, would reject every packet; the server switching first
+		# means the old authority is quiet before the new one speaks. Getting out, this side goes quiet first.
+		if peer_id == SERVER_PEER:
+			set_multiplayer_authority(SERVER_PEER)
+		_grant.rpc_id(SERVER_PEER, peer_id)
+
+
+## The server's half of a client's [method _hand_authority_to]: it switches itself as it tells everyone.
+@rpc("any_peer", "reliable")
+func _grant(peer_id: int) -> void:
+	if multiplayer.is_server():
 		_set_authority.rpc(peer_id)
 
 

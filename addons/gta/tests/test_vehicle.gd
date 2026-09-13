@@ -160,3 +160,17 @@ func test_the_radio_station_lives_on_the_car_and_replicates() -> void:
 	var props: Array[NodePath] = car.vehicle_synchronizer.replication_config.get_properties()
 	assert_has(props, NodePath(".:radio_station"), "The station reaches every rider through the synchronizer")
 	assert_has(props, NodePath(".:current_driver_peer_id"), "as does the driver, for a peer that joins mid-drive")
+
+
+## A client at the wheel asks the server rather than taking the car itself, so the server is quiet before the
+## client speaks; the grant is the server's alone and a client that receives one ignores it.
+func test_a_clients_hand_off_is_a_request_the_server_grants() -> void:
+	var config: Dictionary = (car.get_script() as Script).get_rpc_config()
+	assert_true(config.has(&"_grant"), "The request travels by RPC")
+	assert_eq(config[&"_grant"]["rpc_mode"], MultiplayerAPI.RPC_MODE_ANY_PEER, "any peer may ask")
+	assert_false(config[&"_grant"].get("call_local", false), "and the asker does not switch itself")
+	assert_true(config.has(&"_set_authority"), "the switch is the server's broadcast")
+	car._grant(7) # offline this side is the server, so its own grant applies at once
+	assert_eq(car.get_multiplayer_authority(), 7, "The server's grant switches the car")
+	assert_eq(car.current_driver_peer_id, 7, "and names the driver")
+	car._set_authority(Vehicle.SERVER_PEER)
