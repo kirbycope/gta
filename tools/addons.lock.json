@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "af765a646eca90b9d5b4be692bf7280a9f8b3684",
-    "pulled": "2026-09-13T19:42:17Z",
+    "commit": "7e7af6d9a400b0358dca24d1093b00ca3ad34f38",
+    "pulled": "2026-09-13T19:53:06Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Replicate the emote layer's spine blend"
+    "subject": "Make the perspective swap a Camera method"
   },
   "controls": {
     "commit": "e8639304fe6ea791c682bda72752b7ab5d38b400",
-    "pulled": "2026-09-13T19:42:24Z",
+    "pulled": "2026-09-13T19:53:08Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Hide a puppet's HUD, bind the d-pad keys, and take the pad in hand"
