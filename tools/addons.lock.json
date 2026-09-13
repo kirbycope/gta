@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "2d1cdf30574fb4cc31834f0219f6022c62c31668",
-    "pulled": "2026-09-13T07:13:35Z",
+    "commit": "610284d4ade6e3003c9e4f3eebd28a0779814dab",
+    "pulled": "2026-09-13T16:01:50Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Drop the stretch mode: the controls HUD sizes itself to the window now"
+    "subject": "Fix the peer review: replicate what peers must see, load saves once the player is ready"
   },
   "controls": {
-    "commit": "5a073169a44078371e14fec28e21e591577eca3d",
-    "pulled": "2026-09-13T07:13:36Z",
+    "commit": "e8639304fe6ea791c682bda72752b7ab5d38b400",
+    "pulled": "2026-09-13T16:01:58Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Drop the stretch mode: the HUD sizes itself to the window now"
+    "subject": "Hide a puppet's HUD, bind the d-pad keys, and take the pad in hand"
   }
 }
