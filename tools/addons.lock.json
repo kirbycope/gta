@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "610284d4ade6e3003c9e4f3eebd28a0779814dab",
-    "pulled": "2026-09-13T16:01:50Z",
+    "commit": "9a4934706ec7057f0b454cb57d63910f4112e487",
+    "pulled": "2026-09-13T17:15:09Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Fix the peer review: replicate what peers must see, load saves once the player is ready"
+    "subject": "Fade equipment with the body in stealth"
   },
   "controls": {
     "commit": "e8639304fe6ea791c682bda72752b7ab5d38b400",
-    "pulled": "2026-09-13T16:01:58Z",
+    "pulled": "2026-09-13T17:15:17Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Hide a puppet's HUD, bind the d-pad keys, and take the pad in hand"
