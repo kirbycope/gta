@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
     "commit": "36ec249450c6cb85cc938a8532b618f3318431ad",
-    "pulled": "2026-09-12T03:49:02Z",
+    "pulled": "2026-09-13T00:25:04Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
     "subject": "Name the buttons the HUD stopped naming"
   },
   "controls": {
-    "commit": "88900e9dda5ea1ef8b3bac6652ad68bd5fadfb55",
-    "pulled": "2026-09-12T03:49:04Z",
+    "commit": "941c2a9040d0808e40d5721fe94cf6861ea2f9c2",
+    "pulled": "2026-09-13T00:25:11Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Keep both slots' events when two of them name one action"
+    "subject": "Offer arrow keys instead of the touch joystick for movement"
   }
 }
