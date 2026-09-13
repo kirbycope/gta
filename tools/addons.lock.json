@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "36ec249450c6cb85cc938a8532b618f3318431ad",
-    "pulled": "2026-09-13T00:25:04Z",
+    "commit": "41bf0a0e6373991c0db24b64b458eb60b724e54d",
+    "pulled": "2026-09-13T06:26:00Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Name the buttons the HUD stopped naming"
+    "subject": "Take the controls addon's arrow-key touch movement"
   },
   "controls": {
-    "commit": "941c2a9040d0808e40d5721fe94cf6861ea2f9c2",
-    "pulled": "2026-09-13T00:25:11Z",
+    "commit": "9e39d25f442346d7309b949316b1e0852868b32e",
+    "pulled": "2026-09-13T06:26:08Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Offer arrow keys instead of the touch joystick for movement"
+    "subject": "Size the HUD for thumbs, on its own and apart from the project's stretch"
   }
 }
