@@ -19,7 +19,6 @@ config/features=PackedStringArray("4.8", "Forward Plus")
 
 window/size/viewport_width=1280
 window/size/viewport_height=800
-window/stretch/mode="canvas_items"
 
 [physics]
 
