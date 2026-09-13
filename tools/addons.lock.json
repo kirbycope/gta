@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "41bf0a0e6373991c0db24b64b458eb60b724e54d",
-    "pulled": "2026-09-13T06:26:00Z",
+    "commit": "0f76e19b913b8f5388dd92b08341340896e91443",
+    "pulled": "2026-09-13T07:01:20Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Take the controls addon's arrow-key touch movement"
+    "subject": "Take the controls addon's touch sizing"
   },
   "controls": {
-    "commit": "9e39d25f442346d7309b949316b1e0852868b32e",
-    "pulled": "2026-09-13T06:26:08Z",
+    "commit": "ca5297f3305706b41a4e8f8fb46c64cf0d128ae3",
+    "pulled": "2026-09-13T07:01:22Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Size the HUD for thumbs, on its own and apart from the project's stretch"
+    "subject": "Fit the HUD to the window on every device, and again on every resize"
   }
 }
