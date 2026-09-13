@@ -47,6 +47,12 @@ fills in.
 
 Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player.controls, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels (`"joypad_button_0": "Exit"`).
 
+### Multiplayer
+
+The body moves on the car's multiplayer authority and `VehicleSynchronizer` carries its transform, velocities, drive state, damage flags, `current_driver_peer_id` and `radio_station` to the other peers. Getting in hands the authority to the driver's peer on every peer (`_set_authority`, an `any_peer` / `call_local` reliable RPC, the shape a rideable hands itself over in) and getting out hands it back to the server; a driver whose peer disconnects hands it back on every peer too. Offline, with no peers, it is a plain `set_multiplayer_authority`. `current_driver_peer_id` is `SERVER_PEER` (1) while nobody drives.
+
+`radio_station` is an `int` the car carries for whatever radio the project gives its riders; the car plays nothing itself. The driver writes it (they hold the authority, so it replicates) and `radio_station_changed(station)` fires on every peer, so each rider's own radio can follow the car's station while they are in it. The host project's `scenes/world.gd` does that with the `radi_ot` addon: the driver's next / previous station actions move the car's station, and every radio in the car tunes to it.
+
 ---
 
 ## Tests

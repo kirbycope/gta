@@ -5,8 +5,13 @@ extends VehicleBody3D
 ## nodes), engine SFX, first-person look, the GTA chase camera and the speedometer are all the vehicle's own; the
 ## Player lends its body and its input, and the [Riding] state plays the enter and exit clips named below, hands the
 ## view to [member camera] and turns the Player's collision off for the seat.
+##
+## Over the network the body moves on the car's authority: the server's while parked, the driver's peer while driven,
+## handed over on every peer when they get in and back when they get out, and VehicleSynchronizer carries its
+## transform, drive state, damage, [member current_driver_peer_id] and [member radio_station] to the other peers.
 
 signal locomotion_requested(state_path: String, immediate: bool) ## Asks the rider to play an animation node.
+signal radio_station_changed(station: int) ## The car was tuned, by the driver here or on their peer; every rider's radio follows.
 
 @export_category("Driving Controls")
 @export_group("Keyboard/Mouse Actions")
@@ -22,6 +27,7 @@ signal locomotion_requested(state_path: String, immediate: bool) ## Asks the rid
 @export_group("")
 
 const BAIL_OUT_SPEED: float = 2.0 ## Above this speed exiting skips the door animation.
+const SERVER_PEER: int = 1 ## Who holds the car while nobody drives it.
 
 const MAX_LOOK_YAW: float = 1.0472 # 60 degrees in radians
 const MAX_LOOK_PITCH: float = 1.0472 # 60 degrees in radians
@@ -56,8 +62,14 @@ const BURNED_MATERIAL: StandardMaterial3D = preload("res://addons/gta/materials/
 @export var steering_speed: float = 6.0 ## Radians per second the wheels turn toward the smoothed target.
 @export var counter_steer_gain: float = 0.6 ## Fraction of the slip angle steered back into a slide (GTA V steer assist).
 
-@export var current_driver_peer_id: int = 1
+@export var current_driver_peer_id: int = SERVER_PEER ## The driver's peer, [constant SERVER_PEER] with nobody at the wheel; replicated for a peer that joins mid-drive, and set by the hand-off itself on every peer already there.
 
+var radio_station: int = 0: ## The station the car's radio is on, an index into whatever station list the project's radios share; the car plays nothing itself. Replicated: the driver holds the authority, so their write reaches every rider.
+	set(value):
+		if radio_station == value:
+			return
+		radio_station = value
+		radio_station_changed.emit(value)
 var current_gear: int = 1
 var current_rpm: float = 0.0 # 0.0 = idle, 1.0 = redline
 var has_exploded: bool = false
@@ -124,6 +136,7 @@ var _revved_current_accel: bool = false
 func _ready() -> void:
 	add_to_group("vehicles")
 	initial_spawn_transform = global_transform
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	set_sfx_volume(PlayerSettingsResource.load_or_create().sfx_volume)
 	if is_on_fire:
 		_update_fire_state()
@@ -132,20 +145,44 @@ func _ready() -> void:
 			(sfx.stream as AudioStreamOggVorbis).loop = true
 
 
-## Sets the current driver and updates multiplayer authority; null when the driver gets out.
+## Sets the current driver and hands them the car's authority on every peer; null when the driver gets out, and
+## the server has the car again.
 func set_driver(driver: Player) -> void:
 	if driver:
 		player = driver
-		current_driver_peer_id = driver.get_multiplayer_authority()
-		set_multiplayer_authority(current_driver_peer_id)
+		_hand_authority_to(driver.get_multiplayer_authority())
 		_play_door_sequence()
 		return
 	if player and first_person_camera.current:
 		_show_chase_camera()
 	is_driving_this_car = false
-	current_driver_peer_id = 1
-	set_multiplayer_authority(1)
+	_hand_authority_to(SERVER_PEER)
 	player = null
+
+
+## Hands the car (and so its synchronizer) to [param peer_id] on every peer: the driver's while driven, since their
+## Riding state feeds the drive inputs and moves the body, the server's again once they are out. Offline there is
+## nobody to tell.
+func _hand_authority_to(peer_id: int) -> void:
+	if multiplayer.get_peers().is_empty():
+		_set_authority(peer_id)
+	else:
+		_set_authority.rpc(peer_id)
+
+
+## Getting out hands the car back before its synchronizer could send the cleared driver, so the hand-off carries
+## [member current_driver_peer_id] to every peer itself; the replicated copy is for a peer that joins later.
+@rpc("any_peer", "call_local", "reliable")
+func _set_authority(peer_id: int) -> void:
+	set_multiplayer_authority(peer_id)
+	current_driver_peer_id = peer_id
+
+
+## A driver who drops out takes the authority with them; every peer hands the car back to the server.
+func _on_peer_disconnected(peer_id: int) -> void:
+	if peer_id == get_multiplayer_authority():
+		set_multiplayer_authority(SERVER_PEER)
+		current_driver_peer_id = SERVER_PEER
 
 
 ## Called by the Player's Driving state every physics frame while seated.
@@ -177,11 +214,16 @@ func set_sfx_volume(value: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not is_multiplayer_authority() or player == null:
+	if player == null:
 		return
 
+	# The prompt is only ever shown to this peer's own Player, and a parked car is the server's: getting in must not
+	# wait on an authority the driver only gets by getting in
 	if event.is_action_pressed("action") and menu_displayed and not player.is_riding and not is_on_fire and not has_exploded:
 		player.mount(self)
+		return
+
+	if not is_multiplayer_authority():
 		return
 
 	if is_driving_this_car and first_person_camera.current and event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:

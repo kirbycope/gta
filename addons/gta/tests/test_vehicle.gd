@@ -2,6 +2,8 @@ extends GutTest
 
 ## Purpose: A Vehicle is ridden through the Player's Riding state: mounting seats the driver behind the enter
 ## animation, drive inputs reach the drivetrain, the chase camera takes the view, and the exit action gets out.
+## Getting in hands the car's authority to the driver's peer and getting out hands it back, and the radio station
+## is the car's, replicated, so every rider hears the driver's pick.
 
 const DEMO_SCENE: PackedScene = preload("res://addons/gta/scenes/demo/demo.tscn")
 
@@ -106,3 +108,55 @@ func test_the_addon_car_has_no_fire_of_its_own() -> void:
 	car.is_on_fire = true
 	await wait_physics_frames(1)
 	assert_true(car.is_on_fire, "And flagging fire without them does not crash")
+
+
+func test_the_driver_takes_the_car_s_authority_and_hands_it_back() -> void:
+	player.set_multiplayer_authority(42)
+	car.set_driver(player)
+	assert_eq(car.current_driver_peer_id, 42, "The driver's peer is the driver")
+	assert_eq(car.get_multiplayer_authority(), 42, "and holds the car")
+	assert_eq(car.vehicle_synchronizer.get_multiplayer_authority(), 42, "synchronizer included, so its state is theirs to send")
+	car.set_driver(null)
+	assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER, "Getting out hands the car back to the server")
+	assert_eq(car.get_multiplayer_authority(), Vehicle.SERVER_PEER)
+
+
+func test_the_hand_off_carries_the_driver_s_peer_to_every_copy() -> void:
+	car._set_authority(42)
+	assert_eq(car.get_multiplayer_authority(), 42, "The RPC every peer runs moves the authority")
+	assert_eq(car.current_driver_peer_id, 42, "and names the driver itself, since the synchronizer has already changed hands")
+	car._set_authority(Vehicle.SERVER_PEER)
+	assert_eq(car.get_multiplayer_authority(), Vehicle.SERVER_PEER)
+	assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER)
+
+
+func test_a_driver_who_disconnects_hands_the_car_back_to_the_server() -> void:
+	car._set_authority(42)
+	car._on_peer_disconnected(7)
+	assert_eq(car.get_multiplayer_authority(), 42, "Somebody else leaving changes nothing")
+	car._on_peer_disconnected(42)
+	assert_eq(car.get_multiplayer_authority(), Vehicle.SERVER_PEER, "The driver leaving hands the car to the server")
+	assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER)
+
+
+func test_the_prompt_gets_the_player_in_whoever_holds_the_car() -> void:
+	car.set_multiplayer_authority(42) # a parked car as a client sees it: the server's
+	car._show_prompt(player)
+	var press: InputEventAction = InputEventAction.new()
+	press.action = "action"
+	press.pressed = true
+	car._input(press)
+	await wait_physics_frames(2)
+	assert_eq(player.riding, car, "Action gets in without the car being this peer's yet")
+	assert_eq(car.get_multiplayer_authority(), player.get_multiplayer_authority(), "and getting in is what hands it over")
+
+
+func test_the_radio_station_lives_on_the_car_and_replicates() -> void:
+	watch_signals(car)
+	car.radio_station = 3
+	assert_signal_emitted_with_parameters(car, "radio_station_changed", [3])
+	car.radio_station = 3
+	assert_signal_emit_count(car, "radio_station_changed", 1, "The same station again is not a change")
+	var props: Array[NodePath] = car.vehicle_synchronizer.replication_config.get_properties()
+	assert_has(props, NodePath(".:radio_station"), "The station reaches every rider through the synchronizer")
+	assert_has(props, NodePath(".:current_driver_peer_id"), "as does the driver, for a peer that joins mid-drive")
