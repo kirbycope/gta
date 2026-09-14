@@ -37,7 +37,8 @@ func _ready() -> void:
 	set_process_unhandled_input(false)
 
 
-## Takes the view for [param rider] driving [param driven], starting behind the vehicle.
+## Takes the view for [param rider] driving [param driven], starting behind the vehicle. [param rider] is
+## null for a driver with no body, a [HumanDriver], and then there is no pause to respect.
 func begin(rider: Player, driven: RigidBody3D) -> void:
 	player = rider
 	vehicle = driven
@@ -63,13 +64,13 @@ func end() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not camera.current or player == null or player.is_paused: return
+	if not camera.current or (player != null and player.is_paused): return
 	if event is InputEventMouseMotion and (DisplayServer.get_name() == "headless" or Input.mouse_mode == Input.MOUSE_MODE_CAPTURED):
 		_look(-event.relative * mouse_sensitivity)
 
 
 func _process(delta: float) -> void:
-	if not camera.current or player == null or player.is_paused: return
+	if not camera.current or (player != null and player.is_paused): return
 	var joypad: Vector2 = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if joypad != Vector2.ZERO:
 		_look(-joypad * joypad_sensitivity * delta)

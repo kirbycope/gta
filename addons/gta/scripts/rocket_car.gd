@@ -239,26 +239,46 @@ func mount(rider: Player) -> void:
 	is_ball_cam = starts_in_ball_cam
 
 
-## Rideable contract: the ball cam is a toggle rather than a hold, so it is read
-## from the event rather than polled. Everything else goes up to the chassis,
-## which owns the exit action.
+## A driver with no body: the demo's way in. Opens in ball cam the way a
+## kickoff does.
+func take_the_wheel() -> void:
+	super()
+	is_ball_cam = starts_in_ball_cam
+
+
+## Rideable contract: toggles first, then up to the chassis, which owns the exit.
 func ride_input(rider: Player, event: InputEvent) -> void:
-	if event.is_action_pressed(_action(keyboard_ball_cam_action, pad_ball_cam_action)):
-		is_ball_cam = not is_ball_cam
+	if read_toggles(event):
 		return
 	super(rider, event)
 
 
-## Rideable contract, filled from the player's own buttons.
-##
-## This is where the eight inputs are cut back down to the default control
-## scheme: one stick, with the air roll button deciding whether its sideways
-## axis is a yaw or a roll. A rebinding or an AI can drive both at once.
+## The ball cam is a toggle rather than a hold, so it is read off the event
+## rather than polled. True when the event was one of this car's toggles. A
+## seated [Player] and a [HumanDriver] both come through here.
+func read_toggles(event: InputEvent) -> bool:
+	if event.is_action_pressed(_action(keyboard_ball_cam_action, pad_ball_cam_action)):
+		is_ball_cam = not is_ball_cam
+		return true
+	return false
+
+
+## Rideable contract, filled from the player's own buttons. The Riding state has
+## already pinned the rider to the seat by now; the only thing a body adds to
+## reading the pad is that a paused or ragdolling one lets go of it.
 func ride(rider: Player, _delta: float) -> void:
-	# the Riding state has already pinned the rider to the seat by now
 	if rider.is_paused or rider.is_ragdolling:
 		release_controls()
 		return
+	read_controls()
+
+
+## The pad, off the buttons. This is where the eight inputs are cut back down to
+## the default control scheme: one stick, with the air roll button deciding
+## whether its sideways axis is a yaw or a roll. A rebinding or an AI can drive
+## both at once. A seated [Player] and a [HumanDriver] both come through here;
+## [member Vehicle.input_type] says which bindings to read.
+func read_controls() -> void:
 	var forward: bool = Input.is_action_pressed(_action(keyboard_accelerate_action, pad_accelerate_action))
 	var backward: bool = Input.is_action_pressed(_action(keyboard_brake_action, pad_brake_action))
 	var stick: float = Input.get_axis(&"move_right", &"move_left")

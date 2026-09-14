@@ -12,11 +12,11 @@ extends GutTest
 ## kickoff, which is a chain of four systems that each pass their own unit tests
 ## and could still be wired up wrong between them.
 ##
-## The driving tests press a real key rather than calling into the car. The
-## seated [Player] reads its own buttons in [method RocketCar.ride], so pressing
-## the key is the only way to prove that path works. Headless Godot reports its
-## input device as touch, having seen no keyboard, so the car is told its driver
-## is on one before the key goes down.
+## The driving tests press a real key rather than calling into the car. There
+## is no [Player] in this demo: a [HumanDriver] under the person's car reads the
+## buttons each frame and fills the pad, so pressing the key is the only way to
+## prove that path works. With no joypad plugged in the driver reads the
+## keyboard bindings, which is what a headless run has.
 ##
 ## Every test here rebuilds the whole demo and sits through a three second
 ## countdown, so they are deliberately few and each one checks a whole sequence
@@ -72,8 +72,8 @@ func _all_brains_off() -> void:
 ## Hold the accelerate key down, as a person would.
 func _press_accelerate() -> void:
 	held_action = match_node.player_car.keyboard_accelerate_action
-	# headless has seen no keyboard and calls itself a touch device, so the car
-	# would otherwise resolve the gamepad binding instead of this one
+	# the driver picked the keyboard bindings, having found no joypad; said again
+	# here so a CI runner with a phantom pad cannot turn space into a jump
 	match_node.player_car.input_type = Controls.InputType.KEYBOARD_MOUSE
 	Input.action_press(held_action)
 
@@ -96,34 +96,55 @@ func _line_up_a_tap_in() -> RocketCar:
 
 # ------------------------------------------------- an AI match plays out -----
 
-func test_with_nobody_seated_every_car_is_an_ai_and_the_player_stands_down() -> void:
+func test_with_nobody_seated_every_car_is_an_ai() -> void:
 	await _start_match(false)
 	assert_null(match_node.player_car, "There is no car held back for a person")
 	assert_eq(match_node.cars.size(), 6, "Three a side is six cars")
-	var player: Node3D = match_node.get_node_or_null(^"Player") as Node3D
-	assert_not_null(player)
-	assert_false(player.visible,
-		"A match nobody is playing should not have someone stood on the halfway line")
 	await _wait_for_play()
 	for car: RocketCar in match_node.cars:
 		assert_true(car.is_ai, "%s should be driving itself" % car.name)
+		assert_null(car.get_node_or_null(^"HumanDriver"), "and nobody has a hand on %s" % car.name)
 
 
-## The battle car sits on the same [Vehicle] chassis as the road car, so getting into one hands its
-## multiplayer authority to the driver's peer exactly as getting into the CR-V does. Nothing in the
-## match rules asks for that; it arrives with the chassis, which is the point of testing it here.
-func test_getting_into_a_battle_car_hands_it_to_the_driver_s_peer() -> void:
+## There is no Player in this demo. A person is a [HumanDriver] under one blue
+## car, with nothing seated and nothing to get out of, which is why the space
+## bar cannot put you on the pitch on foot the way it once did.
+func test_seating_a_person_puts_a_driver_on_one_blue_car_and_no_body_in_it() -> void:
 	await _start_match(true)
-	var player: Player = match_node.get_node(^"Player") as Player
-	assert_not_null(match_node.player_car, "A seated match keeps one car for the person")
-	assert_eq(match_node.player_car.current_driver_peer_id, player.get_multiplayer_authority(),
-		"The car is the driver's while they are in it")
-	assert_eq(match_node.player_car.get_multiplayer_authority(), player.get_multiplayer_authority())
+	assert_null(match_node.get_node_or_null(^"Player"), "No Player node anywhere in the demo")
+	var car: RocketCar = match_node.player_car
+	assert_not_null(car, "One car is held back for the person")
+	assert_eq(car.team, RocketCar.Team.BLUE)
+	var driver: HumanDriver = car.get_node_or_null(^"HumanDriver") as HumanDriver
+	assert_not_null(driver, "and it has a HumanDriver under it")
+	assert_false(car.is_ai)
+	assert_false((car.get_node(^"RocketAi") as RocketAi).enabled, "Its brain is off")
+	assert_true(car.camera.current, "The car's chase camera is the view")
+	assert_true(car.is_ball_cam, "and it opened in ball cam, the way a kickoff does")
+	for other: RocketCar in match_node.cars:
+		if other != car:
+			assert_null(other.get_node_or_null(^"HumanDriver"), "%s is nobody's" % other.name)
+	assert_false(driver.enabled, "Nobody drives during the countdown")
+	await _wait_for_play()
+	assert_true(driver.enabled, "The whistle hands over the pad")
+
+
+## The bug this pins: with the yaw conversion a half turn out, every kickoff
+## faced away from the ball, the ball cam sat in front of the nose, and pressing
+## accelerate drove the car into the camera with the steering mirrored.
+func test_every_car_faces_the_ball_at_kickoff() -> void:
+	await _start_match(true)
 	for car: RocketCar in match_node.cars:
-		if car == match_node.player_car:
-			continue
-		assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER,
-			"%s has nobody in it, so it stays the server's" % car.name)
+		var to_ball: Vector3 = match_node.ball.global_position - car.global_position
+		to_ball.y = 0.0
+		var facing: float = to_ball.normalized().dot(car.nose())
+		assert_gt(facing, 0.7, "%s should be nosed at the ball, not away from it (dot %.2f)" % [car.name, facing])
+	# and the camera is behind the person's car, on the far side from the ball
+	var cam: Camera3D = match_node.player_car.camera
+	var behind: Vector3 = cam.global_position - match_node.player_car.global_position
+	behind.y = 0.0
+	assert_lt(behind.normalized().dot(match_node.player_car.nose()), -0.5,
+		"The chase camera sits behind the nose, not in front of it")
 
 
 func test_an_ai_match_plays_itself_out() -> void:
@@ -165,9 +186,8 @@ func test_driving_forward_off_the_kickoff_hits_the_ball_downfield() -> void:
 	await _wait_for_play()
 	assert_not_null(match_node.player_car, "One blue car is held back for the person")
 	assert_false(match_node.player_car.is_ai)
-	assert_eq(match_node.player_car.player, match_node.get_node(^"Player"),
-		"The Player is at the wheel, the way the Twisted Metal demo seats them")
-	assert_true(match_node.player_car.hides_driver_model, "And not drawn while they are")
+	assert_null(match_node.player_car.player, "Nobody is seated: the person is a HumanDriver on the pad")
+	assert_not_null(match_node.player_car.get_node_or_null(^"HumanDriver"))
 
 	_all_brains_off()
 	# the classic opener: square on to the ball, pointed at the other goal

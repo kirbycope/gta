@@ -326,10 +326,15 @@ static func to_godot(x: float, y: float, z: float) -> Vector3:
 	return Vector3(x, z, -y)
 
 
-## The same conversion for a yaw. Rocket League measures from positive x and
-## Godot's zero faces negative z, which is a quarter turn apart.
+## The same conversion for a yaw. Rocket League measures from positive x, and
+## the addon's chassis noses along Godot's positive z rather than the usual
+## negative, so a quarter turn is added rather than taken away. Rocket League's
+## positive y becomes Godot's negative z in [method to_godot], and a car facing
+## positive y has to come out with its nose on negative z, which this does: a
+## yaw of half pi gives a Godot yaw of pi, and a nose on positive z turned by pi
+## is on negative z. The old subtraction faced every kickoff away from the ball.
 static func to_godot_yaw(yaw: float) -> float:
-	return yaw - PI * 0.5
+	return yaw + PI * 0.5
 
 
 ## Reads one of the piecewise curves above. Rocket League stores these as

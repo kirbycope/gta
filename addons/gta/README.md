@@ -57,6 +57,8 @@ once after cloning.
 | `GtaCar` (instance `scenes/honda_crv.tscn`, or the script on your own `VehicleBody3D`) | In your level, on the ground | The handling exports (`max_acceleration_force`, `drive_bias_front`, `traction_curve_*`, `max_steering_angle`, ...), `wheels`, the drive action exports; children `DriverSeat`, `EnterCar`, optional `ExitCar` markers, `PlayerDetection` area, the engine `AudioStreamPlayer3D`s, `FirstPersonCamera`, `VehicleCamera` (instance `scenes/vehicle_camera.tscn`) and `DrivingUI` (instance `scenes/driving_ui.tscn` with `vehicle` set) |
 | Damage effects (optional) | A scene that inherits the car and adds them | Children named `Fire_05` (with a `FireSFX` player) and `VFXGroundExplosion_01` (with an `ExplosionSFX` player); without them the car still flips and locks up but never burns. The host project's `scenes/honda_crv.tscn` is that inherited scene. |
 
+A car is driven one of two ways, and cannot tell them apart. A `Player` who walks up and gets in reaches it through the rideable contract below; that is the road car's way, and the only demo that needs a `Player`. The two battle demos have no `Player` at all: a `HumanDriver` node under the car fills the same virtual pad the AI brains fill, from the keyboard or a joypad, and there is nothing to get out of. See `HumanDriver` under each of those demos.
+
 Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player.controls, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. Setting its `look_target` locks it onto a node instead, keeping that node in view with the car between the two, which is what the Rocket League demo's ball cam is; left null it behaves exactly as it always has. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels (`"joypad_button_0": "Exit"`).
 
 ### Multiplayer
@@ -76,8 +78,10 @@ multiplayer hand-off (`set_driver`, `current_driver_peer_id`, `SERVER_PEER`), `s
 the player controller's audio settings, and membership of the `vehicles` group.
 
 What your scene must add: four `VehicleWheel3D` children listed in `wheels`, a `VehicleCamera` (instance
-`scenes/vehicle_camera.tscn`), and an override of `ride()` that reads the buttons and drives. That is all;
-a car with no `ride()` sits there while somebody sits in it.
+`scenes/vehicle_camera.tscn`), and `read_controls()`, which reads the buttons and drives. `ride()` for a
+seated `Player` calls that after checking the body is not paused; a `HumanDriver` calls it directly. A car
+with neither sits there while somebody sits in it. If the car has a press-toggle, the ball cam is one, put
+it in `read_toggles(event)` and both routes deliver the event.
 
 One thing is worth knowing before you add a `Seat`. The `Riding` state pins the driver to it the moment
 they get on, **before** `mount_animation` plays. That is right for a car with no door, where getting in is
@@ -91,14 +95,15 @@ is that car: it has no `Seat` node at all and seats its driver itself in `ride()
 
 `Tm2Car` is a car of its own on the shared chassis, with a combat layer beside it, and a demo built on
 Twisted Metal 2's own Los Angeles arena. Open **`res://addons/gta/scenes/demo/twisted_metal.tscn`**: the
-level loads with the Player already at the wheel of Roadkill and six opponents driving the arena and
-fighting each other as well as you.
+level loads with you already at the wheel of Roadkill and six opponents driving the arena and
+fighting each other as well as you. There is no `Player` in this demo and nothing to get out of.
 
 | Node | What it is |
 |---|---|
 | `Tm2Car` (`scenes/tm2_car.tscn`) | The car: arcade handling, a turbo and a wreck state. `car` is a [`Tm2Roster`](scripts/tm2_roster.gd) key, which is where its top and turbo speeds come from. |
 | `CarCombat` (child of a `Tm2Car`) | Health, the weapon inventory and firing. Its own `car` key is where its health and special timing come from. |
 | `AiDriver` (child of a `Tm2Car`) | The opponent. Set `waypoints` and `aggression`; `enabled` off leaves the car to a human. |
+| `HumanDriver` (child of a `Tm2Car`) | You. Fills the same pad from the keyboard or a joypad; the demo puts one under Roadkill. |
 | `Tm2Ui` (`scenes/tm2_ui.tscn`) | Armour, the selected weapon and the turbo meter. It reads nothing: every number arrives on a signal. |
 | `Tm2Waypoints` (resource) | The arena's own AI path, read off the disc. |
 | `Tm2Projectile` | One shot in flight. Damage, speed and homing come from the roster. |
@@ -239,6 +244,9 @@ stripped by size so the engine's own sky shows instead.
   wedge against the rooftop geometry, drop to a tier they cannot climb out of, or end up on full throttle
   doing two metres a second against something. On flat ground the same car reaches three quarters of its
   published top speed in seven seconds, so this is the arena rather than the handling.
+- A car that goes over a rooftop edge tumbles onto the tier below and stays on its roof; only a car
+  that leaves the world entirely is put back. Twisted Metal's own cars do not roll, and there is no
+  auto-right here yet, so a hard turn held into an edge at speed ends your run.
 - The energy attacks are not implemented at all: no freeze, mine, rear fire, jump, shield or button
   combos. The turbo and the pickup weapons are the whole of what a car can do.
 - Every car uses one generic collision box and one set of wheel positions, sized for a 4.5 metre car.
@@ -261,9 +269,9 @@ A second demo built on the same `Vehicle` chassis, and a much bigger departure f
 Twisted Metal one. Open **`res://addons/gta/scenes/demo/rocket_league.tscn`**: a three a side match
 on a full size soccar pitch, five AI cars, a five minute clock, goal replays and overtime.
 
-The player is hidden at the wheel, the same way the Twisted Metal demo hides them. There is no
-walking around; the match seats you in a blue car at kickoff and puts you back in it after every
-goal.
+There is no `Player` in this demo, the same as the Twisted Metal one. You are a `HumanDriver` under
+a blue car, filling the same pad the five brains fill, and there is nothing to get out of. The car is
+put on its kickoff spot after every goal and you are simply still at its wheel.
 
 ### Controls
 
@@ -358,6 +366,12 @@ reimplementation of Rocket League's simulation, cross-checked against the
 [RLBot wiki's game values](https://wiki.rlbot.org/v4/botmaking/useful-game-values/) and its
 [jumping physics](https://wiki.rlbot.org/v4/botmaking/jumping-physics/) page. Car hitboxes and wheel
 positions come from RocketSim's `CarConfig.cpp`.
+
+One conversion is the addon's own rather than Rocket League's. The chassis noses along Godot's positive
+z, the opposite of Godot's usual convention, so `to_godot_yaw` adds a quarter turn rather than taking one
+away. It used to subtract, and every kickoff faced away from the ball: the ball cam then sat in front of
+the nose, pressing accelerate drove the car into the camera, and the steering looked mirrored because
+you were watching the front of the car. `test_every_car_faces_the_ball_at_kickoff` holds that shut.
 
 That covers the pitch at 81.92 by 102.4 metres, the 2048 uu ceiling, the goal line at 5124.25 uu,
 the ball at 91.25 uu across with its 60 percent bounce, a top speed of 2300 uu/s and supersonic at
@@ -472,12 +486,13 @@ One test script per car, plus one for the chassis they share:
 | `test_gta_car.gd` | The road car: mounting behind the enter animation, the drivetrain, the door, the speedometer, the action prompt and the radio. |
 | `test_rocket_car.gd` | The battle car: boost, the jump and dodge state machine, supersonic and demolitions. |
 | `test_tm2_car.gd` | The Twisted Metal car: `forward()` against the way a driven car actually travels, the published speed ceilings, the turbo meter and the wreck. |
+| `test_human_driver.gd` | The person's hand on a battle car's pad: keyboard bindings with no joypad, the switch on a pad press, space as the throttle and never the exit. |
 
 Most of them are unit tests over one script at a time and run in seconds.
 `test_rocket_league_demo.gd` is different: it loads `rocket_league.tscn` whole and plays it, so an
 all-AI match moves the ball and empties boost pads, a car drives off the kickoff and hits the ball,
 and a tap-in scores, cuts to the replay and comes back to a kickoff. The driving ones press a real
-key, because a seated `Player` reads its own buttons and that is the only way to prove that path.
+key, because the `HumanDriver` reads the buttons and that is the only way to prove that path.
 
 Each of those rebuilds the demo and sits through a three second countdown, which is why there are
 six of them rather than twenty, and why the suite takes about a minute rather than twenty seconds.

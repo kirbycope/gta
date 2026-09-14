@@ -7,10 +7,10 @@ extends Node3D
 ## reset. The pitch itself is [RocketArena], the handling is [RocketCar] and the
 ## opponents think in [RocketAi]; none of those know the score.
 ##
-## The player is hidden at the wheel of a blue car exactly the way the Twisted
-## Metal demo hides them, through [member Vehicle.hides_driver_model] and
-## [method Player.mount]. There is no walking around: the match seats them the
-## moment it starts and re-seats them after every kickoff.
+## There is no [Player] in this demo. A person drives a blue car through a
+## [HumanDriver] under it, which fills the same pad the AI brains fill; there is
+## no walking around and nothing to get out of. The road car demo is the one
+## that needs a body, because it is about walking up and getting in.
 ##
 ## The rules here are Rocket League's, and they are rules rather than published
 ## constants, so [constant RocketConst.UNSOURCED] lists the clock as a judgement
@@ -45,7 +45,7 @@ const ORANGE_NAMES: Array[String] = ["Striker", "Sweeper", "Keeper"]
 @export_range(1, 5) var team_size: int = 3 ## Cars a side. Three is Rocket League's standard match.
 @export var match_minutes: float = 5.0 ## The clock, which is a rule rather than a published constant.
 @export var ai_skill: float = 0.8 ## Handed to every [RocketAi]; zero dawdles, one commits.
-@export var seat_player: bool = true ## Off makes the demo an AI match to watch.
+@export var seat_player: bool = true ## One blue car is a person's. Off makes the demo an AI match to watch.
 
 @onready var arena: RocketArena = $Arena
 @onready var ball: RocketBall = $Ball
@@ -95,9 +95,8 @@ func _ready() -> void:
 	score_changed.emit(blue_score, orange_score)
 	clock_changed.emit(clock)
 	if seat_player:
-		_seat_the_player.call_deferred()
-	else:
-		_stand_the_player_down()
+		# deferred so the HUD above is already listening when the driver opens in ball cam
+		_hand_over_the_wheel.call_deferred()
 	start_kickoff()
 
 
@@ -131,8 +130,6 @@ func start_kickoff() -> void:
 		var spot_index: int = (index + _kickoff_taker) % RocketConst.KICKOFF_SPOTS.size()
 		_place_on_kickoff(car, spot_index)
 		car.refill_boost()
-	if player_car != null:
-		_reseat_player()
 	replay_camera.current = false
 	state = State.COUNTDOWN
 	countdown_timer.start(COUNTDOWN_SECONDS)
@@ -352,37 +349,18 @@ func _recover_escapees() -> void:
 			_place_on_kickoff(car, 4)
 
 
-## Hide the player at the wheel, the same way the Twisted Metal demo does: the
-## Player is moved onto the car and mounted, and the car hides the driver model
-## because a battle car has no cabin to put anyone in.
-func _seat_the_player() -> void:
-	var player: Player = get_node_or_null(^"Player") as Player
-	if player == null or not is_instance_valid(player_car):
+## Put a person on the pad of their car. A [HumanDriver] under the car reads
+## the keyboard or a joypad each frame the way a brain reads its plan, and the
+## car opens in ball cam the way a kickoff does. Nothing is seated and nothing
+## can get out.
+func _hand_over_the_wheel() -> void:
+	if not is_instance_valid(player_car) or player_car.get_node_or_null(^"HumanDriver") != null:
 		return
-	player.global_position = player_car.global_position
-	player.mount(player_car)
-
-
-## With [member seat_player] off the demo is an AI match to watch, and the
-## Player has no part in it. Left alone they stand on the halfway line getting
-## run over, so they are taken out of the way instead.
-func _stand_the_player_down() -> void:
-	var player: Player = get_node_or_null(^"Player") as Player
-	if player == null:
-		return
-	player.visible = false
-	player.process_mode = Node.PROCESS_MODE_DISABLED
-	player.set_collision_layer_value(1, false)
-	player.set_collision_mask_value(1, false)
-
-
-## After a kickoff the Player has to be put back on the seat, or the mount
-## drags them from wherever the last whistle left them.
-func _reseat_player() -> void:
-	var player: Player = get_node_or_null(^"Player") as Player
-	if player == null or not is_instance_valid(player_car):
-		return
-	player.global_position = player_car.global_position
+	var driver: HumanDriver = HumanDriver.new()
+	driver.name = "HumanDriver"
+	driver.controls = get_node_or_null(^"Controls") as Controls
+	driver.enabled = state == State.PLAYING
+	player_car.add_child(driver)
 
 
 func _set_state(to: State) -> void:
@@ -398,6 +376,10 @@ func _set_state(to: State) -> void:
 		var brain: RocketAi = car.get_node_or_null(^"RocketAi") as RocketAi
 		if brain != null:
 			brain.enabled = live and car != player_car
+		# the person waits for the whistle the same as the brains do
+		var driver: HumanDriver = car.get_node_or_null(^"HumanDriver") as HumanDriver
+		if driver != null:
+			driver.enabled = live
 		if not live:
 			car.release_controls()
 	state_changed.emit(state)

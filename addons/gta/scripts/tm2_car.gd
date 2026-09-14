@@ -181,15 +181,24 @@ func _update_engine_sound() -> void:
 	sfx_engine.pitch_scale = lerpf(0.8, 1.6, fraction) * (1.25 if is_turbo_engaged else 1.0)
 
 
-## Rideable contract: read the buttons for a seated driver. The AI calls [method set_drive_input]
-## instead, and the drivetrain cannot tell which of the two filled the pad.
+## Rideable contract: read the buttons for a seated driver. The only thing a body adds to reading the
+## pad is that a paused or ragdolling one lets go of it.
 func ride(rider: Player, _delta: float) -> void:
-	var blocked: bool = rider.is_paused or rider.is_ragdolling
+	if rider.is_paused or rider.is_ragdolling:
+		set_drive_input(false, false, false, 0.0)
+		return
+	read_controls()
+
+
+## The pad, off the buttons. A seated [Player] and a [HumanDriver] both come through here, and the AI
+## calls [method set_drive_input] directly; the drivetrain cannot tell which of the three filled it.
+## [member Vehicle.input_type] says which bindings to read.
+func read_controls() -> void:
 	set_drive_input(
-		not blocked and Input.is_action_pressed(_action(keyboard_accelerate_action, pad_accelerate_action)),
-		not blocked and Input.is_action_pressed(_action(keyboard_brake_action, pad_brake_action)),
-		not blocked and Input.is_action_pressed(_action(keyboard_turbo_action, pad_turbo_action)),
-		0.0 if blocked else Input.get_axis("move_right", "move_left"))
+		Input.is_action_pressed(_action(keyboard_accelerate_action, pad_accelerate_action)),
+		Input.is_action_pressed(_action(keyboard_brake_action, pad_brake_action)),
+		Input.is_action_pressed(_action(keyboard_turbo_action, pad_turbo_action)),
+		Input.get_axis("move_right", "move_left"))
 
 
 ## Rideable contract: label names on the Player's controls to their text while driving.

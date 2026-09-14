@@ -151,6 +151,15 @@ func mount(rider: Player) -> void:
 	_set_driver_model_visible(not hides_driver_model)
 
 
+## A driver with no body. The demos that put you straight at the wheel, with no walking up and no
+## getting out, come in here rather than through [method mount]: it starts the chase camera and makes it
+## the view, and nothing else. The pad is filled each frame by a [HumanDriver] under the car, the way a
+## brain fills it for an AI. No authority changes hands, because there is no peer getting in.
+func take_the_wheel() -> void:
+	chase_camera.begin(null, self)
+	camera.current = true
+
+
 ## Rideable contract: give the rider back, and the view and the car with them.
 func dismount(rider: Player) -> void:
 	_set_driver_model_visible(true)

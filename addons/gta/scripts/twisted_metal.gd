@@ -1,7 +1,8 @@
 extends Node3D
-## The Twisted Metal 2 demo: a Los Angeles arena, the player already at the
-## wheel, and a field of opponents driving the level and fighting each other as
-## well as the player.
+## The Twisted Metal 2 demo: a Los Angeles arena, you already at the wheel, and
+## a field of opponents driving the level and fighting each other as well as
+## you. There is no [Player] here: a [HumanDriver] under your car fills the same
+## pad the opponents' [AiDriver] fills, and there is nothing to get out of.
 ##
 ## Two scenes use this. [code]twisted_metal.tscn[/code] plays the arena pulled
 ## out of the game disc by [code]tools/extract_tm2.py[/code], with the AI on the
@@ -79,8 +80,8 @@ func _ready() -> void:
 	waypoints = _ground_waypoints(flat) if flat != null else _sample_waypoints()
 	_roof = _roof_waypoints()
 	_spawn_cars()
-	# the Player has to be in the tree with its own _ready done before it mounts
-	_seat_the_player.call_deferred()
+	# deferred so the HUD is listening when the driver's car starts talking
+	_hand_over_the_wheel.call_deferred()
 
 
 ## Put the arena in the scene. Returns false, with the reason on screen, when
@@ -321,12 +322,15 @@ func _physics_process(_delta: float) -> void:
 		car.global_rotation = Vector3.ZERO
 
 
-func _seat_the_player() -> void:
-	var player: Player = $Player as Player
-	if player == null or not is_instance_valid(player_car):
+## Put a person on the pad of Roadkill: a [HumanDriver] under it, the way the
+## opponents have an [AiDriver] under them.
+func _hand_over_the_wheel() -> void:
+	if not is_instance_valid(player_car) or player_car.get_node_or_null(^"HumanDriver") != null:
 		return
-	player.global_position = player_car.global_position
-	player.mount(player_car)
+	var driver: HumanDriver = HumanDriver.new()
+	driver.name = "HumanDriver"
+	driver.controls = get_node_or_null(^"Controls") as Controls
+	player_car.add_child(driver)
 	if is_instance_valid(ui):
 		ui.watch(player_car)
 	hint.text = "Twisted Metal 2 - %s\nSpace accelerates, Shift brakes, Q is turbo." % level_name

@@ -3,9 +3,9 @@
 [ext_resource type="Script" path="res://addons/gta/scripts/rocket_match.gd" id="1_match"]
 [ext_resource type="Script" path="res://addons/gta/scripts/rocket_arena.gd" id="2_arena"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/rocket_ball.tscn" id="3_ball"]
-[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player.tscn" id="4_player"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/rocket_league_ui.tscn" id="5_ui"]
 [ext_resource type="Script" path="res://addons/gta/scripts/rocket_replay.gd" id="6_replay"]
+[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player_controls.tscn" id="9_controls"]
 
 [sub_resource type="Environment" id="Environment_stadium"]
 background_mode = 1
@@ -22,6 +22,8 @@ size = Vector3(220, 140, 260)
 
 [node name="RocketLeague" type="Node3D"]
 script = ExtResource("1_match")
+
+[node name="Controls" parent="." instance=ExtResource("9_controls")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_stadium")
@@ -53,11 +55,6 @@ script = ExtResource("2_arena")
 [node name="Ball" parent="." instance=ExtResource("3_ball")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9315, 0)
 
-[node name="Player" parent="." instance=ExtResource("4_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 25.6)
-
-[node name="Chat" parent="Player"]
-visible = false
 
 [node name="UI" parent="." instance=ExtResource("5_ui")]
 

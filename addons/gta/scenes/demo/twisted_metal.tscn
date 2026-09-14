@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://addons/gta/scripts/twisted_metal.gd" id="1_tm2"]
-[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/tm2_ui.tscn" id="3_ui"]
+[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player_controls.tscn" id="9_controls"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
 sky_top_color = Color(0.16, 0.12, 0.26, 1)
@@ -26,6 +26,8 @@ fog_density = 0.002
 [node name="TwistedMetal" type="Node3D"]
 script = ExtResource("1_tm2")
 
+[node name="Controls" parent="." instance=ExtResource("9_controls")]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dusk")
 
@@ -35,11 +37,6 @@ light_color = Color(1, 0.85, 0.7, 1)
 light_energy = 1.2
 shadow_enabled = true
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
-
-[node name="Chat" parent="Player"]
-visible = false
 
 [node name="HUD" type="CanvasLayer" parent="."]
 

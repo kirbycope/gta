@@ -103,9 +103,17 @@ func test_the_axis_conversion_puts_blue_on_the_positive_z_end() -> void:
 
 func test_the_yaw_conversion_turns_a_kickoff_to_face_the_far_goal() -> void:
 	# a blue car on the centre spot faces Rocket League's positive y, which is
-	# Godot's negative z, and Godot's own zero yaw already faces negative z
+	# Godot's negative z. The chassis noses along Godot's positive z, so the
+	# yaw that puts its nose on negative z is pi, not zero. The old conversion
+	# gave zero here and every kickoff faced away from the ball.
 	var facing: float = RocketConst.to_godot_yaw(PI * 0.5)
-	assert_almost_eq(facing, 0.0, 0.0001, "A quarter turn apart is the whole conversion")
+	var nose: Vector3 = Basis(Vector3.UP, facing).z
+	assert_almost_eq(nose.z, -1.0, 0.001, "The nose ends up on negative z, where positive y went")
+	assert_almost_eq(nose.x, 0.0, 0.001)
+	# and the corner spot: Rocket League's quarter pi faces between positive x and positive y
+	var corner: Vector3 = Basis(Vector3.UP, RocketConst.to_godot_yaw(PI * 0.25)).z
+	assert_almost_eq(corner.x, 0.7071, 0.001, "Positive x stays positive x")
+	assert_almost_eq(corner.z, -0.7071, 0.001, "and positive y is negative z")
 
 
 func test_a_curve_holds_its_end_values_beyond_either_end() -> void:
