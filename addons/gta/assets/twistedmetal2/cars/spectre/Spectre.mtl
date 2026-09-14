@@ -1,0 +1,32 @@
+# Blender 5.1.2 MTL File: 'None'
+# www.blender.org
+
+newmtl material_img_0.004
+Ns 300.000031
+Ka 1.000000 1.000000 1.000000
+Ks 0.066667 0.066667 0.066667
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Spectre_0.png
+
+newmtl material_img_1.004
+Ns 300.000031
+Ka 1.000000 1.000000 1.000000
+Ks 0.066667 0.066667 0.066667
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Spectre_1.png
+
+newmtl material_img_2.002
+Ns 300.000031
+Ka 1.000000 1.000000 1.000000
+Ks 0.066667 0.066667 0.066667
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Spectre_2.png

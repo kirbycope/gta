@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/honda_crv.tscn" id="1_base"]
+[ext_resource type="Script" path="res://addons/gta/scripts/car_combat.gd" id="2_combat"]
+[ext_resource type="Script" path="res://addons/gta/scripts/ai_driver.gd" id="3_ai"]
+
+[node name="Tm2Car" instance=ExtResource("1_base")]
+hides_driver_model = true
+
+[node name="CarCombat" type="Node" parent="." index="0"]
+script = ExtResource("2_combat")
+car = &"roadkill"
+
+[node name="AiDriver" type="Node" parent="." index="1"]
+script = ExtResource("3_ai")
+aggression = 0.6
+enabled = false
+
+[node name="MuzzleForward" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -2.4)
+
+[node name="MuzzleRear" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 2.4)
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Root Scene" parent="." index="6"]
+visible = false

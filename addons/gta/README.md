@@ -55,6 +55,96 @@ The body moves on the car's multiplayer authority and `VehicleSynchronizer` carr
 
 ---
 
+## Twisted Metal 2: the Los Angeles level
+
+An optional car combat layer over the same `Vehicle`, and a demo built on Twisted Metal 2's own
+Los Angeles arena. Open **`res://addons/gta/scenes/demo/twisted_metal.tscn`**: the level loads with
+the Player already at the wheel of Roadkill and six opponents driving the arena and fighting each
+other as well as you.
+
+| Node | What it is |
+|---|---|
+| `CarCombat` (child of a `Vehicle`) | Health, the weapon inventory and firing. `car` is a [`Tm2Roster`](scripts/tm2_roster.gd) key, which is where its health and special timing come from. |
+| `AiDriver` (child of a `Vehicle`) | The opponent. Set `waypoints` and `aggression`; `enabled` off leaves the car to a human. |
+| `Tm2Waypoints` (resource) | The arena's own AI path, read off the disc. |
+| `Tm2Projectile` | One shot in flight. Damage, speed and homing come from the roster. |
+| `tm2_car.tscn` | A scene inheriting `honda_crv.tscn` that adds the three above plus fore and aft muzzles. |
+
+The `AiDriver` never touches the handling model. It fills in a virtual control pad and hands it to
+`Vehicle.set_drive_input`, which is how Twisted Metal's own `AICarUpdateControlPad` works. The one
+change to `vehicle.gd` is `is_ai_driven`: without it the car parks itself, because the drivetrain
+only ran for a seated `Player`.
+
+### Where the behaviour comes from
+
+There is no Twisted Metal 2 source code. The [Twisted Metal 1
+decompilation](https://github.com/abelbriggs1/tm1_decomp) has only three files decompiled, and the
+[Twisted Metal: Black one](https://github.com/abelbriggs1/tmb_decomp) three more, none of them
+gameplay. What tm1_decomp does carry is a splat config with 1,973 named symbols from the retail
+binary, and Twisted Metal 2 runs on that same engine. The AI is modelled on those names, and each
+step in `ai_driver.gd` says which routine it stands in for: `AICarOutOfBattle` and `AICarInBattle`,
+`AICarDriveBetweenPts`, `AICarInitSwerve`, `AICarUpdateHealthTier`, `AIPickAttackWeapon`,
+`AICarChooseForeWeapon` and `AICarChooseAftWeapon`.
+
+The numbers are a separate matter. Health, top speed, turbo speed and special recharge come from the
+published community stat tables, and weapon damage from the Twisted Metal wiki; the per-car stat
+screens on the disc are pictures, not tables, so they could not be read. Anything that could not be
+sourced is listed in `Tm2Roster.UNSOURCED` rather than invented.
+
+### Building the assets
+
+The converted level and cars are committed under `addons/gta/assets/twistedmetal2/`, which is why
+this repository is private: the material is Sony's and SingleTrac's and is not ours to publish. Only
+the raw files pulled off the disc are git-ignored, because the extractor rebuilds those on demand.
+To build them again, or to add another level, point it at your own copy of the game:
+
+```powershell
+python tools/extract_tm2.py "Twisted Metal 2 (USA) (Track 01).bin"
+python tools/extract_tm2.py tm2.iso --all          # every level on the disc
+```
+
+It reads the ISO9660 filesystem off the disc image, decodes the `.DPC` model database into a glTF
+with the game's own vertex colours, and turns the level's `.PTS` terrain file into the `Tm2Waypoints`
+the opponents drive along. The demo scene loads all of it at run time and says so on screen if it is
+missing, so the project still opens in a checkout that has none of it.
+
+Twelve levels are on the disc. `ROOF` is Los Angeles, the "Quake Zone Rumble" rooftop arena;
+`SROOF` is the cut-down split-screen copy of it, as `HKONG` is of `HONGKONG`.
+
+The car models are a separate job: `tools/tm2/cars.py` rescales the ripped `.obj` models, which come
+at wildly different sizes, to a common 4.5 m length and sits them on the ground.
+
+### What the format turned out to be
+
+Documented in `tools/tm2/dpc.py`, reverse engineered from the retail data with no game code involved.
+A `.DPC` is a tree of nodes with absolute pointers based at `0x80019c40`. A mesh node is keyed
+`0x0000ff00` and is only genuine when its polygon pointer equals its own address plus `0x2c`, which
+is what separates it from the same bytes appearing elsewhere. Vertices are PlayStation `SVECTOR`s,
+three `int16`s and two bytes of padding, and the game is Z up where Godot is Y up. A polygon record
+is `nVerts, 0x01, sizeInDwords, primWords` followed by the vertex indices and a partly prebuilt
+PlayStation GPU primitive, whose fourth word carries the colour and the command code: `0x2c` for a
+textured quad, `0x3c` for a gouraud one. The indices run round the polygon, so a quad fans from its
+first corner rather than pairing up the way a PlayStation strip does.
+
+One number in the pipeline is tuned rather than read: the world scale of 1/64 m per game unit. At
+that scale the drivable quads come out about 6 m across, the waypoints about 25 m apart and the
+Los Angeles play area 252 x 166 m, which agree with each other, but the game's own constant has not
+been found.
+
+### Known rough edges
+
+- About a fifth of the mesh blocks in a level fail to parse and are dropped rather than drawn wrong;
+  Los Angeles keeps 249 of 325. Textures are not decoded at all yet, so the level renders with its
+  vertex colours and the `.TPC` texture banks are untouched.
+- The arena is two tiers, rooftops and the street far below. Opponents feel for the edge with
+  raycasts and turn away, but they still go over sometimes, and a car that ends up on the wrong tier
+  has no route back. Anything that leaves the world entirely is put back on the roof.
+- Cars can still flip. The `Vehicle` damage model treats that as a fire and eventually an explosion,
+  which is roughly what Twisted Metal does, but it happens more often than it should.
+
+
+---
+
 ## Tests
 
 ```powershell
@@ -71,6 +161,8 @@ The body moves on the car's multiplayer authority and `VehicleSynchronizer` carr
 | `assets/cgtrader/honda_crv/` | Wheel | Not recorded - fill in |
 | `assets/gravitysound/Car Sound Effects/` | [Gravity Sound](https://gravity-sound.itch.io/car-sound-effects) | Not recorded - fill in |
 | `materials/burned.tres` | Made for this addon | CC0 |
+| `assets/twistedmetal2/` | Twisted Metal 2 level geometry and AI paths, converted from the disc by `tools/extract_tm2.py`. Sony / SingleTrac. | Not licensed for redistribution; this repository is private for that reason |
+| `assets/twistedmetal2/cars/` | Vehicle models ripped to [The Models Resource](https://www.models-resource.com/playstation/twistedmetal2/), rescaled by `tools/tm2/cars.py`. Sony / SingleTrac. | Not licensed for redistribution |
 
 ---
 

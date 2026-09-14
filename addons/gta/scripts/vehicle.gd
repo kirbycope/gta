@@ -62,6 +62,8 @@ const BURNED_MATERIAL: StandardMaterial3D = preload("res://addons/gta/materials/
 @export var steering_speed: float = 6.0 ## Radians per second the wheels turn toward the smoothed target.
 @export var counter_steer_gain: float = 0.6 ## Fraction of the slip angle steered back into a slide (GTA V steer assist).
 
+@export var hides_driver_model: bool = false ## Hide the driver's own model while they are at the wheel, for a car with no cabin to put them in.
+
 @export var current_driver_peer_id: int = SERVER_PEER ## The driver's peer, [constant SERVER_PEER] with nobody at the wheel; replicated for a peer that joins mid-drive, and set by the hand-off itself on every peer already there.
 
 var radio_station: int = 0: ## The station the car's radio is on, an index into whatever station list the project's radios share; the car plays nothing itself. Replicated: the driver holds the authority, so their write reaches every rider.
@@ -84,6 +86,7 @@ var is_on_fire: bool = false:
 var is_flipped: bool = false
 var is_engine_started: bool = false
 var is_driving_this_car: bool = false ## True from the first drive input until the driver gets out.
+var is_ai_driven: bool = false ## An [AiDriver] holds the wheel instead of a [Player], so the drivetrain still runs with no one seated.
 var look_angles: Vector2 = Vector2.ZERO
 var menu_displayed: bool = false ## The prompt is up for [member player], who is inside PlayerDetection.
 var player: Player ## The driver, or the Player standing by the car.
@@ -205,7 +208,7 @@ func set_drive_input(accelerate: bool, brake_pressed: bool, handbrake: bool, ste
 	if not is_driving_this_car and not is_engine_started:
 		sfx_car_start.play()
 		is_engine_started = true
-	is_driving_this_car = player != null
+	is_driving_this_car = player != null or is_ai_driven
 	_accelerate = accelerate
 	_brake = brake_pressed
 	_handbrake = handbrake
@@ -240,7 +243,7 @@ func _input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
 
-	if is_driving_this_car and first_person_camera.current and event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	if is_driving_this_car and player != null and first_person_camera.current and event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var player_cam: Camera = player.camera as Camera
 		var motion: InputEventMouseMotion = event
 		look_angles.x = clampf(look_angles.x - deg_to_rad(motion.relative.x * player_cam.mouse_sensitivity), -MAX_LOOK_YAW, MAX_LOOK_YAW)
@@ -251,7 +254,7 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
-	if is_driving_this_car:
+	if is_driving_this_car and player != null:
 		var player_cam: Camera = player.camera as Camera
 		if player_cam.perspective == Camera.Perspective.FIRST_PERSON:
 			if not first_person_camera.current:
@@ -637,7 +640,8 @@ func _update_engine_sfx() -> void:
 			(sfx as AudioStreamPlayer3D).stop()
 		return
 
-	var player_cam: Camera = player.camera as Camera
+	# an AI driven car has no Player, so there is no first person view to match
+	var player_cam: Camera = player.camera as Camera if player != null else null
 	var is_first_person: bool = (player_cam and player_cam.perspective == Camera.Perspective.FIRST_PERSON) or first_person_camera.current
 	var forward_speed: float = global_transform.basis.z.dot(linear_velocity)
 	var lateral_speed: float = absf(global_transform.basis.x.dot(linear_velocity))
@@ -716,6 +720,7 @@ func mount(_player: Player) -> void:
 	player.orientation.origin = Vector3.ZERO
 	player.player_model.global_transform = enter_car.global_transform
 	player.velocity = Vector3.ZERO
+	_set_driver_model_visible(not hides_driver_model)
 	chase_camera.begin(player, self)
 	driving_ui.show()
 
@@ -723,6 +728,7 @@ func mount(_player: Player) -> void:
 ## Rideable contract: the Player is off (after the exit animation, or a bail out at speed).
 func dismount(_player: Player) -> void:
 	driving_ui.hide()
+	_set_driver_model_visible(true)
 	first_person_camera.current = false
 	chase_camera.end()
 	if player == _player:
@@ -732,6 +738,19 @@ func dismount(_player: Player) -> void:
 	_brake = false
 	_handbrake = false
 	_steer = 0.0
+
+
+## Shows or hides the driver's own model, for [member hides_driver_model].
+##
+## Worth knowing when turning it back on: the Player's model sits in the seat facing backwards,
+## because the Mixamo mesh is authored looking down +Z while a Godot node looks down -Z, so it
+## needs a 180 to face out of the windscreen. [code]honda_crv.tscn[/code] hides that by rotating its
+## own body 180 instead, which is why the CR-V looks right and a car whose model is not rotated the
+## same way does not.
+func _set_driver_model_visible(shown: bool) -> void:
+	if player == null or not is_instance_valid(player.player_model):
+		return
+	player.player_model.visible = shown
 
 
 ## Rideable contract: once seated (the Riding state does not call this while a clip plays), keeps the Player on

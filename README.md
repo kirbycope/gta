@@ -3,7 +3,9 @@
 # Godot Tim's Automobile (GTA) for Godot 4.8+
 
 Drivable vehicles with GTA V style handling: a five-speed box, traction curves, a handbrake and a
-chase camera.
+chase camera. Plus an optional car combat layer and a Twisted Metal 2 demo that plays in that game's
+own Los Angeles arena, converted from the disc. That material is Sony's, which is why this
+repository is private.
 
 **[Read the full documentation](addons/gta/README.md)**, which ships with the addon so it is
 there however you installed it.
@@ -16,6 +18,7 @@ project you can open and edit it in:
 ```
 project.godot                 the demo project, which is this repository
 addons/gta/                   the addon itself
+tools/extract_tm2.py          builds the Twisted Metal 2 level from your own disc
 addons/3d_player_controller/  what the demo drives around as
 addons/controls/              the on-screen input hints
 addons/gut/                   the test runner

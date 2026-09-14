@@ -25,3 +25,8 @@ addons/controls/
 # Python bytecode caches from the scripts in tools/
 __pycache__/
 *.pyc
+
+# Raw files pulled straight off the Twisted Metal 2 disc by tools/extract_tm2.py.
+# The converted assets beside them are committed; these are just the working
+# copies the converter reads, and it rebuilds them from the disc on demand.
+addons/gta/assets/twistedmetal2/.src/

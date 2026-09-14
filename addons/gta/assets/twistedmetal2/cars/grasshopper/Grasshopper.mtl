@@ -1,0 +1,32 @@
+# Blender 5.1.2 MTL File: 'None'
+# www.blender.org
+
+newmtl material_0.003
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.5 0.5 0.5
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Grasshopper_0.png
+
+newmtl material_1.003
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.5 0.5 0.5
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Grasshopper_2.png
+
+newmtl material_2.002
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.5 0.5 0.5
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Grasshopper_1.png
