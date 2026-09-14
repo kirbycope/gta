@@ -131,6 +131,24 @@ that scale the drivable quads come out about 6 m across, the waypoints about 25 
 Los Angeles play area 252 x 166 m, which agree with each other, but the game's own constant has not
 been found.
 
+### The fan remake, side by side
+
+`twisted_metal_fanmade.tscn` loads Angel V Mendez's Sketchfab remake of the scrapped version of the
+same level, so the two can be compared in the same game with the same cars. The comparison:
+
+| | Extracted from the disc | Fan remake |
+|---|---|---|
+| Geometry | 2,406 verts, 2,586 faces | 16,455 verts, 9,297 tris |
+| Surfacing | the game's own vertex colours; textures not decoded yet | 34 textures with normals and UVs |
+| Layout | rooftops over a street tier, as shipped | the scrapped street level, tidied up by its author |
+| AI path | the level's own 140 `.PTS` waypoints | none, so the drivable surface is sampled instead |
+| Scale | already metres, straight out of the extractor | unknown units, measured and fitted to 250 m |
+
+The same script drives both. A level that brings no waypoints has them sampled off its surface, a
+level with no collision gets a trimesh built for it, and a level in unknown units is measured rather
+than guessed at (`level_scale = 0`). Both maps wrap themselves in huge painted scenery, which is
+stripped by size so the engine's own sky shows instead.
+
 ### Known rough edges
 
 - About a fifth of the mesh blocks in a level fail to parse and are dropped rather than drawn wrong;
@@ -141,6 +159,9 @@ been found.
   has no route back. Anything that leaves the world entirely is put back on the roof.
 - Cars can still flip. The `Vehicle` damage model treats that as a fire and eventually an explosion,
   which is roughly what Twisted Metal does, but it happens more often than it should.
+- The fan remake is only half playable. It loads, scales, collides and the cars spawn on it, but the
+  sampler finds few waypoints on it and the opponents do not drive it the way they drive the
+  extracted arena. It is there for the comparison above rather than as a finished level.
 
 
 ---

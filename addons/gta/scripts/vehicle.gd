@@ -742,11 +742,11 @@ func dismount(_player: Player) -> void:
 
 ## Shows or hides the driver's own model, for [member hides_driver_model].
 ##
-## Worth knowing when turning it back on: the Player's model sits in the seat facing backwards,
-## because the Mixamo mesh is authored looking down +Z while a Godot node looks down -Z, so it
-## needs a 180 to face out of the windscreen. [code]honda_crv.tscn[/code] hides that by rotating its
-## own body 180 instead, which is why the CR-V looks right and a car whose model is not rotated the
-## same way does not.
+## Worth knowing when turning it back on. A car model is authored nose down +Z, but a Godot vehicle
+## drives toward -Z, so the mesh needs turning 180 about Y or the chase camera looks at its grille.
+## [code]honda_crv.tscn[/code] does that on its "Root Scene" and [code]tm2_car.tscn[/code] on its
+## "Model"; the driver rides in whichever way that node faces, so a car that has not been turned
+## seats its driver backwards too.
 func _set_driver_model_visible(shown: bool) -> void:
 	if player == null or not is_instance_valid(player.player_model):
 		return

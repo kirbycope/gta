@@ -22,8 +22,12 @@ fog_enabled = true
 fog_light_color = Color(0.45, 0.3, 0.3, 1)
 fog_density = 0.002
 
-[node name="TwistedMetal" type="Node3D"]
+[node name="TwistedMetalFanmade" type="Node3D"]
 script = ExtResource("1_tm2")
+level_mesh = "res://addons/gta/assets/twistedmetal2/fanmade/los_angeles_fanmade.glb"
+level_waypoints = ""
+level_scale = 0.0
+level_name = "Los Angeles (fan remake of the scrapped version)"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dusk")
@@ -52,5 +56,5 @@ offset_right = 400.0
 offset_bottom = 140.0
 grow_horizontal = 2
 horizontal_alignment = 1
-text = "Loading Los Angeles..."
+text = "Loading the fan remake..."
 autowrap_mode = 3
