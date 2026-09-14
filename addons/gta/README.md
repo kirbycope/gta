@@ -24,17 +24,14 @@ Open and run **`res://addons/gta/scenes/demo/demo.tscn`**: an asphalt lot with a
 
 ## Playing the demo
 
-This repository is private, and GitHub Pages will not serve a private repository on this plan, so there is
-no published demo. This repository is the project one is built from: it uses the layout the
+This repository is the project the demo is built from. It uses the layout the
 [Godot Asset Library](https://docs.godotengine.org/en/stable/community/asset_library/submitting_to_assetlib.html)
 expects, with the addon at `addons/gta/` and a `project.godot` at the root, so cloning it and
 opening it in Godot is all it takes. The addon is edited in place, with nothing copied first.
 
-The player controller and the Controls addon sit under `addons/` beside it, which is what the
-recursive clone below is for.
-
-The player controller and the Controls addon are submodules of `addons/`, which is what the second line
-fills in.
+The player controller and the Controls addon sit under `addons/` beside it. They are not committed
+here; `tools/addons.json` lists them and `python tools/pull_addons.py` fetches them, so run that
+once after cloning.
 
 ---
 
