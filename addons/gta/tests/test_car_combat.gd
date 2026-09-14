@@ -6,13 +6,14 @@ extends GutTest
 
 const TM2_CAR: PackedScene = preload("res://addons/gta/scenes/tm2_car.tscn")
 
-var car: Vehicle
+var car: Tm2Car
 var combat: CarCombat
 
 
 func before_each() -> void:
 	car = TM2_CAR.instantiate()
 	# set before the car enters the tree: CarCombat reads the roster in _ready
+	car.car = &"sweet_tooth"
 	(car.get_node(^"CarCombat") as CarCombat).car = &"sweet_tooth"
 	(car.get_node(^"AiDriver") as AiDriver).enabled = false
 	add_child_autofree(car)
@@ -27,12 +28,6 @@ func test_a_twisted_metal_car_hides_its_driver() -> void:
 	# and with nobody aboard it is simply a no-op rather than an error
 	car._set_driver_model_visible(false)
 	assert_null(car.player)
-
-
-func test_the_plain_car_still_shows_its_driver() -> void:
-	var crv: Vehicle = preload("res://addons/gta/scenes/honda_crv.tscn").instantiate()
-	add_child_autofree(crv)
-	assert_false(crv.hides_driver_model, "The CR-V seats the driver normally")
 
 
 func test_health_comes_from_the_roster_not_the_scene_default() -> void:
@@ -126,3 +121,47 @@ func test_a_dead_car_stops_shooting() -> void:
 	assert_false(combat.fire_forward())
 	assert_false(combat.fire_rear())
 	assert_false(combat.fire_special())
+
+
+## Each muzzle is turned the way its own shot should travel, so a shot simply takes the muzzle's
+## transform. Getting this wrong fires the forward weapon out of the back of the car, which is what
+## the scene did before the car was its own: the markers sat on the wrong ends.
+func test_a_shot_leaves_the_car_the_way_it_was_aimed() -> void:
+	var muzzle_forward: Node3D = car.get_node(^"MuzzleForward")
+	var muzzle_rear: Node3D = car.get_node(^"MuzzleRear")
+	var nose: Vector3 = car.forward()
+	assert_gt((-muzzle_forward.global_basis.z).dot(nose), 0.9,
+		"The forward muzzle fires along the nose")
+	assert_lt((-muzzle_rear.global_basis.z).dot(nose), -0.9,
+		"and the rear one fires out of the back")
+	assert_gt(muzzle_forward.position.z, 0.0, "The forward muzzle sits on the nose end")
+	assert_lt(muzzle_rear.position.z, 0.0, "and the rear one on the tail end")
+
+
+func test_a_fired_shot_flies_away_from_the_nose() -> void:
+	# earlier tests in this file fire too, and a shot is parented to the car's own parent,
+	# so the new one is found by difference rather than by counting
+	var before: Array = []
+	for child: Node in car.get_parent().get_children():
+		if child is Tm2Projectile:
+			before.append(child)
+	combat.pick_up(&"fire_missile", 1)
+	combat.fire_forward()
+	await wait_physics_frames(1)
+	var shot: Tm2Projectile = null
+	for child: Node in car.get_parent().get_children():
+		if child is Tm2Projectile and not before.has(child):
+			shot = child as Tm2Projectile
+			break
+	assert_not_null(shot, "One shot left the car")
+	if shot == null:
+		return
+	var start: Vector3 = shot.global_position
+	await wait_physics_frames(4)
+	if not is_instance_valid(shot):
+		pass_test("The shot hit something straight away, which is still away from the car")
+		return
+	var travelled: Vector3 = shot.global_position - start
+	assert_gt(travelled.normalized().dot(car.forward()), 0.9,
+		"A forward shot travels along the nose, not out of the back")
+	shot.queue_free()

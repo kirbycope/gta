@@ -1,6 +1,6 @@
 class_name CarCombat
 extends Node
-## Twisted Metal style combat bolted onto a [Vehicle].
+## Twisted Metal style combat bolted onto a [Tm2Car].
 ##
 ## Sits as a child of the car and owns its health, its weapon inventory and its
 ## firing. The shape follows Twisted Metal's own module layout, whose function
@@ -31,7 +31,7 @@ var inventory: Dictionary = {} ## weapon key -> count remaining.
 var selected: StringName = &"" ## The pickup the fire button will use, empty for none.
 var specials: int = 0
 
-var _vehicle: Vehicle
+var _vehicle: Tm2Car
 var _gun_cooldown: float = 0.0
 var _special_timer: float = 0.0
 var _special_recharge: float = 35.0
@@ -39,7 +39,7 @@ var _max_specials: int = 5
 
 
 func _ready() -> void:
-	_vehicle = get_parent() as Vehicle
+	_vehicle = get_parent() as Tm2Car
 	var stats: Dictionary = Tm2Roster.stats(car)
 	if not stats.is_empty():
 		max_health = float(stats["health"])
@@ -70,7 +70,7 @@ func health_tier() -> int:
 
 
 ## Apply [param amount] of damage from [param from]. The car's own fire and
-## explosion states are left to [Vehicle]; this only tracks the number.
+## wreck state is left to [Tm2Car], which listens for [signal died]; this only tracks the number.
 func take_hit(amount: float, from: Node3D = null) -> void:
 	if is_dead or amount <= 0.0:
 		return
@@ -175,6 +175,6 @@ func _spawn(weapon: StringName, forward: bool, target: Node3D) -> void:
 	var shot: Tm2Projectile = PROJECTILE.instantiate() as Tm2Projectile
 	shot.configure(weapon, _vehicle, target, MACHINE_GUN_DAMAGE)
 	_vehicle.get_parent().add_child(shot)
+	# each muzzle is turned the way its shot should travel, so the shot simply takes the
+	# muzzle's transform: a projectile flies along its own -Z
 	shot.global_transform = origin
-	if not forward:
-		shot.global_transform = shot.global_transform.rotated_local(Vector3.UP, PI)

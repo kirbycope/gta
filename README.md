@@ -2,9 +2,11 @@
 
 # Godot Tim's Automobile (GTA) for Godot 4.8+
 
-Drivable vehicles with GTA V style handling: a five-speed box, traction curves, a handbrake and a
-chase camera. Plus an optional car combat layer and a Twisted Metal 2 demo that plays in that game's
-own Los Angeles arena, converted from the disc.
+One rideable car chassis and three cars built on it, each driving like the game it comes from: a road
+car with GTA V style handling (a five-speed box, traction curves, a handbrake and a chase camera), a
+Twisted Metal 2 car with arcade handling and a turbo, and a Rocket League battle car with boost, flips
+and aerials. Each has a demo: an asphalt lot, that game's own Los Angeles arena converted from the disc,
+and a full size soccar pitch with AI opponents and goal replays.
 
 **[Read the full documentation](addons/gta/README.md)**, which ships with the addon so it is
 there however you installed it.

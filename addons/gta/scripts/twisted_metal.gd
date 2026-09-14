@@ -58,9 +58,10 @@ const SAMPLE_LIMIT: int = 600 ## Stop sampling past this many points.
 @export var level_name: String = "Los Angeles"
 
 @onready var hint: Label = $HUD/Hint
+@onready var ui: Tm2Ui = get_node_or_null(^"Tm2Ui")
 
 var waypoints: Tm2Waypoints
-var player_car: Vehicle
+var player_car: Tm2Car
 
 var _roof: PackedInt32Array = PackedInt32Array() ## Indices on the rooftop tier.
 var _fell_out_y: float = -INF ## Set from the arena's own bounds once it is loaded.
@@ -226,8 +227,8 @@ func _spawn_cars() -> void:
 
 ## One car: the shared [code]tm2_car.tscn[/code] with its model, its roster
 ## stats and, for an opponent, its [AiDriver] switched on.
-func _make_car(car: StringName, waypoint: int, ai: bool) -> Vehicle:
-	var vehicle: Vehicle = TM2_CAR.instantiate() as Vehicle
+func _make_car(car: StringName, waypoint: int, ai: bool) -> Tm2Car:
+	var vehicle: Tm2Car = TM2_CAR.instantiate() as Tm2Car
 	vehicle.name = String(car).to_pascal_case()
 
 	# everything is set before the car enters the tree, because CarCombat reads
@@ -240,6 +241,9 @@ func _make_car(car: StringName, waypoint: int, ai: bool) -> Vehicle:
 			instance.mesh = mesh
 			model.add_child(instance)
 
+	# the key names the car in both places it matters: the roster top speed the handling drives
+	# to, and the roster health and special timing the combat node reads
+	vehicle.car = car
 	var combat: CarCombat = vehicle.get_node_or_null(^"CarCombat") as CarCombat
 	if combat != null:
 		combat.car = car
@@ -251,7 +255,6 @@ func _make_car(car: StringName, waypoint: int, ai: bool) -> Vehicle:
 		driver.aggression = randf_range(0.45, 0.9)
 
 	vehicle.position = _spawn_point(waypoint)
-	vehicle.add_to_group(&"tm2_cars")
 	add_child(vehicle)
 	return vehicle
 
@@ -309,7 +312,7 @@ func _physics_process(_delta: float) -> void:
 	if waypoints == null or waypoints.points.is_empty():
 		return
 	for node: Node in get_tree().get_nodes_in_group(&"tm2_cars"):
-		var car: Vehicle = node as Vehicle
+		var car: Tm2Car = node as Tm2Car
 		if car == null or car.global_position.y > _fell_out_y:
 			continue
 		car.linear_velocity = Vector3.ZERO
@@ -324,4 +327,6 @@ func _seat_the_player() -> void:
 		return
 	player.global_position = player_car.global_position
 	player.mount(player_car)
-	hint.text = "Twisted Metal 2 - Los Angeles\nSpace accelerates, Shift brakes, the throw button handbrakes."
+	if is_instance_valid(ui):
+		ui.watch(player_car)
+	hint.text = "Twisted Metal 2 - %s\nSpace accelerates, Shift brakes, Q is turbo." % level_name

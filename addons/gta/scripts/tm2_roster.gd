@@ -17,6 +17,12 @@ const UNSOURCED: PackedStringArray = [
 	"machine gun damage per shot and rate of fire",
 	"special weapon damage per car",
 	"armour damage falloff by impact angle",
+	"the drive force, brake force, reverse speed and steering lock a car reaches its published"
+		+ " top speed with, which are Tm2Car exports chosen to feel right rather than measured",
+	"how long a full turbo meter lasts and how long it takes to refill; the meter is documented"
+		+ " as refilling on its own over time, but neither rate is published",
+	"the turbo pickups the real arenas carry, which this demo has no pickups of any kind for",
+	"the friction and bounce of a car against the world",
 ]
 
 ## Miles per hour to metres per second, so the published speeds can drive the car.

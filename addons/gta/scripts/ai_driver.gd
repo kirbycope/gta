@@ -1,13 +1,13 @@
 class_name AiDriver
 extends Node
-## Drives a [Vehicle] the way Twisted Metal drives its opponents.
+## Drives a [Tm2Car] the way Twisted Metal drives its opponents.
 ##
 ## The structure is taken from the Twisted Metal 1 decompilation's symbol table,
 ## which still carries the original function names even though the bodies are
 ## not decompiled yet. Each step below names the routine it stands in for.
 ##
 ## The AI never touches the handling model. It fills in a virtual control pad and
-## hands it to [method Vehicle.set_drive_input], exactly as
+## hands it to [method Tm2Car.set_drive_input], exactly as
 ## [code]AICarUpdateControlPad[/code] does in the original.
 
 signal state_changed(state: State) ## Broke off, or joined, a fight.
@@ -27,7 +27,8 @@ const SWERVE_STRENGTH: float = 0.45
 const REVERSE_TIME: float = 1.1 ## How long to back up after getting stuck.
 const STUCK_SPEED: float = 1.5
 const STUCK_PATIENCE: float = 1.0
-const SLIDE_SPEED: float = 12.0 ## Below this the handbrake would just park the car.
+const TURBO_RANGE: float = 45.0 ## Far enough from the target to be worth burning turbo closing it.
+const TURBO_MAX_STEER: float = 0.35 ## Turning harder than this, turbo would only run the car wide.
 const OVERSPEED: float = 1.15 ## Brake once this far over the speed the corner allows.
 const EDGE_LOOKAHEAD_TIME: float = 1.1 ## Seconds of travel to feel ahead for a drop.
 const EDGE_MIN_LOOKAHEAD: float = 6.0
@@ -43,9 +44,9 @@ const EDGE_SIDE_REACH: float = 0.7 ## Side feelers are this fraction of the forw
 @export var enabled: bool = true
 
 var state: State = State.OUT_OF_BATTLE
-var target: Vehicle
+var target: Tm2Car
 
-var _vehicle: Vehicle
+var _vehicle: Tm2Car
 var _combat: CarCombat
 var _point: int = -1
 var _swerve_timer: float = 0.0
@@ -57,15 +58,12 @@ var _top_speed: float = DEFAULT_TOP_SPEED
 
 
 func _ready() -> void:
-	_vehicle = get_parent() as Vehicle
+	_vehicle = get_parent() as Tm2Car
 	_combat = _combat_of(_vehicle)
 	if is_instance_valid(_vehicle):
-		# without this the car parks itself: Vehicle only runs its drivetrain
-		# for a seated Player
-		_vehicle.is_ai_driven = enabled
-	if _combat != null:
-		# the car drives to its own published Twisted Metal 2 top speed
-		var published: float = Tm2Roster.top_speed(_combat.car)
+		# the car drives to its own published Twisted Metal 2 top speed, which the car
+		# already knows: its roster key is its identity, not the combat node's
+		var published: float = Tm2Roster.top_speed(_vehicle.car)
 		_top_speed = published if published > 0.0 else DEFAULT_TOP_SPEED
 	if waypoints != null and is_instance_valid(_vehicle):
 		_point = waypoints.nearest(_vehicle.global_position)
@@ -91,10 +89,10 @@ func _physics_process(delta: float) -> void:
 
 ## AICarUpdateClosestPlayer: whoever is nearest and still alive is the target.
 func _update_closest_target() -> void:
-	var best: Vehicle = null
+	var best: Tm2Car = null
 	var best_distance: float = INF
 	for node: Node in get_tree().get_nodes_in_group(&"tm2_cars"):
-		var other: Vehicle = node as Vehicle
+		var other: Tm2Car = node as Tm2Car
 		if other == null or other == _vehicle or not other.is_inside_tree():
 			continue
 		var other_combat: CarCombat = _combat_of(other)
@@ -159,7 +157,7 @@ func _drive_at_target(_delta: float) -> void:
 ## AICarTurn and AICarUpdateNextPtAngle, then AICarUpdateControlPad.
 func _steer_towards(goal: Vector3) -> void:
 	var local: Vector3 = _vehicle.global_transform.affine_inverse() * goal
-	var steer: float = clampf(atan2(local.x, maxf(0.5, -local.z)) * 1.6, -1.0, 1.0)
+	var steer: float = clampf(atan2(local.x, maxf(0.5, local.z)) * 1.6, -1.0, 1.0)
 	steer = clampf(steer + _swerve, -1.0, 1.0)
 	if _reverse_for > 0.0:
 		# braking from a standstill is what puts this car into reverse
@@ -179,17 +177,23 @@ func _steer_towards(goal: Vector3) -> void:
 	var limit: float = _top_speed * lerpf(0.35, 1.0, 1.0 - absf(steer))
 	var accelerate: bool = speed < limit
 	var brake: bool = speed > limit * OVERSPEED
-	# the handbrake is for throwing the back out of a fast corner, never for
-	# setting off: held at low speed it would pin the car where it stands
-	var slide: bool = absf(steer) > 0.85 and speed > SLIDE_SPEED
-	_vehicle.set_drive_input(accelerate and not brake, brake, slide, steer)
+	# turbo is for covering ground in a straight line, never for cornering: a Twisted Metal
+	# car under turbo does not turn well enough to spend it there. That means the long runs
+	# between waypoints, and closing a gap on someone who is still a way off.
+	var turbo: bool = false
+	if accelerate and not brake and absf(steer) < TURBO_MAX_STEER:
+		if state == State.OUT_OF_BATTLE:
+			turbo = true
+		elif is_instance_valid(target):
+			turbo = target.global_position.distance_to(_vehicle.global_position) > TURBO_RANGE
+	_vehicle.set_drive_input(accelerate and not brake, brake, turbo, steer)
 
 
 ## Feel for the edge of the roof ahead, and say which way to turn off it.
 ## Returns NAN when the way forward is solid, otherwise the steer to use.
 ## Twisted Metal's own opponents know the arena; ours has to feel for it.
 func _edge_avoidance(speed: float) -> float:
-	if not _vehicle.is_any_wheel_on_ground():
+	if _vehicle.wheels_in_contact() == 0:
 		return NAN
 	var ahead: float = clampf(speed * EDGE_LOOKAHEAD_TIME, EDGE_MIN_LOOKAHEAD, EDGE_MAX_LOOKAHEAD)
 	if _ground_at(ahead, 0.0):
@@ -209,7 +213,7 @@ func _edge_avoidance(speed: float) -> float:
 ## Is there roof [param distance] ahead, [param angle] radians off the nose?
 func _ground_at(distance: float, angle: float) -> bool:
 	var space: PhysicsDirectSpaceState3D = _vehicle.get_world_3d().direct_space_state
-	var forward: Vector3 = (-_vehicle.global_transform.basis.z).rotated(Vector3.UP, angle)
+	var forward: Vector3 = _vehicle.forward().rotated(Vector3.UP, angle)
 	var probe: Vector3 = _vehicle.global_position + forward * distance
 	var query := PhysicsRayQueryParameters3D.create(probe + Vector3.UP * 2.0,
 		probe + Vector3.DOWN * EDGE_DROP)
@@ -250,7 +254,7 @@ func _update_attack() -> void:
 	var distance: float = to_target.length()
 	if distance > ENGAGE_RANGE:
 		return
-	var facing: float = (-_vehicle.global_transform.basis.z).dot(to_target.normalized())
+	var facing: float = _vehicle.forward().dot(to_target.normalized())
 	if facing >= FIRE_CONE:
 		if _combat.specials > 0 and distance < ENGAGE_RANGE * 0.6:
 			_combat.fire_special(target)
@@ -269,7 +273,7 @@ func _flat_distance(to: Vector3) -> float:
 	return Vector2(to.x - here.x, to.z - here.z).length()
 
 
-func _combat_of(vehicle: Vehicle) -> CarCombat:
+func _combat_of(vehicle: Tm2Car) -> CarCombat:
 	if not is_instance_valid(vehicle):
 		return null
 	for child: Node in vehicle.get_children():

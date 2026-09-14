@@ -1,121 +1,156 @@
 extends GutTest
 
-## Purpose: A Vehicle is ridden through the Player's Riding state: mounting seats the driver behind the enter
-## animation, drive inputs reach the drivetrain, the chase camera takes the view, and the exit action gets out.
-## Getting in hands the car's authority to the driver's peer and getting out hands it back, and the radio station
-## is the car's, replicated, so every rider hears the driver's pick.
+## Purpose: [Vehicle], the chassis the addon's three cars are built on, and the
+## things it deliberately does not bring with it.
+##
+## It holds the wheels, the rideable contract and the multiplayer hand-off, and
+## no handling model at all. The car under test here is the Rocket League one,
+## because it is the lightest car in the addon to stand up, but nothing asserted
+## below is particular to it.
+##
+## The split is worth holding onto. Every car used to be the road car: the
+## battle car extended it to borrow a raycast body, four wheels and the rideable
+## contract, and inherited a gearbox, a damage model and a radio along with them.
+## One piece of that was quietly fatal, because the engine audio only ever ran
+## for a car driven through the road car's own drive input, which a battle car
+## never calls, so every battle car was silent.
 
-const DEMO_SCENE: PackedScene = preload("res://addons/gta/scenes/demo/demo.tscn")
+const ROCKET_CAR: PackedScene = preload("res://addons/gta/scenes/rocket_car.tscn")
+const PLAYER: PackedScene = preload("res://addons/3d_player_controller/scenes/player.tscn")
 
-var demo: Node3D
-var player: Player
-var car: Vehicle
+var car: RocketCar
 
 
 func before_each() -> void:
-	demo = DEMO_SCENE.instantiate()
-	add_child_autofree(demo)
-	player = demo.get_node("Player")
-	car = demo.get_node("HondaCRV")
-	await wait_physics_frames(3)
-
-
-## Mounts and skips the enter animation, the way a test can.
-func _sit_in_the_car() -> void:
-	player.mount(car)
+	car = ROCKET_CAR.instantiate()
+	(car.get_node(^"RocketAi") as RocketAi).enabled = false
+	add_child_autofree(car)
 	await wait_physics_frames(2)
-	player.is_mounting = false
+
+
+func test_a_battle_car_is_a_chassis_and_not_the_road_car() -> void:
+	assert_true(car is Vehicle, "Every car in the addon is one of these")
+	# `car is GtaCar` will not even compile, which is the strongest form this
+	# could take, so the chain is walked instead to say it out loud
+	var chain: Array = []
+	var step: Script = car.get_script()
+	while step != null:
+		chain.append(step.resource_path.get_file())
+		step = step.get_base_script()
+	assert_does_not_have(chain, "gta_car.gd",
+		"The road car's gearbox, damage model and radio are nowhere in %s" % [chain])
+	assert_has(chain, "vehicle.gd", "The chassis is")
+
+
+func test_it_carries_the_rideable_contract_the_riding_state_looks_for() -> void:
+	# the state is duck typed, so a missing name is a silent failure to mount
+	for method: String in ["mount", "dismount", "ride", "ride_input", "get_contextual_controls"]:
+		assert_true(car.has_method(method), "A rideable needs %s()" % method)
+	for property: String in ["seat", "camera", "blocks_hands", "disables_collision",
+			"mount_animation", "dismount_animation", "input_type"]:
+		assert_true(property in car, "A rideable needs the %s property" % property)
+
+
+func test_the_seat_is_a_node_the_rider_can_be_pinned_to() -> void:
+	assert_not_null(car.seat, "The Riding state pins the rider here every frame")
+	assert_true(car.seat is Node3D)
+
+
+func test_getting_in_is_instant_because_a_battle_car_has_no_door() -> void:
+	assert_eq(car.mount_animation, "", "No get-in clip, so the Riding state plays none")
+	assert_eq(car.dismount_animation, "")
+
+
+func test_the_camera_is_the_chase_camera_s_own() -> void:
+	assert_not_null(car.chase_camera)
+	assert_not_null(car.camera, "The Riding state makes this current while ridden")
+	assert_eq(car.camera, car.chase_camera.camera)
+
+
+func test_the_chassis_carries_no_handling_model_of_its_own() -> void:
+	# a car built straight on the chassis has none of the road car's handling,
+	# because none of it is on the chassis to inherit
+	for handling: String in ["max_acceleration_force", "drive_bias_front", "traction_curve_min",
+			"max_steering_angle", "current_gear", "radio_station", "driving_ui"]:
+		assert_false(handling in car, "%s is a road car's, not the chassis's" % handling)
+
+
+func test_it_does_not_drag_a_road_car_s_apparatus_along_with_it() -> void:
+	# the CR-V brought a speedometer, a first person camera, a door animation,
+	# an action prompt, a detection area and seven timers to every battle car
+	for gone: String in ["DrivingUI", "FirstPersonCamera", "PlayerDetection", "ActionPrompt",
+			"AnimationPlayer", "FlippedTimer", "FireTimer", "ClutchTimer", "Root Scene"]:
+		assert_null(car.get_node_or_null(NodePath(gone)),
+			"%s belongs to the GTA car, not a battle car" % gone)
+
+
+func test_every_car_carries_its_own_sound() -> void:
+	# this is the one the old arrangement got wrong: a battle car never called
+	# set_drive_input, so Vehicle's engine audio stopped itself every frame and
+	# the cars made no noise at all
+	for named: String in ["SFXBoost", "SFXJump", "SFXImpact"]:
+		var player: AudioStreamPlayer3D = car.get_node_or_null(NodePath(named)) as AudioStreamPlayer3D
+		assert_not_null(player, "%s should be on the car" % named)
+		assert_not_null(player.stream, "%s should have something to play" % named)
+
+
+func test_the_boost_note_follows_the_tank() -> void:
+	car.refill_boost(RocketConst.BOOST_MAX)
+	for _i: int in 6:
+		car.set_rocket_input(0.0, 0.0, 0.0, 0.0, 0.0, false, true, false)
+		await wait_physics_frames(1)
+	assert_true(car.sfx_boost.playing, "Holding boost should be heard")
+	car.refill_boost(0.0)
+	for _i: int in 20:
+		car.release_controls()
+		await wait_physics_frames(1)
+	assert_false(car.sfx_boost.playing, "And an empty tank should go quiet")
+
+
+func test_a_car_bounces_off_the_world_the_way_rocket_league_says() -> void:
+	# the CR-V's material had bounce zero, so nothing rebounded off anything
+	var material: PhysicsMaterial = car.physics_material_override
+	assert_not_null(material)
+	assert_almost_eq(material.bounce, RocketConst.WORLD_RESTITUTION, 0.01,
+		"CARWORLD_COLLISION_RESTITUTION is 0.3")
+	assert_almost_eq(material.friction, RocketConst.WORLD_FRICTION, 0.01,
+		"CARWORLD_COLLISION_FRICTION is 0.3")
+
+
+func test_the_chassis_counts_wheels_rather_than_answering_yes_or_no() -> void:
+	assert_eq(car.wheels.size(), 4)
+	assert_eq(car.wheels_in_contact(), 0, "Nothing under it in this test scene")
+
+
+func test_drive_and_brake_are_shared_across_the_wheels() -> void:
+	# setting the whole brake on each of four was four times the braking asked
+	# for, and Godot's wheel brake creeps a standing car in proportion to it
+	car.apply_wheel_forces(400.0, 800.0)
+	var driven: int = 0
 	for wheel: VehicleWheel3D in car.wheels:
-		wheel.brake = 0.0
+		if wheel.use_as_traction:
+			driven += 1
+		assert_almost_eq(wheel.brake, 800.0 / 4.0, 0.01, "The brake is split four ways")
+	assert_eq(driven, 4, "All four drive")
+	for wheel: VehicleWheel3D in car.wheels:
+		assert_almost_eq(wheel.engine_force, 400.0 / float(driven), 0.01,
+			"And the drive is split across the driven wheels")
 
 
-func test_mounting_seats_the_driver_and_takes_the_view() -> void:
-	player.mount(car)
-	await wait_physics_frames(2)
-	assert_eq(player.current_state, NodeStateMachine.States.RIDING, "mount() rides the car")
-	assert_eq(player.riding, car)
-	assert_true(player.is_mounting, "The enter animation plays first")
-	assert_true(player.riding_blocks_hands(), "Hands stay off weapons at the wheel")
-	assert_true(car.chase_camera.camera.current, "The car's chase camera is the view")
-	assert_false(player.camera.current)
-	assert_true(car.driving_ui.visible, "The speedometer is up")
-	player.is_mounting = false
-	await wait_physics_frames(2)
-	assert_almost_eq(player.global_position, car.driver_seat.global_position, Vector3.ONE * 0.1, "Seated on the DriverSeat marker once the animation is over")
-
-
-func test_drive_inputs_reach_the_drivetrain() -> void:
-	await _sit_in_the_car()
-	player.controls.current_input_type = Controls.InputType.KEYBOARD_MOUSE
-	var sender = InputSender.new(Input)
-	sender.set_auto_flush_input(true)
-	sender.action_down(car.keyboard_accelerate_action)
-	sender.action_down("move_left")
-	await wait_physics_frames(10)
-	assert_true(car.is_driving_this_car, "The first drive input starts the drive")
-	assert_gt(car.get_node("VehicleWheel3D").engine_force, 0.0, "Accelerating drives the wheels")
-	assert_gt(car._steer, 0.0, "Steering left reaches the car")
-	sender.action_up(car.keyboard_accelerate_action)
-	sender.action_up("move_left")
-
-
-func test_the_exit_action_gets_out_and_hands_the_view_back() -> void:
-	await _sit_in_the_car()
-	player.controls.current_input_type = Controls.InputType.KEYBOARD_MOUSE
-	var sender = InputSender.new(Input)
-	sender.set_auto_flush_input(true)
-	sender.action_down(car.keyboard_exit_action)
-	await wait_physics_frames(2)
-	sender.action_up(car.keyboard_exit_action)
-	assert_true(player.is_dismounting, "At rest the exit goes through the door animation")
-	assert_eq(player.current_state, NodeStateMachine.States.RIDING, "And is still in the car until it ends")
-	(player.state_machine.get_node("Riding") as Riding)._on_locomotion_node_changed("StandingLocomotion")
-	await wait_physics_frames(2)
-	assert_eq(player.current_state, NodeStateMachine.States.STANDING)
-	assert_null(player.riding)
-	assert_true(player.camera.current, "The Player's own camera is back")
-	assert_false(car.chase_camera.camera.current)
-	assert_false(car.driving_ui.visible)
-	assert_false(car.is_driving_this_car)
-
-
-func test_the_car_declares_its_side_of_the_rideable_contract() -> void:
-	assert_true(car.blocks_hands)
-	assert_true(car.disables_collision, "The driver's own collision is off inside the body")
-	assert_eq(car.mount_animation, "EnteringCar")
-	assert_eq(car.dismount_animation, "ExitingCar")
-	assert_eq(car.camera, car.chase_camera.camera, "The chase camera is the view the Riding state makes current")
-	assert_eq(car.get_contextual_controls(Controls.InputType.KEYBOARD_MOUSE).get("joypad_button_0"), "Exit")
-	assert_eq(car.get_contextual_controls(Controls.InputType.SONY).get("joypad_button_3"), "Exit")
-
-
-func test_a_bail_out_at_speed_skips_the_door_animation() -> void:
-	await _sit_in_the_car()
-	player.controls.current_input_type = Controls.InputType.KEYBOARD_MOUSE
-	car.linear_velocity = Vector3(0.0, 0.0, 8.0)
-	var sender = InputSender.new(Input)
-	sender.set_auto_flush_input(true)
-	sender.action_down(car.keyboard_exit_action)
-	await wait_physics_frames(2)
-	sender.action_up(car.keyboard_exit_action)
-	assert_eq(player.current_state, NodeStateMachine.States.STANDING, "Straight out at speed")
-	assert_false(player.is_dismounting)
-	assert_true(player.camera.current)
-
-
-func test_the_addon_car_has_no_fire_of_its_own() -> void:
-	assert_null(car.fire, "Fire and explosion effects are optional nodes a project scene adds")
-	car.is_on_fire = true
-	await wait_physics_frames(1)
-	assert_true(car.is_on_fire, "And flagging fire without them does not crash")
+func test_the_body_holds_no_force_of_its_own() -> void:
+	car.apply_wheel_forces(400.0, 800.0)
+	assert_almost_eq(car.engine_force, 0.0, 0.001,
+		"Godot adds the body's own force to each wheel's, so the body holds none")
+	assert_almost_eq(car.brake, 0.0, 0.001)
 
 
 func test_the_driver_takes_the_car_s_authority_and_hands_it_back() -> void:
-	player.set_multiplayer_authority(42)
-	car.set_driver(player)
+	var driver: Player = PLAYER.instantiate() as Player
+	add_child_autofree(driver)
+	driver.set_multiplayer_authority(42)
+	car.set_driver(driver)
 	assert_eq(car.current_driver_peer_id, 42, "The driver's peer is the driver")
 	assert_eq(car.get_multiplayer_authority(), 42, "and holds the car")
-	assert_eq(car.vehicle_synchronizer.get_multiplayer_authority(), 42, "synchronizer included, so its state is theirs to send")
 	car.set_driver(null)
 	assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER, "Getting out hands the car back to the server")
 	assert_eq(car.get_multiplayer_authority(), Vehicle.SERVER_PEER)
@@ -139,29 +174,6 @@ func test_a_driver_who_disconnects_hands_the_car_back_to_the_server() -> void:
 	assert_eq(car.current_driver_peer_id, Vehicle.SERVER_PEER)
 
 
-func test_the_prompt_gets_the_player_in_whoever_holds_the_car() -> void:
-	car.set_multiplayer_authority(42) # a parked car as a client sees it: the server's
-	car._show_prompt(player)
-	var press: InputEventAction = InputEventAction.new()
-	press.action = "action"
-	press.pressed = true
-	car._input(press)
-	await wait_physics_frames(2)
-	assert_eq(player.riding, car, "Action gets in without the car being this peer's yet")
-	assert_eq(car.get_multiplayer_authority(), player.get_multiplayer_authority(), "and getting in is what hands it over")
-
-
-func test_the_radio_station_lives_on_the_car_and_replicates() -> void:
-	watch_signals(car)
-	car.radio_station = 3
-	assert_signal_emitted_with_parameters(car, "radio_station_changed", [3])
-	car.radio_station = 3
-	assert_signal_emit_count(car, "radio_station_changed", 1, "The same station again is not a change")
-	var props: Array[NodePath] = car.vehicle_synchronizer.replication_config.get_properties()
-	assert_has(props, NodePath(".:radio_station"), "The station reaches every rider through the synchronizer")
-	assert_has(props, NodePath(".:current_driver_peer_id"), "as does the driver, for a peer that joins mid-drive")
-
-
 ## A client at the wheel asks the server rather than taking the car itself, so the server is quiet before the
 ## client speaks; the grant is the server's alone and a client that receives one ignores it.
 func test_a_clients_hand_off_is_a_request_the_server_grants() -> void:
@@ -174,3 +186,17 @@ func test_a_clients_hand_off_is_a_request_the_server_grants() -> void:
 	assert_eq(car.get_multiplayer_authority(), 7, "The server's grant switches the car")
 	assert_eq(car.current_driver_peer_id, 7, "and names the driver")
 	car._set_authority(Vehicle.SERVER_PEER)
+
+
+func test_the_audio_settings_reach_every_player_on_the_car() -> void:
+	# the player controller's audio settings call this on every member of the
+	# "vehicles" group, and the chassis is what joins that group
+	assert_true(car.is_in_group(&"vehicles"))
+	car.set_sfx_volume(0.0)
+	for named: String in ["SFXBoost", "SFXJump", "SFXImpact"]:
+		var speaker: AudioStreamPlayer3D = car.get_node(NodePath(named)) as AudioStreamPlayer3D
+		assert_almost_eq(speaker.volume_db, -80.0, 0.01, "%s is silenced" % named)
+	car.set_sfx_volume(100.0)
+	for named: String in ["SFXBoost", "SFXJump", "SFXImpact"]:
+		var speaker: AudioStreamPlayer3D = car.get_node(NodePath(named)) as AudioStreamPlayer3D
+		assert_almost_eq(speaker.volume_db, 0.0, 0.01, "%s is back to full" % named)

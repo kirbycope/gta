@@ -1,29 +1,110 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="PackedScene" path="res://addons/gta/scenes/honda_crv.tscn" id="1_base"]
+[ext_resource type="Script" path="res://addons/gta/scripts/tm2_car.gd" id="1_car"]
 [ext_resource type="Script" path="res://addons/gta/scripts/car_combat.gd" id="2_combat"]
 [ext_resource type="Script" path="res://addons/gta/scripts/ai_driver.gd" id="3_ai"]
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/vehicle_camera.tscn" id="5_camera"]
+[ext_resource type="AudioStream" uid="uid://gfahw4ac4782" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Running_1.ogg" id="6_engine"]
 
-[node name="Tm2Car" instance=ExtResource("1_base")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_chassis"]
+size = Vector3(1.85, 0.9, 4.3)
+
+[node name="Tm2Car" type="VehicleBody3D" node_paths=PackedStringArray("wheels")]
+mass = 1200.0
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 0.3, 0)
+script = ExtResource("1_car")
+wheels = [NodePath("FrontLeft"), NodePath("FrontRight"), NodePath("RearLeft"), NodePath("RearRight")]
 hides_driver_model = true
+keyboard_exit_action = &"action"
+pad_exit_action = &"jump"
 
-[node name="CarCombat" type="Node" parent="." index="0"]
-script = ExtResource("2_combat")
-car = &"roadkill"
-
-[node name="AiDriver" type="Node" parent="." index="1"]
-script = ExtResource("3_ai")
-aggression = 0.6
-enabled = false
-
-[node name="MuzzleForward" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -2.4)
-
-[node name="MuzzleRear" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 2.4)
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("BoxShape3D_chassis")
 
 [node name="Model" type="Node3D" parent="."]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
 
-[node name="Root Scene" parent="." index="6"]
-visible = false
+[node name="FrontLeft" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82, 0.35, 1.35)
+use_as_traction = true
+use_as_steering = true
+wheel_roll_influence = 0.05
+wheel_radius = 0.35
+wheel_friction_slip = 1.6
+suspension_stiffness = 22.0
+suspension_max_force = 14000.0
+damping_compression = 0.7
+damping_relaxation = 1.0
+
+
+[node name="FrontRight" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.82, 0.35, 1.35)
+use_as_traction = true
+use_as_steering = true
+wheel_roll_influence = 0.05
+wheel_radius = 0.35
+wheel_friction_slip = 1.6
+suspension_stiffness = 22.0
+suspension_max_force = 14000.0
+damping_compression = 0.7
+damping_relaxation = 1.0
+
+
+[node name="RearLeft" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82, 0.35, -1.35)
+use_as_traction = true
+wheel_roll_influence = 0.05
+wheel_radius = 0.35
+wheel_friction_slip = 1.6
+suspension_stiffness = 22.0
+suspension_max_force = 14000.0
+damping_compression = 0.7
+damping_relaxation = 1.0
+
+
+[node name="RearRight" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.82, 0.35, -1.35)
+use_as_traction = true
+wheel_roll_influence = 0.05
+wheel_radius = 0.35
+wheel_friction_slip = 1.6
+suspension_stiffness = 22.0
+suspension_max_force = 14000.0
+damping_compression = 0.7
+damping_relaxation = 1.0
+
+
+[node name="Seat" type="Marker3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.55, -0.1)
+
+[node name="VehicleCamera" parent="." instance=ExtResource("5_camera")]
+
+[node name="MuzzleForward" type="Marker3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.7, 2.2)
+
+[node name="MuzzleRear" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -2.2)
+
+[node name="SFXEngine" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_engine")
+volume_db = -8.0
+unit_size = 16.0
+max_distance = 80.0
+
+[node name="SFXTurbo" type="AudioStreamPlayer3D" parent="."]
+volume_db = -4.0
+unit_size = 20.0
+max_distance = 90.0
+
+[node name="CarCombat" type="Node" parent="."]
+script = ExtResource("2_combat")
+car = &"roadkill"
+
+[node name="AiDriver" type="Node" parent="."]
+script = ExtResource("3_ai")
+aggression = 0.6
+enabled = false
+
+[connection signal="died" from="CarCombat" to="." method="on_died"]

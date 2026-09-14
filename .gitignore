@@ -30,3 +30,10 @@ __pycache__/
 # The converted assets beside them are committed; these are just the working
 # copies the converter reads, and it rebuilds them from the disc on demand.
 addons/gta/assets/twistedmetal2/.src/
+
+# Screenshots and films of the demos, including whatever Godot's Movie Maker
+# mode writes. The addon README's "Filming a test run" recipe drops a .avi in
+# the project root, and an uncompressed one of those runs to well over 100 MB.
+recordings/
+*.avi
+*.mp4

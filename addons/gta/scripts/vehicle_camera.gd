@@ -4,6 +4,10 @@ extends Node3D
 ## travelling once it moves the way the camera looks, so slides swing the view, and the vehicle's facing at
 ## rest; manual look holds for a moment before the follow resumes. The Player's Riding state makes its camera
 ## current on mount and takes the view back on dismount.
+##
+## Setting [member look_target] locks it onto something instead. The camera then keeps that thing in view and
+## the vehicle between itself and it, rather than following where the vehicle is pointing. Rocket League's
+## ball cam is this with the ball as the target, which is what [RocketCar] uses it for.
 
 @export var pivot_height: float = 1.2 ## Metres above the vehicle's origin the arm pivots.
 @export var pitch: float = deg_to_rad(-15.0) ## Resting pitch, looking down at the vehicle.
@@ -11,6 +15,12 @@ extends Node3D
 @export var travel_speed: float = 3.0 ## Above this (m/s) the yaw follows the direction of travel instead of the facing.
 @export var mouse_sensitivity: float = 0.1
 @export var joypad_sensitivity: float = 100.0
+
+@export_group("Lock On")
+## Something to keep in view instead of following the vehicle's heading. Null is the ordinary chase camera.
+@export var look_target: Node3D
+@export var target_pitch_limit: float = deg_to_rad(70.0) ## How far up or down the lock is allowed to tilt.
+@export var target_min_distance: float = 1.0 ## Nearer than this the direction is noise and the view is held.
 
 var vehicle: RigidBody3D
 var player: Player
@@ -49,6 +59,7 @@ func end() -> void:
 		spring_arm.remove_excluded_object(vehicle.get_rid())
 	player = null
 	vehicle = null
+	look_target = null # a lock belongs to the drive that set it, not to the camera
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -75,10 +86,24 @@ func _physics_process(delta: float) -> void:
 	global_position = vehicle.global_position + vehicle.global_basis.y * pivot_height
 	if not follow_timer.is_stopped():
 		return
-	var look_dir: Vector3 = vehicle.global_basis.z
-	var travel: Vector3 = vehicle.linear_velocity
-	if Vector2(travel.x, travel.z).length() > travel_speed and travel.dot(-global_basis.z) > 0.0:
-		look_dir = travel
-	var target_yaw: float = atan2(-look_dir.x, -look_dir.z)
+	var target_yaw: float = rotation.y
+	var target_pitch: float = pitch
+	if is_instance_valid(look_target) and look_target.is_inside_tree():
+		# aiming the camera along the line to the target is what puts the
+		# vehicle between the two, because the arm hangs off the back of it
+		var offset: Vector3 = look_target.global_position - global_position
+		if offset.length() > target_min_distance:
+			target_yaw = atan2(-offset.x, -offset.z)
+			target_pitch = clampf(asin(clampf(offset.normalized().y, -1.0, 1.0)),
+				-target_pitch_limit, target_pitch_limit)
+		else:
+			# nose to nose there is no direction worth reading, so hold the angle
+			target_pitch = rotation.x
+	else:
+		var look_dir: Vector3 = vehicle.global_basis.z
+		var travel: Vector3 = vehicle.linear_velocity
+		if Vector2(travel.x, travel.z).length() > travel_speed and travel.dot(-global_basis.z) > 0.0:
+			look_dir = travel
+		target_yaw = atan2(-look_dir.x, -look_dir.z)
 	rotation.y = lerp_angle(rotation.y, target_yaw, 1.0 - exp(-follow_speed * delta))
-	rotation.x = lerp_angle(rotation.x, pitch, 1.0 - exp(-follow_speed * delta))
+	rotation.x = lerp_angle(rotation.x, target_pitch, 1.0 - exp(-follow_speed * delta))

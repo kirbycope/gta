@@ -9,20 +9,17 @@
 config_version=5
 
 [application]
-config/version="3.0.3"
 
 config/name="Godot Tim's Automobile"
+config/version="3.0.3"
 run/main_scene="res://addons/gta/scenes/demo/demo.tscn"
 config/features=PackedStringArray("4.8", "Forward Plus")
+
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=800
-
-[physics]
-
-3d/physics_engine="Jolt Physics"
 
 [importer_defaults]
 
@@ -31,3 +28,7 @@ texture={
 &"detect_3d/compress_to": 0,
 &"process/size_limit": 512
 }
+
+[physics]
+
+3d/physics_engine="Jolt Physics"

@@ -1,5 +1,5 @@
 extends CanvasLayer
-## Speedometer for a [Vehicle]; the vehicle shows it while it is driven.
+## Speedometer for a [GtaCar]; the car shows it while it is driven.
 
 const NEEDLE_MIN_DEGREES: float = -132.5 ## Needle rotation at zero speed.
 const NEEDLE_SWEEP_DEGREES: float = 265.0 ## Needle travel from zero to [member speedometer_max_speed].
