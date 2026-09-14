@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/tm2_car.tscn" id="1_base"]
+[ext_resource type="Mesh" uid="uid://demt8e8a57ynk" path="res://addons/gta/assets/twistedmetal2/cars/twister/Twister.obj" id="2_mesh"]
+[ext_resource type="Texture2D" uid="uid://b88255yoqkein" path="res://addons/gta/assets/twistedmetal2/cars/twister/Twister_0.png" id="tex_0"]
+
+[sub_resource type="StandardMaterial3D" id="mat_0"]
+resource_name = "Twister_0"
+albedo_texture = ExtResource("tex_0")
+metallic = 0.06667
+cull_mode = 2
+
+[node name="Tm2Twister" instance=ExtResource("1_base")]
+car = &"twister"
+
+[node name="CarCombat" parent="." index="0"]
+car = &"twister"
+
+[node name="Mesh" type="MeshInstance3D" parent="Model"]
+mesh = ExtResource("2_mesh")
+surface_material_override/0 = SubResource("mat_0")

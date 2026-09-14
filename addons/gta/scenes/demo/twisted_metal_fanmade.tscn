@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://addons/gta/scripts/twisted_metal.gd" id="1_tm2"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/tm2_ui.tscn" id="3_ui"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/car_controls.tscn" id="9_controls"]
+[ext_resource type="PackedScene" uid="uid://cidn0vnqetl3i" path="res://addons/gta/assets/twistedmetal2/fanmade/los_angeles_fanmade.glb" id="8_level"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
 sky_top_color = Color(0.16, 0.12, 0.26, 1)
@@ -25,12 +26,13 @@ fog_density = 0.002
 
 [node name="TwistedMetalFanmade" type="Node3D"]
 script = ExtResource("1_tm2")
-level_mesh = "res://addons/gta/assets/twistedmetal2/fanmade/los_angeles_fanmade.glb"
 level_waypoints = ""
-level_scale = 0.0
 level_name = "Los Angeles (fan remake of the scrapped version)"
 
 [node name="Controls" parent="." instance=ExtResource("9_controls")]
+
+[node name="Arena" parent="." instance=ExtResource("8_level")]
+transform = Transform3D(18.177, 0, 0, 0, 18.177, 0, 0, 0, 18.177, 0, 0, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dusk")

@@ -101,6 +101,8 @@ fighting each other as well as you. There is no `Player` in this demo and nothin
 | Node | What it is |
 |---|---|
 | `Tm2Car` (`scenes/tm2_car.tscn`) | The car: arcade handling, a turbo and a wreck state. `car` is a [`Tm2Roster`](scripts/tm2_roster.gd) key, which is where its top and turbo speeds come from. |
+| `scenes/tm2/<car>.tscn` | One scene per ripped car, inheriting `tm2_car.tscn`: its mesh under `Model/Mesh` and a material per surface embedded in the scene. Open one to change how that car looks. |
+| `Arena` (in each demo scene) | The level, an instance of its glTF placed as a node so it can be seen and selected in the editor. The demo script prepares it; it does not build it. |
 | `CarCombat` (child of a `Tm2Car`) | Health, the weapon inventory and firing. Its own `car` key is where its health and special timing come from. |
 | `AiDriver` (child of a `Tm2Car`) | The opponent. Set `waypoints` and `aggression`; `enabled` off leaves the car to a human. |
 | `HumanDriver` (child of a `Tm2Car`) | You. Fills the same pad from the keyboard or a joypad; the demo puts one under Roadkill. |
@@ -190,7 +192,12 @@ python tools/extract_tm2.py tm2.iso --all          # every level on the disc
 It reads the ISO9660 filesystem off the disc image, decodes the `.DPC` model database into a glTF
 with the game's own vertex colours, and turns the level's `.PTS` terrain file into the `Tm2Waypoints`
 the opponents drive along. The demo scene loads all of it at run time and says so on screen if it is
-missing, so the project still opens in a checkout that has none of it.
+missing, so the project still opens in a checkout that has none of it. The level itself is a node in
+each demo scene, `Arena`, an instance of the glTF at its scale, so it is there to look at in the editor;
+the script only strips the painted backdrop, adds collision to a level that has none, and measures where
+out of the world is. The cars are spawned in the game rather than placed, because their spawn points are
+found by dropping rays onto the arena's collision, but each is spawned from its own scene under
+`scenes/tm2/`, which is where its model and materials live.
 
 Twelve levels are on the disc. `ROOF` is Los Angeles, the "Quake Zone Rumble" rooftop arena;
 `SROOF` is the cut-down split-screen copy of it, as `HKONG` is of `HONGKONG`.
@@ -228,13 +235,22 @@ same level, so the two can be compared in the same game with the same cars. The 
 | AI path | the level's own 140 `.PTS` waypoints | none, so the drivable surface is sampled instead |
 | Scale | already metres, straight out of the extractor | unknown units, measured and fitted to 250 m |
 
-The same script drives both. A level that brings no waypoints has them sampled off its surface, a
-level with no collision gets a trimesh built for it, and a level in unknown units is measured rather
-than guessed at (`level_scale = 0`). Both maps wrap themselves in huge painted scenery, which is
-stripped by size so the engine's own sky shows instead.
+The same script drives both. A level that brings no waypoints has them sampled off its surface, and a
+level with no collision gets a trimesh built for it. Each level is an `Arena` node in its own demo
+scene, at its own scale: the extracted arena is already in metres and sits at 1, and the fan remake is
+in whatever units its author used and sits at 18.177, which is the 250 metres the arena should be
+across over the 13.75 units the model measures once it is in the tree. Both maps wrap themselves in
+huge painted scenery, which is stripped by size so the engine's own sky shows instead.
 
 ### Known rough edges
 
+- The ripped car models are wound mostly inside out: between 64 and 86 percent of each car's
+  triangles face into the car, measured across the seven in the demo. With back-face culling that
+  reads as transparency, and it takes Sweet Tooth's clown head off the roof entirely. Each car's
+  scene under `scenes/tm2/` carries a material per surface with culling off, so both sides draw; the
+  material is yours to change in the inspector if a car wants something else.
+- Outlaw and Shadow are in the roster with no ripped model in the assets, so they have no scene. The
+  demo does not use them; asking for one spawns the bare chassis and says so.
 - About a fifth of the mesh blocks in a level fail to parse and are dropped rather than drawn wrong;
   Los Angeles keeps 249 of 325. Textures are not decoded at all yet, so the level renders with its
   vertex colours and the `.TPC` texture banks are untouched.
@@ -489,6 +505,7 @@ One test script per car, plus one for the chassis they share:
 | `test_tm2_car.gd` | The Twisted Metal car: `forward()` against the way a driven car actually travels, the published speed ceilings, the turbo meter and the wreck. |
 | `test_human_driver.gd` | The person's hand on a battle car's pad: keyboard bindings with no joypad, the switch on a pad press, space as the throttle and never the exit. |
 | `test_car_controls.gd` | The car-only HUD: it registers every action the cars read and nothing they do not, and every label a car gives sits on a slot that really reads that way on that device. |
+| `test_twisted_metal_demo.gd` | The Twisted Metal demo whole: the arena is a node in the scene with geometry and collision, every roster car with a model has a scene of its own, seven spawn from those scenes with a person on Roadkill, and each car's materials are editable resources drawn on both sides. |
 
 Most of them are unit tests over one script at a time and run in seconds.
 `test_rocket_league_demo.gd` is different: it loads `rocket_league.tscn` whole and plays it, so an

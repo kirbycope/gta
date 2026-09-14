@@ -1,0 +1,37 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/tm2_car.tscn" id="1_base"]
+[ext_resource type="Mesh" uid="uid://bepurpdmc7mp6" path="res://addons/gta/assets/twistedmetal2/cars/warthog/Warthog.obj" id="2_mesh"]
+[ext_resource type="Texture2D" uid="uid://cnxl754ba7js7" path="res://addons/gta/assets/twistedmetal2/cars/warthog/Warthog_0.png" id="tex_0"]
+[ext_resource type="Texture2D" uid="uid://skolt1sqolqn" path="res://addons/gta/assets/twistedmetal2/cars/warthog/Warthog_1.png" id="tex_1"]
+[ext_resource type="Texture2D" uid="uid://dyvbglc6lor38" path="res://addons/gta/assets/twistedmetal2/cars/warthog/Warthog_2.png" id="tex_2"]
+
+[sub_resource type="StandardMaterial3D" id="mat_0"]
+resource_name = "Warthog_0"
+albedo_texture = ExtResource("tex_0")
+metallic = 0.06667
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_1"]
+resource_name = "Warthog_1"
+albedo_texture = ExtResource("tex_1")
+metallic = 0.06667
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_2"]
+resource_name = "Warthog_2"
+albedo_texture = ExtResource("tex_2")
+metallic = 0.06667
+cull_mode = 2
+
+[node name="Tm2Warthog" instance=ExtResource("1_base")]
+car = &"warthog"
+
+[node name="CarCombat" parent="." index="0"]
+car = &"warthog"
+
+[node name="Mesh" type="MeshInstance3D" parent="Model"]
+mesh = ExtResource("2_mesh")
+surface_material_override/0 = SubResource("mat_0")
+surface_material_override/1 = SubResource("mat_1")
+surface_material_override/2 = SubResource("mat_2")

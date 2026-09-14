@@ -4,32 +4,34 @@ extends Node3D
 ## you. There is no [Player] here: a [HumanDriver] under your car fills the same
 ## pad the opponents' [AiDriver] fills, and there is nothing to get out of.
 ##
+## The arena is a node in the scene, an instance of the level's glTF named
+## [code]Arena[/code], so it can be looked at and selected in the editor. The
+## two demo scenes differ by which glTF that is and at what scale, which is what
+## a scene is for. This script only prepares the node it finds: it strips the
+## painted backdrop, gives a level that arrived without collision a trimesh, and
+## measures where out of the world is.
+##
+## The cars are their own scenes under [code]scenes/tm2/[/code], one per ripped
+## model, each with its mesh and its materials embedded where they can be edited.
+## They are spawned here at run time because their spawn points are found by
+## dropping rays onto the arena's collision, which needs the game running; open
+## a car's scene to change its look.
+##
 ## Two scenes use this. [code]twisted_metal.tscn[/code] plays the arena pulled
 ## out of the game disc by [code]tools/extract_tm2.py[/code], with the AI on the
 ## level's own waypoints. [code]twisted_metal_fanmade.tscn[/code] plays the
 ## Sketchfab remake of the scrapped version of the same level, which has no
 ## waypoints of its own, so they are sampled off its surface instead. Between
 ## them they are a like for like comparison of the two maps.
-##
-## The level is put together here rather than wired up as nodes because which
-## arena to load, and at what scale, is the thing the two scenes differ by.
 
 const ASSETS: String = "res://addons/gta/assets/twistedmetal2"
-const CARS_DIR: String = ASSETS + "/cars"
-const TM2_CAR: PackedScene = preload("res://addons/gta/scenes/tm2_car.tscn")
+const CAR_SCENES: String = "res://addons/gta/scenes/tm2" ## One scene per ripped car, named by roster key.
 
 ## Who the player drives, and who they are up against. Keys are [Tm2Roster] cars.
 const PLAYER_CAR: StringName = &"roadkill"
 const OPPONENTS: Array[StringName] = [
 	&"sweet_tooth", &"warthog", &"spectre", &"thumper", &"twister", &"minion",
 ]
-## Folder under cars/ for each roster key, as the model rips are named.
-const MODEL_DIRS: Dictionary = {
-	&"axel": "axel", &"grasshopper": "grasshopper", &"hammerhead": "hammerhead",
-	&"minion": "minion", &"mr_grimm": "mrgrimm", &"mr_slam": "mrslam",
-	&"roadkill": "roadkill", &"spectre": "spectre", &"sweet_tooth": "sweettooth",
-	&"thumper": "thumper", &"twister": "twister", &"warthog": "warthog",
-}
 
 const SPAWN_HEIGHT: float = 2.0 ## Drop the cars in just above the roof.
 const RAY_TOP: float = 150.0 ## How far above a waypoint to start looking for the roof.
@@ -38,7 +40,6 @@ const OPPONENT_SPACING: int = 9 ## Rooftop waypoints between one car and the nex
 const FELL_OUT_MARGIN: float = 40.0 ## How far under the arena a car has to be to count as lost.
 const BACKDROP_RATIO: float = 8.0 ## A mesh this many times wider than its neighbours is scenery, not arena.
 const BACKDROP_TALLNESS: float = 0.15 ## And it only counts as scenery if it rises this much of its own width.
-const TARGET_ARENA_WIDTH: float = 250.0 ## What a level of unknown units is scaled to, in metres.
 const ROOF_TIER_BAND: float = 30.0 ## How far off the median height still counts as the rooftops.
 const SAMPLE_STEPS: int = 26 ## Grid resolution across the widest side when sampling a level.
 const SAMPLE_MIN_SPACING: float = 3.0
@@ -47,19 +48,14 @@ const SAMPLE_FLATNESS: float = 0.85 ## How level a surface has to be to be worth
 const SAMPLE_LIMIT: int = 600 ## Stop sampling past this many points.
 
 @export_group("Level")
-@export_file("*.glb") var level_mesh: String = ASSETS + "/los_angeles.glb"
 ## The arena's own AI path. Leave empty for a level that has none and the
 ## drivable surface is sampled for waypoints instead.
 @export_file("*.tres") var level_waypoints: String = ASSETS + "/los_angeles_waypoints.tres"
-## Scale applied to the level, or 0 to size it automatically so the arena comes
-## out [constant TARGET_ARENA_WIDTH] across. The extracted arena is already in
-## metres and sets 1.0; a model from elsewhere is in whatever units its author
-## used, so it is better off measured than guessed at.
-@export var level_scale: float = 1.0
 @export var level_name: String = "Los Angeles"
 
 @onready var hint: Label = $HUD/Hint
 @onready var ui: Tm2Ui = get_node_or_null(^"Tm2Ui")
+@onready var arena: Node3D = get_node_or_null(^"Arena") ## The level, placed in the scene as a node.
 
 var waypoints: Tm2Waypoints
 var player_car: Tm2Car
@@ -69,7 +65,7 @@ var _fell_out_y: float = -INF ## Set from the arena's own bounds once it is load
 
 
 func _ready() -> void:
-	if not _build_level():
+	if not _prepare_level():
 		return
 	var flat: Tm2Waypoints = null
 	if not level_waypoints.is_empty() and ResourceLoader.exists(level_waypoints):
@@ -84,24 +80,17 @@ func _ready() -> void:
 	_hand_over_the_wheel.call_deferred()
 
 
-## Put the arena in the scene. Returns false, with the reason on screen, when
-## the extractor has not been run yet.
-func _build_level() -> bool:
-	if not ResourceLoader.exists(level_mesh):
+## Make the [code]Arena[/code] node ready to drive on. Returns false, with the
+## reason on screen, when the scene has no arena, which is what a checkout that
+## has not run the extractor gets: the glTF is missing and the instance is empty.
+func _prepare_level() -> bool:
+	if arena == null or arena.find_children("*", "MeshInstance3D", true, false).is_empty():
 		hint.text = "Twisted Metal 2 assets are missing.\n\nBuild them from your own copy of the game:\n"\
 			+ "  python tools/extract_tm2.py \"Twisted Metal 2 (USA) (Track 01).bin\""
 		return false
-	var scene: PackedScene = load(level_mesh) as PackedScene
-	if scene == null:
-		hint.text = "Could not load %s" % level_mesh
-		return false
-	var level: Node3D = scene.instantiate() as Node3D
-	level.name = "Arena"
-	add_child(level)
-	_strip_backdrop(level)
-	level.scale = Vector3.ONE * _fit_scale(level)
-	_give_collision(level)
-	_fell_out_y = _arena_bounds(level).position.y - FELL_OUT_MARGIN
+	_strip_backdrop(arena)
+	_give_collision(arena)
+	_fell_out_y = _arena_bounds(arena).position.y - FELL_OUT_MARGIN
 	return true
 
 
@@ -134,18 +123,6 @@ func _strip_backdrop(level: Node3D) -> void:
 		# its scale on the very next line
 		meshes[i].get_parent().remove_child(meshes[i])
 		meshes[i].free()
-
-
-## The scale that makes the arena [constant TARGET_ARENA_WIDTH] across, unless
-## [member level_scale] is set to a positive number and overrides it. The
-## extracted level is already in metres and passes 1.0; a model from elsewhere
-## is in whatever units its author used, and this sizes it to the cars.
-func _fit_scale(level: Node3D) -> float:
-	if level_scale > 0.0:
-		return level_scale
-	var box: AABB = _arena_bounds(level)
-	var width: float = maxf(box.size.x, box.size.z)
-	return 1.0 if width <= 0.0 else TARGET_ARENA_WIDTH / width
 
 
 ## The box the whole arena sits in, which is how far down is out of the world
@@ -226,24 +203,19 @@ func _spawn_cars() -> void:
 		_make_car(OPPONENTS[i], i + 1, true)
 
 
-## One car: the shared [code]tm2_car.tscn[/code] with its model, its roster
-## stats and, for an opponent, its [AiDriver] switched on.
+## One car: its own scene under [constant CAR_SCENES], which carries its mesh,
+## its materials and its roster key, plus for an opponent its [AiDriver] switched
+## on. A key with no scene falls back to the bare chassis so the field still
+## fills, and says so.
 func _make_car(car: StringName, waypoint: int, ai: bool) -> Tm2Car:
-	var vehicle: Tm2Car = TM2_CAR.instantiate() as Tm2Car
+	var path: String = "%s/%s.tscn" % [CAR_SCENES, car]
+	var scene: PackedScene = load(path) as PackedScene if ResourceLoader.exists(path) else null
+	if scene == null:
+		push_warning("No scene for %s at %s; spawning the bare chassis." % [car, path])
+		scene = load("res://addons/gta/scenes/tm2_car.tscn") as PackedScene
+	var vehicle: Tm2Car = scene.instantiate() as Tm2Car
 	vehicle.name = String(car).to_pascal_case()
-
-	# everything is set before the car enters the tree, because CarCombat reads
-	# its roster stats in _ready and would otherwise keep the scene's defaults
-	var mesh: Mesh = _load_model(car)
-	if mesh != null:
-		var model: Node3D = vehicle.get_node_or_null(^"Model") as Node3D
-		if model != null:
-			var instance: MeshInstance3D = MeshInstance3D.new()
-			instance.mesh = mesh
-			model.add_child(instance)
-
-	# the key names the car in both places it matters: the roster top speed the handling drives
-	# to, and the roster health and special timing the combat node reads
+	# set before the car enters the tree, because the car and its combat node read the key in _ready
 	vehicle.car = car
 	var combat: CarCombat = vehicle.get_node_or_null(^"CarCombat") as CarCombat
 	if combat != null:
@@ -292,19 +264,6 @@ func _spawn_point(slot: int) -> Vector3:
 		return any + Vector3.UP * SPAWN_HEIGHT
 	var index: int = _roof[(slot * OPPONENT_SPACING) % _roof.size()]
 	return waypoints.points[index] + Vector3.UP * SPAWN_HEIGHT
-
-
-## The car models import as meshes, not scenes, and the rips keep their own
-## capitalised file names, so the folder is scanned rather than guessed at.
-func _load_model(car: StringName) -> Mesh:
-	var folder: String = CARS_DIR + "/" + String(MODEL_DIRS.get(car, String(car)))
-	var dir: DirAccess = DirAccess.open(folder)
-	if dir == null:
-		return null
-	for file: String in dir.get_files():
-		if file.get_extension().to_lower() == "obj":
-			return load(folder + "/" + file) as Mesh
-	return null
 
 
 ## Anything that leaves the arena is put back on it. Twisted Metal drops a car
