@@ -93,10 +93,10 @@ sourced is listed in `Tm2Roster.UNSOURCED` rather than invented.
 
 ### Building the assets
 
-The converted level and cars are committed under `addons/gta/assets/twistedmetal2/`, which is why
-this repository is private: the material is Sony's and SingleTrac's and is not ours to publish. Only
-the raw files pulled off the disc are git-ignored, because the extractor rebuilds those on demand.
-To build them again, or to add another level, point it at your own copy of the game:
+The converted level and cars are committed under `addons/gta/assets/twistedmetal2/`. The material is
+Sony's and SingleTrac's, so it is here on the understanding that it is not ours to license; only the
+raw files pulled off the disc are git-ignored, because the extractor rebuilds those on demand. To
+build them again, or to add another level, point it at your own copy of the game:
 
 ```powershell
 python tools/extract_tm2.py "Twisted Metal 2 (USA) (Track 01).bin"
@@ -182,7 +182,8 @@ stripped by size so the engine's own sky shows instead.
 | `assets/cgtrader/honda_crv/` | Wheel | Not recorded - fill in |
 | `assets/gravitysound/Car Sound Effects/` | [Gravity Sound](https://gravity-sound.itch.io/car-sound-effects) | Not recorded - fill in |
 | `materials/burned.tres` | Made for this addon | CC0 |
-| `assets/twistedmetal2/` | Twisted Metal 2 level geometry and AI paths, converted from the disc by `tools/extract_tm2.py`. Sony / SingleTrac. | Not licensed for redistribution; this repository is private for that reason |
+| `assets/twistedmetal2/` | Twisted Metal 2 level geometry and AI paths, converted from the disc by `tools/extract_tm2.py`. Sony / SingleTrac. | Not licensed for redistribution |
+| `assets/twistedmetal2/fanmade/` | ["Los Angeles Scrapped Twisted Metal 2 Level"](https://sketchfab.com/3d-models/los-angeles-scrapped-twisted-metal-2-level-58733d47afcf426aa38d9143ceb7d79b) by [Angel V Mendez](https://sketchfab.com/Angel.V.Mendez) | [Sketchfab Standard](https://sketchfab.com/licenses); the author has downloads turned off, so this copy came from the user rather than from Sketchfab |
 | `assets/twistedmetal2/cars/` | Vehicle models ripped to [The Models Resource](https://www.models-resource.com/playstation/twistedmetal2/), rescaled by `tools/tm2/cars.py`. Sony / SingleTrac. | Not licensed for redistribution |
 
 ---

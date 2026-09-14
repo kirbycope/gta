@@ -4,8 +4,7 @@
 
 Drivable vehicles with GTA V style handling: a five-speed box, traction curves, a handbrake and a
 chase camera. Plus an optional car combat layer and a Twisted Metal 2 demo that plays in that game's
-own Los Angeles arena, converted from the disc. That material is Sony's, which is why this
-repository is private.
+own Los Angeles arena, converted from the disc.
 
 **[Read the full documentation](addons/gta/README.md)**, which ships with the addon so it is
 there however you installed it.
