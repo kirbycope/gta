@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/gta/scripts/twisted_metal.gd" id="1_tm2"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/tm2_ui.tscn" id="3_ui"]
-[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player_controls.tscn" id="9_controls"]
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/car_controls.tscn" id="9_controls"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dusk"]
 sky_top_color = Color(0.16, 0.12, 0.26, 1)

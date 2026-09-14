@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://carag3s40qlej" path="res://addons/controls/controls.tscn" id="1_base"]
+[ext_resource type="Script" path="res://addons/gta/scripts/car_controls.gd" id="2_script"]
+
+[node name="CarControls" instance=ExtResource("1_base")]
+script = ExtResource("2_script")
+action_button_0 = &"action"
+action_button_1 = &"sprint"
+action_button_2 = &""
+action_button_3 = &"jump"
+action_button_4 = &""
+action_button_6 = &""
+action_button_7 = &"crouch"
+action_button_8 = &""
+action_button_9 = &"ability"
+action_button_10 = &"throw"
+action_button_11 = &""
+action_button_12 = &""
+action_button_13 = &""
+action_button_14 = &""
+action_button_15 = &""
+action_axis_4_plus = &"focus"
+action_axis_5_plus = &"shoot"
+action_move_up = &"move_up"
+action_move_down = &"move_down"
+action_move_left = &"move_left"
+action_move_right = &"move_right"
+action_look_up = &"look_up"
+action_look_down = &"look_down"
+action_look_left = &"look_left"
+action_look_right = &"look_right"

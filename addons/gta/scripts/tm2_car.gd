@@ -210,12 +210,15 @@ func get_contextual_controls(input_type_: int) -> Dictionary:
 	if input_type_ == Controls.InputType.KEYBOARD_MOUSE:
 		controls["joypad_button_3"] = "Accelerate"
 		controls["joypad_button_1"] = "Reverse"
-		controls["joypad_button_0"] = "Exit"
+		if player != null:
+			controls["joypad_button_0"] = "Exit"
 	else:
 		controls["joypad_axis_5_plus"] = "Accelerate"
 		controls["joypad_axis_4_plus"] = "Reverse"
-		controls["joypad_button_3"] = "Exit"
-	controls["joypad_button_4"] = "Turbo"
+		if player != null:
+			controls["joypad_button_3"] = "Exit"
+	# the left bumper, which is where the "ability" action sits on the HUD
+	controls["joypad_button_9"] = "Turbo"
 	return controls
 
 

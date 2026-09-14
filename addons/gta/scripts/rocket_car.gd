@@ -55,9 +55,13 @@ const BOOST_PITCH_RANGE: Vector2 = Vector2(0.9, 1.25) ## Boost note, idle to fla
 
 @export_group("Rocket League Actions")
 @export var keyboard_boost_action: StringName = &"shoot" ## Keyboard: left click.
-@export var pad_boost_action: StringName = &"focus" ## Pad: left trigger.
+## Pad: the B button. Not the left trigger, which is already reverse on a pad; the two used to share it,
+## so pulling the trigger both braked and boosted.
+@export var pad_boost_action: StringName = &"sprint"
 @export var keyboard_jump_action: StringName = &"crouch" ## Keyboard: control.
-@export var pad_jump_action: StringName = &"jump" ## Pad: the A button.
+## Pad: the A button, as in Rocket League. On this HUD the A slot carries the "action" action; the "jump"
+## action sits on Y and the Space key, which is why a keyboard accelerates with it.
+@export var pad_jump_action: StringName = &"action"
 @export var keyboard_air_roll_action: StringName = &"throw" ## Keyboard: T, the same key as the handbrake.
 @export var pad_air_roll_action: StringName = &"throw"
 ## Stick forward, which pitches the nose down, the way Rocket League has it.
@@ -301,13 +305,15 @@ func get_contextual_controls(input_type_: int) -> Dictionary:
 		"left_joystick": "Steer\nPitch",
 		"right_joystick": "Camera",
 		"joypad_button_10": "Powerslide\nAir Roll",
-		"joypad_button_4": "Ball Cam",
+		"joypad_button_9": "Ball Cam",
 	}
+	# each label sits on the slot that carries the action the car reads for that device, and the
+	# slot faces are fixed: on a keyboard Y is the Space key, B is Shift, L3 is Ctrl, RT is the mouse
 	if input_type_ == Controls.InputType.KEYBOARD_MOUSE:
 		controls["joypad_button_3"] = "Accelerate"
 		controls["joypad_button_1"] = "Reverse"
-		controls["joypad_button_2"] = "Jump"
-		controls["joypad_button_0"] = "Boost"
+		controls["joypad_button_7"] = "Jump"
+		controls["joypad_axis_5_plus"] = "Boost"
 	else:
 		controls["joypad_axis_5_plus"] = "Accelerate"
 		controls["joypad_axis_4_plus"] = "Reverse"

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/rocket_ball.tscn" id="3_ball"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/rocket_league_ui.tscn" id="5_ui"]
 [ext_resource type="Script" path="res://addons/gta/scripts/rocket_replay.gd" id="6_replay"]
-[ext_resource type="PackedScene" path="res://addons/3d_player_controller/scenes/player_controls.tscn" id="9_controls"]
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/car_controls.tscn" id="9_controls"]
 
 [sub_resource type="Environment" id="Environment_stadium"]
 background_mode = 1

@@ -13,8 +13,8 @@ extends GutTest
 const ROCKET_CAR: PackedScene = preload("res://addons/gta/scenes/rocket_car.tscn")
 const TM2_CAR: PackedScene = preload("res://addons/gta/scenes/tm2_car.tscn")
 ## The Controls HUD is what registers the addon's action names into the InputMap; a Player carries one,
-## and a demo with no Player instances it as a node. The test does the same.
-const CONTROLS: PackedScene = preload("res://addons/3d_player_controller/scenes/player_controls.tscn")
+## and a demo with no Player instances the car's own HUD as a node. The test does the same.
+const CONTROLS: PackedScene = preload("res://addons/gta/scenes/car_controls.tscn")
 
 var car: RocketCar
 var driver: HumanDriver
