@@ -179,9 +179,6 @@ stripped by size so the engine's own sky shows instead.
 | `assets/cgtrader/honda_crv/` | Wheel | Not recorded - fill in |
 | `assets/gravitysound/Car Sound Effects/` | [Gravity Sound](https://gravity-sound.itch.io/car-sound-effects) | Not recorded - fill in |
 | `materials/burned.tres` | Made for this addon | CC0 |
-| `assets/twistedmetal2/` | Twisted Metal 2 level geometry and AI paths, converted from the disc by `tools/extract_tm2.py`. Sony / SingleTrac. | Not licensed for redistribution |
-| `assets/twistedmetal2/fanmade/` | ["Los Angeles Scrapped Twisted Metal 2 Level"](https://sketchfab.com/3d-models/los-angeles-scrapped-twisted-metal-2-level-58733d47afcf426aa38d9143ceb7d79b) by [Angel V Mendez](https://sketchfab.com/Angel.V.Mendez) | [Sketchfab Standard](https://sketchfab.com/licenses); the author has downloads turned off, so this copy came from the user rather than from Sketchfab |
-| `assets/twistedmetal2/cars/` | Vehicle models ripped to [The Models Resource](https://www.models-resource.com/playstation/twistedmetal2/), rescaled by `tools/tm2/cars.py`. Sony / SingleTrac. | Not licensed for redistribution |
 
 ---
 
