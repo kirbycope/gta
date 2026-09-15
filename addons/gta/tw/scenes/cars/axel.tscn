@@ -6,9 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://7sjoxeyl1um5" path="res://addons/gta/tw/assets/cars/axel/Axel_0.png" id="tex_1"]
 [ext_resource type="Texture2D" uid="uid://cprehry0oep68" path="res://addons/gta/tw/assets/cars/axel/Axel_4.png" id="tex_2"]
 [ext_resource type="Texture2D" uid="uid://kq7ppew687a6" path="res://addons/gta/tw/assets/cars/axel/Axel_5.png" id="tex_3"]
-[ext_resource type="Texture2D" uid="uid://c8lo808aniurr" path="res://addons/gta/tw/assets/cars/axel/Axel_2.png" id="tex_4"]
-[ext_resource type="Texture2D" uid="uid://ebornsyiokhb" path="res://addons/gta/tw/assets/cars/axel/Axel_3.png" id="tex_5"]
-[ext_resource type="Texture2D" uid="uid://cvsfy1m1u3nb3" path="res://addons/gta/tw/assets/cars/axel/Axel_6.png" id="tex_6"]
+[ext_resource type="Texture2D" uid="uid://8502pxh71thx" path="res://addons/gta/tw/assets/cars/axel/Axel_2.png" id="tex_4"]
+[ext_resource type="Texture2D" uid="uid://cftpbeal6t4mo" path="res://addons/gta/tw/assets/cars/axel/Axel_3.png" id="tex_5"]
+[ext_resource type="Texture2D" uid="uid://cijgc6dpjjha2" path="res://addons/gta/tw/assets/cars/axel/Axel_6.png" id="tex_6"]
 
 [sub_resource type="StandardMaterial3D" id="mat_0"]
 resource_name = "Axel_1"

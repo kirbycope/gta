@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://cnbn1k0hr87t7" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_0.png" id="tex_0"]
 [ext_resource type="Texture2D" uid="uid://t67wwvio6sld" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_1.png" id="tex_1"]
 [ext_resource type="Texture2D" uid="uid://8a67tgnkwaqr" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_4.png" id="tex_2"]
-[ext_resource type="Texture2D" uid="uid://y588l4e0liqm" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_3.png" id="tex_3"]
+[ext_resource type="Texture2D" uid="uid://bfv2utl5fd5ov" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_3.png" id="tex_3"]
 [ext_resource type="Texture2D" uid="uid://bj22oeg00slt" path="res://addons/gta/tw/assets/cars/hammerhead/Hammerhead_2.png" id="tex_4"]
 
 [sub_resource type="StandardMaterial3D" id="mat_0"]

@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" path="res://addons/gta/tw/scenes/tw_car.tscn" id="1_base"]
 [ext_resource type="Mesh" uid="uid://bej1ao0wij3b8" path="res://addons/gta/tw/assets/cars/spectre/Spectre.obj" id="2_mesh"]
-[ext_resource type="Texture2D" uid="uid://bqnql3y7a06mo" path="res://addons/gta/tw/assets/cars/spectre/Spectre_1.png" id="tex_0"]
-[ext_resource type="Texture2D" uid="uid://dywtrxcjktcvo" path="res://addons/gta/tw/assets/cars/spectre/Spectre_2.png" id="tex_1"]
+[ext_resource type="Texture2D" uid="uid://bvy3jjm1ow5xe" path="res://addons/gta/tw/assets/cars/spectre/Spectre_1.png" id="tex_0"]
+[ext_resource type="Texture2D" uid="uid://dexoqgrshqg76" path="res://addons/gta/tw/assets/cars/spectre/Spectre_2.png" id="tex_1"]
 [ext_resource type="Texture2D" uid="uid://ca38brykybnci" path="res://addons/gta/tw/assets/cars/spectre/Spectre_0.png" id="tex_2"]
 
 [sub_resource type="StandardMaterial3D" id="mat_0"]

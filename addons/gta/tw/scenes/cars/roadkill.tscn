@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" path="res://addons/gta/tw/scenes/tw_car.tscn" id="1_base"]
 [ext_resource type="Mesh" uid="uid://dymo6eynt132t" path="res://addons/gta/tw/assets/cars/roadkill/Roadkill.obj" id="2_mesh"]
-[ext_resource type="Texture2D" uid="uid://dne7v8rufhxk7" path="res://addons/gta/tw/assets/cars/roadkill/Roadkill_1.png" id="tex_0"]
+[ext_resource type="Texture2D" uid="uid://dq617sd2poxg8" path="res://addons/gta/tw/assets/cars/roadkill/Roadkill_1.png" id="tex_0"]
 [ext_resource type="Texture2D" uid="uid://dbmkuswmxf08t" path="res://addons/gta/tw/assets/cars/roadkill/Roadkill_0.png" id="tex_1"]
 
 [sub_resource type="StandardMaterial3D" id="mat_0"]
