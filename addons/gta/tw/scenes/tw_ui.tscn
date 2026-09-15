@@ -1,0 +1,89 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/tw/scripts/tw_ui.gd" id="1_ui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0, 0, 0, 0.45)
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_turbo_fill"]
+bg_color = Color(0.36, 0.78, 0.4, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="TwUi" type="CanvasLayer"]
+script = ExtResource("1_ui")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -150.0
+offset_right = 296.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Rows" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HealthRow" type="HBoxContainer" parent="Panel/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HealthTitle" type="Label" parent="Panel/Rows/HealthRow"]
+layout_mode = 2
+text = "Armor"
+
+[node name="HealthBar" type="ProgressBar" parent="Panel/Rows/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 120.0
+value = 120.0
+show_percentage = false
+
+[node name="HealthAmount" type="Label" parent="Panel/Rows/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 0)
+layout_mode = 2
+text = "120"
+horizontal_alignment = 2
+
+[node name="TurboRow" type="HBoxContainer" parent="Panel/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TurboTitle" type="Label" parent="Panel/Rows/TurboRow"]
+layout_mode = 2
+text = "Turbo"
+
+[node name="TurboBar" type="ProgressBar" parent="Panel/Rows/TurboRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 1.0
+show_percentage = false
+theme_override_styles/fill = SubResource("StyleBoxFlat_turbo_fill")
+
+[node name="Weapon" type="Label" parent="Panel/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Machine Gun"

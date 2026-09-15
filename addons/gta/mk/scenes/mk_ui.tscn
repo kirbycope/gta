@@ -1,0 +1,92 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_ui.gd" id="1_ui"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_big"]
+font_size = 64
+outline_size = 8
+outline_color = Color(0, 0, 0, 0.7)
+
+[node name="MkUi" type="CanvasLayer"]
+layer = 2
+script = ExtResource("1_ui")
+
+[node name="Corner" type="MarginContainer" parent="."]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 320.0
+offset_bottom = 160.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Stack" type="VBoxContainer" parent="Corner"]
+theme_override_constants/separation = 2
+
+[node name="Position" type="Label" parent="Corner/Stack"]
+unique_name_in_owner = true
+text = "1st"
+label_settings = SubResource("LabelSettings_big")
+
+[node name="Lap" type="Label" parent="Corner/Stack"]
+unique_name_in_owner = true
+text = "Lap 1/3"
+
+[node name="Item" type="Label" parent="Corner/Stack"]
+unique_name_in_owner = true
+text = ""
+
+[node name="SpeedBox" type="MarginContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -80.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Speed" type="Label" parent="SpeedBox"]
+unique_name_in_owner = true
+text = "0 km/h"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="Centre" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Countdown" type="Label" parent="Centre"]
+unique_name_in_owner = true
+text = ""
+label_settings = SubResource("LabelSettings_big")
+horizontal_alignment = 1
+
+[node name="NoticeBox" type="MarginContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -48.0
+offset_right = -24.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Notice" type="Label" parent="NoticeBox"]
+unique_name_in_owner = true
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3

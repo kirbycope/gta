@@ -29,7 +29,12 @@ __pycache__/
 # Raw files pulled straight off the Twisted Metal 2 disc by tools/extract_tm2.py.
 # The converted assets beside them are committed; these are just the working
 # copies the converter reads, and it rebuilds them from the disc on demand.
-addons/gta/assets/twistedmetal2/.src/
+addons/gta/tw/assets/.src/
+
+# Read out of your own Mario Kart 64 ROM by tools/extract_mk64.py. The item
+# probability tables are the game's data, so they are built locally from a copy
+# you own and are never committed here.
+addons/gta/mk/assets/
 
 # Screenshots and films of the demos, including whatever Godot's Movie Maker
 # mode writes. The addon README's "Filming a test run" recipe drops a .avi in

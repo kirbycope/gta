@@ -1,0 +1,140 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/mk_item_box.tscn" id="1_box"]
+
+[sub_resource type="Curve3D" id="Curve3D_line"]
+_data = {
+"points": PackedVector3Array(-3.26317, -0.372749, -6.35482, 3.26317, 0.372749, 6.35482, 140.912, 6.25238, 0, -1.65648, -0.316408, -7.04438, 1.65648, 0.316408, 7.04438, 148.494, 7.30565, 20.41, 0.120994, -0.2366, -7.29576, -0.120994, 0.2366, 7.29576, 150.85, 8.15083, 42.2663, 1.88157, -0.139244, -7.10044, -1.88157, 0.139244, 7.10044, 147.768, 8.72524, 64.1846, 3.47356, -0.0315618, -6.51295, -3.47356, 0.0315618, 6.51295, 139.561, 8.98629, 84.8689, 4.79919, 0.0784614, -5.62206, -4.79919, -0.0784614, 5.62206, 126.926, 8.91462, 103.262, 5.81419, 0.182666, -4.52174, -5.81419, -0.182666, 4.52174, 110.766, 8.51553, 118.601, 6.51334, 0.273322, -3.29101, -6.51334, -0.273322, 3.29101, 92.0412, 7.81862, 130.393, 6.91019, 0.343708, -1.98766, -6.91019, -0.343708, 1.98766, 71.6858, 6.87559, 138.347, 7.02004, 0.388602, -0.655019, -7.02004, -0.388602, 0.655019, 50.58, 5.75637, 142.319, 6.85292, 0.404676, 0.66354, -6.85292, -0.404676, -0.66354, 29.5656, 4.54398, 142.277, 6.4189, 0.390736, 1.91086, -6.4189, -0.390736, -1.91086, 9.46254, 3.32832, 138.337, 5.7426, 0.347818, 3.01069, -5.7426, -0.347818, -3.01069, -8.94781, 2.19956, 130.812, 4.87978, 0.279103, 3.87556, -4.87978, -0.279103, -3.87556, -24.9931, 1.24141, 120.273, 3.92728, 0.189689, 4.42716, -3.92728, -0.189689, -4.42716, -38.2265, 0.52494, 107.559, 3.01922, 0.086206, 4.62348, -3.01922, -0.086206, -4.62348, -48.5568, 0.10328, 93.7103, 2.30651, -0.0236703, 4.48345, -2.30651, 0.0236703, -4.48345, -56.3418, 0.0077038, 79.8181, 1.923, -0.131791, 4.09897, -1.923, 0.131791, -4.09897, -62.3958, 0.245301, 66.8096, 1.94643, -0.230137, 3.62733, -1.94643, 0.230137, -3.62733, -67.8797, 0.79845, 55.2243, 2.36596, -0.311416, 3.26231, -2.36596, 0.311416, -3.26231, -74.0744, 1.62613, 45.0456, 3.06752, -0.369598, 3.18901, -3.06752, 0.369598, -3.18901, -82.0755, 2.66694, 35.6504, 3.84453, -0.400368, 3.53315, -3.84453, 0.400368, -3.53315, -92.4795, 3.84371, 25.9115, 4.43482, -0.401445, 4.31859, -4.43482, 0.401445, -4.31859, -105.143, 5.06915, 14.4515, 4.57716, -0.372749, 5.44629, -4.57716, 0.372749, -5.44629, -119.088, 6.25238, 1.45841e-14, 4.07458, -0.316408, 6.70281, -4.07458, 0.316408, -6.70281, -132.606, 7.30565, -18.2262, 2.84845, -0.2366, 7.79935, -2.84845, 0.2366, -7.79935, -143.536, 8.15083, -40.2169, 0.968537, -0.139244, 8.43385, -0.968537, 0.139244, -8.43385, -149.696, 8.72524, -65.0223, -1.35049, -0.0315618, 8.36208, 1.35049, 0.0315618, -8.36208, -149.347, 8.98629, -90.82, -3.78742, 0.0784614, 7.45995, 3.78742, -0.0784614, -7.45995, -141.593, 8.91462, -115.195, -5.98, 0.182666, 5.76117, 5.98, -0.182666, -5.76117, -126.623, 8.51553, -135.58, -7.60265, 0.273322, 3.45936, 7.60265, -0.273322, -3.45936, -105.713, 7.81862, -149.762, -8.43783, 0.343708, 0.872766, 8.43783, -0.343708, -0.872766, -81.0067, 6.87559, -156.336, -8.42345, 0.388602, -1.62091, 8.42345, -0.388602, 1.62091, -55.0864, 5.75637, -154.998, -7.6647, 0.404676, -3.66452, 7.6647, -0.404676, 3.66452, -30.466, 4.54398, -146.61, -6.40725, 0.390736, -4.99726, 6.40725, -0.390736, 4.99726, -9.09822, 3.32832, -133.011, -4.97845, 0.347818, -5.5081, 4.97845, -0.347818, 5.5081, 7.97749, 2.19956, -116.627, -3.71116, 0.279103, -5.25451, 3.71116, -0.279103, 5.25451, 20.7725, 1.24141, -99.9626, -2.86868, 0.189689, -4.44264, 2.86868, -0.189689, 4.44264, 30.2444, 0.52494, -85.0997, -2.58882, 0.086206, -3.37466, 2.58882, -0.086206, 3.37466, 37.9845, 0.10328, -73.3068, -2.85981, -0.0236703, -2.37712, 2.85981, 0.0236703, 2.37712, 45.7774, 0.0077038, -64.8518, -3.53216, -0.131791, -1.72789, 3.53216, 0.131791, 1.72789, 55.1434, 0.245301, -59.0441, -4.36203, -0.230137, -1.59917, 4.36203, 0.230137, 1.59917, 66.9704, 0.79845, -54.4844, -5.07332, -0.311416, -2.02886, 5.07332, 0.311416, 2.02886, 81.3156, 1.62613, -49.4491, -5.4226, -0.369598, -2.92491, 5.4226, 0.369598, 2.92491, 97.4103, 2.66694, -42.3113, -5.25072, -0.400368, -4.09873, 5.25072, 0.400368, 4.09873, 113.851, 3.84371, -31.8996, -4.51007, -0.401445, -5.3166, 4.51007, 0.401445, 5.3166, 128.915, 5.06915, -17.7189),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 46
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_road"]
+albedo_color = Color(0.29, 0.3, 0.33, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.32, 0.44, 0.24, 1)
+roughness = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+size = Vector2(900, 900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
+size = Vector3(900, 1, 900)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_line"]
+albedo_color = Color(0.92, 0.92, 0.9, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_line"]
+size = Vector3(12.4, 0.02, 1.4)
+
+[node name="SunsetCircuit" type="Node3D"]
+
+[node name="RacingLine" type="Path3D" parent="."]
+curve = SubResource("Curve3D_line")
+
+[node name="Road" type="CSGPolygon3D" parent="."]
+use_collision = true
+polygon = PackedVector2Array(-7, -0.3, 7, -0.3, 7, 0.7, 6.2, 0.7, 6.2, 0, -6.2, 0, -6.2, 0.7, -7, 0.7)
+mode = 2
+path_node = NodePath("../RacingLine")
+path_interval_type = 0
+path_interval = 2.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_joined = true
+material = SubResource("StandardMaterial3D_road")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("PlaneMesh_ground")
+surface_material_override/0 = SubResource("StandardMaterial3D_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_ground")
+
+[node name="StartLine" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.889574, 0, -0.456792, 0, 1, 0, 0.456792, 0, 0.889574, 140.912, 6.27238, 0)
+mesh = SubResource("BoxMesh_line")
+surface_material_override/0 = SubResource("StandardMaterial3D_line")
+
+[node name="StartGrid" type="Node3D" parent="."]
+
+[node name="Slot1" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.857327, 0, -0.514773, 0, 1, 0, 0.514773, 0, 0.857327, 135.775, 6.56321, -3.26459)
+
+[node name="Slot2" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.857327, 0, -0.514773, 0, 1, 0, 0.514773, 0, 0.857327, 140.748, 6.56321, -6.25027)
+
+[node name="Slot3" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.825206, 0, -0.564832, 0, 1, 0, 0.564832, 0, 0.825206, 132.915, 6.26436, -7.71767)
+
+[node name="Slot4" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.825206, 0, -0.564832, 0, 1, 0, 0.564832, 0, 0.825206, 137.701, 6.26436, -10.9937)
+
+[node name="Slot5" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.793228, 0, -0.608925, 0, 1, 0, 0.608925, 0, 0.793228, 129.816, 5.96011, -11.9877)
+
+[node name="Slot6" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.793228, 0, -0.608925, 0, 1, 0, 0.608925, 0, 0.793228, 134.416, 5.96011, -15.5195)
+
+[node name="Slot7" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.758404, 0, -0.651785, 0, 1, 0, 0.651785, 0, 0.758404, 126.396, 5.64081, -16.2026)
+
+[node name="Slot8" type="Marker3D" parent="StartGrid"]
+transform = Transform3D(0.758404, 0, -0.651785, 0, 1, 0, 0.651785, 0, 0.758404, 130.795, 5.64081, -19.983)
+
+[node name="ItemBoxes" type="Node3D" parent="."]
+
+[node name="Box1" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.3162, 9.00792, 123.742)
+
+[node name="Box2" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95.491, 9.00792, 125.835)
+
+[node name="Box3" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96.6657, 9.00792, 127.928)
+
+[node name="Box4" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.8404, 9.00792, 130.021)
+
+[node name="Box5" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.0152, 9.00792, 132.114)
+
+[node name="Box6" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76.7956, 3.44995, 34.2506)
+
+[node name="Box7" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.5571, 3.44995, 35.8808)
+
+[node name="Box8" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80.3185, 3.44995, 37.5109)
+
+[node name="Box9" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82.0799, 3.44995, 39.141)
+
+[node name="Box10" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.8414, 3.44995, 40.7712)
+
+[node name="Box11" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -103.162, 8.79678, -145.646)
+
+[node name="Box12" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -104.134, 8.79678, -147.84)
+
+[node name="Box13" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -105.107, 8.79678, -150.034)
+
+[node name="Box14" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -106.079, 8.79678, -152.228)
+
+[node name="Box15" parent="ItemBoxes" instance=ExtResource("1_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -107.052, 8.79678, -154.422)
+

@@ -9,11 +9,11 @@ extends EditorPlugin
 
 func _enter_tree() -> void:
 	add_custom_type("GtaCar", "VehicleBody3D", preload("scripts/gta_car.gd"), null)
-	add_custom_type("RocketCar", "VehicleBody3D", preload("scripts/rocket_car.gd"), null)
-	add_custom_type("Tm2Car", "VehicleBody3D", preload("scripts/tm2_car.gd"), null)
+	add_custom_type("RlCar", "VehicleBody3D", preload("scripts/rocket_car.gd"), null)
+	add_custom_type("TwCar", "VehicleBody3D", preload("scripts/tm2_car.gd"), null)
 
 
 func _exit_tree() -> void:
 	remove_custom_type("GtaCar")
-	remove_custom_type("RocketCar")
-	remove_custom_type("Tm2Car")
+	remove_custom_type("RlCar")
+	remove_custom_type("TwCar")

@@ -12,8 +12,8 @@ extends GutTest
 ## actually reads for that device.
 
 const CAR_CONTROLS: PackedScene = preload("res://addons/gta/scenes/car_controls.tscn")
-const ROCKET_CAR: PackedScene = preload("res://addons/gta/scenes/rocket_car.tscn")
-const TM2_CAR: PackedScene = preload("res://addons/gta/scenes/tm2_car.tscn")
+const ROCKET_CAR: PackedScene = preload("res://addons/gta/rl/scenes/rl_car.tscn")
+const TM2_CAR: PackedScene = preload("res://addons/gta/tw/scenes/tw_car.tscn")
 
 var controls: CarControls
 
@@ -43,7 +43,7 @@ func _actions_read(car: Vehicle, keyboard: bool) -> Array[StringName]:
 
 func _car(scene: PackedScene) -> Vehicle:
 	var car: Vehicle = scene.instantiate() as Vehicle
-	for brain_name: String in ["RocketAi", "AiDriver"]:
+	for brain_name: String in ["RlAi", "TwAi"]:
 		var brain: Node = car.get_node_or_null(NodePath(brain_name))
 		if brain != null:
 			brain.set("enabled", false)
@@ -118,7 +118,7 @@ func test_no_two_things_a_car_does_share_one_pad_button() -> void:
 
 
 func test_a_driver_with_no_body_is_offered_no_exit() -> void:
-	var tm2: Tm2Car = _car(TM2_CAR) as Tm2Car
+	var tm2: TwCar = _car(TM2_CAR) as TwCar
 	for input_type: int in [Controls.InputType.KEYBOARD_MOUSE, Controls.InputType.MICROSOFT]:
 		for text: String in tm2.get_contextual_controls(input_type).values():
 			assert_ne(text, "Exit", "Nothing to get out of, so nothing says Exit")

@@ -7,7 +7,7 @@ extends Node3D
 ##
 ## Setting [member look_target] locks it onto something instead. The camera then keeps that thing in view and
 ## the vehicle between itself and it, rather than following where the vehicle is pointing. Rocket League's
-## ball cam is this with the ball as the target, which is what [RocketCar] uses it for.
+## ball cam is this with the ball as the target, which is what [RlCar] uses it for.
 
 @export var pivot_height: float = 1.2 ## Metres above the vehicle's origin the arm pivots.
 @export var pitch: float = deg_to_rad(-15.0) ## Resting pitch, looking down at the vehicle.

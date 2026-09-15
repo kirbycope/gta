@@ -1,0 +1,145 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/rl/scripts/rl_ui.gd" id="1_ui"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scoreboard"]
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
+bg_color = Color(0.05, 0.06, 0.09, 0.72)
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boost"]
+bg_color = Color(0.98, 0.62, 0.12, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_ui")
+
+[node name="Scoreboard" type="PanelContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_right = 150.0
+offset_bottom = 46.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_scoreboard")
+
+[node name="Row" type="HBoxContainer" parent="Scoreboard"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="BlueScore" type="Label" parent="Scoreboard/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.65, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "0"
+horizontal_alignment = 1
+
+[node name="Clock" type="Label" parent="Scoreboard/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "5:00"
+horizontal_alignment = 1
+
+[node name="OrangeScore" type="Label" parent="Scoreboard/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.22, 1)
+theme_override_font_sizes/font_size = 26
+text = "0"
+horizontal_alignment = 1
+
+[node name="Banner" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 92.0
+offset_right = 320.0
+offset_bottom = 148.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="BoostMeter" type="VBoxContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -196.0
+offset_top = -86.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 2
+
+[node name="BoostAmount" type="Label" parent="BoostMeter"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.72, 0.2, 1)
+theme_override_font_sizes/font_size = 34
+text = "33"
+horizontal_alignment = 2
+
+[node name="BoostBar" type="ProgressBar" parent="BoostMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_boost")
+max_value = 100.0
+value = 33.0
+show_percentage = false
+
+[node name="BallCam" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -54.0
+offset_right = 100.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.72, 0.8, 0.92, 0.8)
+theme_override_font_sizes/font_size = 18
+text = "Ball Cam"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -86.0
+offset_right = 620.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.8, 0.84, 0.9, 0.85)
+text = "Space accelerates, Shift reverses, A and D steer, W and S pitch in the air.
+Left click boosts, Ctrl jumps (twice for a flip), T powerslides and air rolls.
+Q is ball cam. R resets the match."
+autowrap_mode = 3
+
+[node name="BannerTimer" type="Timer" parent="."]
+one_shot = true

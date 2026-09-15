@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/rl/scripts/rl_boost_pad.gd" id="1_pad"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_pad"]
+height = 0.95
+radius = 1.44
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pad"]
+top_radius = 1.224
+bottom_radius = 1.44
+height = 0.18
+radial_segments = 16
+rings = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pad"]
+albedo_color = Color(0.98, 0.75, 0.2, 1)
+emission_enabled = true
+emission = Color(0.98, 0.6, 0.1, 1)
+emission_energy_multiplier = 0.85
+
+[node name="RlBoostPad" type="Area3D" groups=["rl_boost_pads"]]
+monitorable = false
+script = ExtResource("1_pad")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.475, 0)
+shape = SubResource("CylinderShape3D_pad")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("CylinderMesh_pad")
+surface_material_override/0 = SubResource("StandardMaterial3D_pad")
+
+[node name="Cooldown" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Cooldown" to="." method="_on_cooldown_timeout"]

@@ -17,8 +17,8 @@ The end state is one base and three cars built on it, each its own script and it
 |---|---|---|---|
 | `Vehicle` | `scripts/vehicle.gd` | none (abstract) | The rideable chassis: wheels, the Player contract, the multiplayer hand-off, SFX volume. No handling model. |
 | `GtaCar` | `scripts/gta_car.gd` | `scenes/honda_crv.tscn` | Everything that is in `vehicle.gd` today and is not in the base. |
-| `RocketCar` | `scripts/rocket_car.gd` | `scenes/rocket_car.tscn` | Unchanged, reparented from `RocketVehicle` to `Vehicle`. |
-| `Tm2Car` | `scripts/tm2_car.gd` | `scenes/tm2_car.tscn` | New. An arcade car with turbo, driven to its roster top speed, carrying `CarCombat` and `AiDriver`. |
+| `RlCar` | `scripts/rocket_car.gd` | `scenes/rocket_car.tscn` | Unchanged, reparented from `RocketVehicle` to `Vehicle`. |
+| `TwCar` | `scripts/tm2_car.gd` | `scenes/tm2_car.tscn` | New. An arcade car with turbo, driven to its roster top speed, carrying `TwCombat` and `TwAi`. |
 
 `RocketVehicle` goes away: the base is what it already is, promoted and given the two things
 all three cars need that it lacks (the authority hand-off and `set_sfx_volume`).
@@ -79,10 +79,10 @@ exactly as `vehicle.gd` does now, and the doc comment on `GtaCar.ride` says why.
 
 **Which way is forward.** Godot's `VehicleBody3D` drives along +Z with positive engine force in
 this addon's scenes: the CR-V's steered wheels sit at z = +1.22, the GTA drivetrain's heading is
-`basis.z`, and `RocketCar.nose()` is `basis.z` (verified in engine last session, cars drove at
-19.8 m/s nose first). Yet `AiDriver` steers and feels for edges with `-basis.z`, and `Tm2Projectile`
+`basis.z`, and `RlCar.nose()` is `basis.z` (verified in engine last session, cars drove at
+19.8 m/s nose first). Yet `TwAi` steers and feels for edges with `-basis.z`, and `TwProjectile`
 flies along `-basis.z` from a `MuzzleForward` placed at z = -2.4. Whether that cancels out today is
-not established. Phase 4 settles it in engine before building the new car, gives `Tm2Car` one
+not established. Phase 4 settles it in engine before building the new car, gives `TwCar` one
 `forward()` helper, and makes the AI, the muzzles and the projectile use it.
 
 **Class name renames and the editor.** Godot caches `class_name` to path in
@@ -144,18 +144,18 @@ Goal: `Vehicle` is the base, `GtaCar` is the road car, nothing else changes beha
    `mount()` and `dismount()` call `super()` first, then do the GTA part (the enter marker, the
    door, the speedometer). Its `ride()` does not call `super()` (the base one is empty).
 5. `GtaCar._ready()` calls `super()` then its own remaining setup. Drop `is_ai_driven` from
-   `GtaCar` entirely: it existed only so `AiDriver` could drive a CR-V, and after Phase 4 nothing
+   `GtaCar` entirely: it existed only so `TwAi` could drive a CR-V, and after Phase 4 nothing
    does. Its removal takes one line out of `set_drive_input` and the README sentence "The one
    change to `vehicle.gd` is `is_ai_driven`".
 6. `scenes/honda_crv.tscn`: change the script ext_resource path to `gta_car.gd`; set the action
    and animation exports named above on the root node. Add nothing else.
 7. `plugin.gd`: register `GtaCar` (`preload("scripts/gta_car.gd")`) under the name "GtaCar", and
-   `RocketCar` and `Tm2Car` too once they exist. The base is abstract and is not registered.
+   `RlCar` and `TwCar` too once they exist. The base is abstract and is not registered.
 8. `rocket_car.gd`: `extends Vehicle`. Delete the `rocket_vehicle.gd` mentions from its comment.
 9. Fix every other reference: `ai_driver.gd`, `car_combat.gd`, `twisted_metal.gd` and the three
    tests that type a car as `Vehicle` and reach for GTA members (`is_ai_driven`,
    `is_driving_this_car`, `_steer`, `set_drive_input`, `is_any_wheel_on_ground`) must type it as
-   `GtaCar` for now. This is temporary; Phase 4 retypes them to `Tm2Car`. `driving_ui.gd`'s
+   `GtaCar` for now. This is temporary; Phase 4 retypes them to `TwCar`. `driving_ui.gd`'s
    comment says `[Vehicle]`; make it `[GtaCar]`.
 10. `is_any_wheel_on_ground()` on `GtaCar` becomes a one-line wrapper over the base's
     `wheels_in_contact() > 0`, or its callers switch to that. Prefer the switch.
@@ -183,7 +183,7 @@ Gate: full suite green at the same count as before plus the new sfx test. Then, 
 MCP server (`run_project` on `scenes/demo/demo.tscn`), walk to the CR-V, get in, drive, get out,
 and confirm with `run_script` that `player.riding is GtaCar`, the door animation played, the
 speedometer showed and hid, and `car.get_multiplayer_authority()` went to the Player's peer and
-back. Then `run_project` on `rocket_league.tscn` and confirm a car is `RocketCar` and `is Vehicle`,
+back. Then `run_project` on `rocket_league.tscn` and confirm a car is `RlCar` and `is Vehicle`,
 and that a goal still scores within a 50 second all-AI run (set `seat_player = false` in the
 script call). Tell the user the editor needs a restart because class names changed.
 
@@ -198,7 +198,7 @@ base.
    about 700 after the moves. Do not change any handling number.
 2. `GtaCar.get_contextual_controls` stays. The base gains a minimal default (`"joypad_button_0":
    "Exit"` for keyboard, `"joypad_button_3": "Exit"` for a pad, plus the steer and camera sticks)
-   so a car that does not override it still labels the exit. Check `RocketCar` overrides it
+   so a car that does not override it still labels the exit. Check `RlCar` overrides it
    already (it does) and `GtaCar` does (it does).
 3. `initial_spawn_transform`, `freeze` while parked, the flip and fire timers, first person look,
    the door sequence, the radio station and the `PlayerDetection` prompt all stay on `GtaCar`.
@@ -208,11 +208,11 @@ not already cover.
 
 ## Phase 3: the Rocket League car on the base
 
-Goal: `RocketCar` gains the authority hand-off for free and loses nothing.
+Goal: `RlCar` gains the authority hand-off for free and loses nothing.
 
-1. `RocketCar.mount()` already calls `super()`; confirm the base `mount` now calls
+1. `RlCar.mount()` already calls `super()`; confirm the base `mount` now calls
    `set_driver(rider)` so the driver's peer takes the car, and that `dismount` hands it back.
-   `RocketMatch._seat_the_player` and `_stand_the_player_down` go through `Player.mount` and
+   `RlMatch._seat_the_player` and `_stand_the_player_down` go through `Player.mount` and
    `Player.dismount`, so nothing there changes.
 2. `README.md` (the addon's): rewrite the "The chassis is its own, not the GTA car" section. It
    currently tells the story of `RocketVehicle`; it now says the Rocket League car sits on the same
@@ -236,18 +236,18 @@ into the class comment.
 **Forward axis.** Run `twisted_metal.tscn` through the MCP server first, as it is today, and read
 off with `run_script` whether an opponent's `linear_velocity` points along `+basis.z` or
 `-basis.z` while it drives, and whether its shots leave the front of the model. Record the answer.
-Then build `Tm2Car` so that `forward()` returns whichever axis the wheels actually drive along
-(expect `+basis.z`, matching `RocketCar.nose()`), place `MuzzleForward` on that side, and change
-`AiDriver` and `Tm2Projectile` to use `forward()` rather than `-basis.z`. If the model then faces
+Then build `TwCar` so that `forward()` returns whichever axis the wheels actually drive along
+(expect `+basis.z`, matching `RlCar.nose()`), place `MuzzleForward` on that side, and change
+`TwAi` and `TwProjectile` to use `forward()` rather than `-basis.z`. If the model then faces
 backwards, turn the `Model` node, not the physics.
 
-**Handling.** Twisted Metal's is arcade and no numbers for it are published; `Tm2Roster.UNSOURCED`
+**Handling.** Twisted Metal's is arcade and no numbers for it are published; `TwRoster.UNSOURCED`
 already says so. The design is: a constant drive force that reaches the car's published top speed
-(`Tm2Roster.top_speed(car)`), with turbo raising the ceiling to the published turbo speed while a
+(`TwRoster.top_speed(car)`), with turbo raising the ceiling to the published turbo speed while a
 meter lasts; brake to a stop then reverse; steering lock that does not shrink with speed, because
 the original turns on a dime; no gearbox, no traction curve, no anti-roll bars. Every tunable that
-is not one of those two published speeds is an `@export` on `Tm2Car` with a comment saying it is a
-judgement, and `Tm2Roster.UNSOURCED` gains a line for each: drive force, brake force, steering lock,
+is not one of those two published speeds is an `@export` on `TwCar` with a comment saying it is a
+judgement, and `TwRoster.UNSOURCED` gains a line for each: drive force, brake force, steering lock,
 turbo meter size, turbo recharge. Do not copy the GTA drivetrain in and trim it; write the short
 one.
 
@@ -257,15 +257,15 @@ HUD. The original's meter behaviour (does it recharge continuously, or refill fr
 fact to look up on the Twisted Metal wiki, not to guess; if the page is not clear, recharge
 continuously and say so in `UNSOURCED`.
 
-**Wreck.** `CarCombat.died` is connected in the scene to `Tm2Car._on_died`, which sets
+**Wreck.** `TwCombat.died` is connected in the scene to `TwCar._on_died`, which sets
 `is_wrecked = true`, stops taking drive input, and leaves the body as a rolling wreck. No fire and
 explosion effect: that was the GTA damage model and it is gone with the CR-V. A wrecked car's
-`AiDriver` already brakes and stops steering.
+`TwAi` already brakes and stops steering.
 
 **Input.** `set_drive_input(accelerate: bool, brake: bool, turbo: bool, steer: float)` is the whole
-virtual pad, with the same signature shape `AiDriver` uses today except that the third argument is
+virtual pad, with the same signature shape `TwAi` uses today except that the third argument is
 turbo rather than handbrake. `ride()` fills it from the action exports for a seated Player;
-`AiDriver` fills it directly. The drivetrain runs from the stored inputs every physics frame
+`TwAi` fills it directly. The drivetrain runs from the stored inputs every physics frame
 regardless of who set them, which is what removes the old `is_ai_driven` gate for good.
 
 **Energy attacks** (freeze, mine, rear fire, jump, shield, the button combos) are out of scope.
@@ -281,15 +281,15 @@ Scene `scenes/tm2_car.tscn`, standalone, root `VehicleBody3D` with `tm2_car.gd`:
 | `Seat` | `Marker3D` | The driver is hidden, so its only job is the Riding state's pin. Face it along `forward()`. |
 | `VehicleCamera` | instance | `scenes/vehicle_camera.tscn`. |
 | `MuzzleForward`, `MuzzleRear` | `Marker3D` | Front and back along `forward()`. |
-| `CarCombat`, `AiDriver` | `Node` | As today. `CarCombat.died` connected to `_on_died` in the scene. |
+| `TwCombat`, `TwAi` | `Node` | As today. `TwCombat.died` connected to `_on_died` in the scene. |
 | `SFXEngine` | `AudioStreamPlayer3D` | Gravity Sound engine loop, pitched by speed. Placeholder. |
 | `SFXTurbo` | `AudioStreamPlayer3D` | Leave the stream empty and ask the user for one. |
 
 `physics_material_override` with friction and bounce set explicitly; note both as judgements.
 
 Code changes around it:
-- `car_combat.gd`: `_vehicle: Tm2Car`, and its comment stops saying "bolted onto a `Vehicle`".
-- `ai_driver.gd`: `_vehicle: Tm2Car`, `target: Tm2Car`, `_combat_of(Tm2Car)`, drop the
+- `car_combat.gd`: `_vehicle: TwCar`, and its comment stops saying "bolted onto a `Vehicle`".
+- `ai_driver.gd`: `_vehicle: TwCar`, `target: TwCar`, `_combat_of(TwCar)`, drop the
   `is_ai_driven` line in `_ready`, `is_any_wheel_on_ground()` becomes `wheels_in_contact() > 0`,
   and the handbrake argument in every `set_drive_input` call becomes turbo. The AI uses turbo
   when in battle and the target is ahead and far, not when cornering. `-basis.z` becomes
@@ -298,19 +298,19 @@ Code changes around it:
   from the muzzle's own transform, so once the muzzle faces `forward()` the projectile needs only
   its own `-basis.z` checked against the muzzle's orientation. Make them agree, and add a test
   that a shot fired forward moves away from the car along `forward()`.
-- `twisted_metal.gd`: `player_car: Tm2Car`, `_make_car() -> Tm2Car`, the group loop in
+- `twisted_metal.gd`: `player_car: TwCar`, `_make_car() -> TwCar`, the group loop in
   `_physics_process`. The hint text gains the turbo key.
-- A small `scenes/tm2_ui.tscn` (`CanvasLayer`, script `tm2_ui.gd`, class `Tm2Ui`) with a health
+- A small `scenes/tm2_ui.tscn` (`CanvasLayer`, script `tm2_ui.gd`, class `TwUi`) with a health
   bar, the selected weapon and its count, and the turbo meter, fed only by signals
-  (`CarCombat.health_changed`, `CarCombat.weapon_changed`, `Tm2Car.turbo_changed`), the way
+  (`TwCombat.health_changed`, `TwCombat.weapon_changed`, `TwCar.turbo_changed`), the way
   `rocket_league_ui.gd` reads nothing. `twisted_metal.tscn` instances it and `twisted_metal.gd`
-  calls `ui.watch(player_car)` once the player's car exists, the way `RocketMatch` does.
+  calls `ui.watch(player_car)` once the player's car exists, the way `RlMatch` does.
 
 Tests:
 - New `tests/test_tm2_car.gd`: it is a `Vehicle`, not a `GtaCar`; the rideable contract names
   are all present; `forward()` agrees with the direction a driven car moves after 30 physics
   frames on a floor (build the floor in the test the way `test_rocket_car.gd` does); it reaches
-  within 10 percent of `Tm2Roster.top_speed(car)` and not past it without turbo; turbo raises the
+  within 10 percent of `TwRoster.top_speed(car)` and not past it without turbo; turbo raises the
   ceiling and drains the meter; the meter recharges; a wrecked car ignores drive input; `died`
   reaches `_on_died` through the scene connection (`assert_connected`).
 - `tests/test_ai_driver.gd`: retype, drop `test_the_car_is_told_an_ai_has_the_wheel` and replace
@@ -320,8 +320,8 @@ Tests:
 - `tests/test_tm2_ui.gd`: three signals in, three labels changed.
 
 Gate: full suite green. Then `run_project` on `twisted_metal.tscn` through the MCP server. Confirm
-with `run_script`: every car in `tm2_cars` is a `Tm2Car`, the player is riding one, opponents move
-(velocity above 5 m/s for at least four of six within 20 seconds), at least one `CarCombat.fired`
+with `run_script`: every car in `tm2_cars` is a `TwCar`, the player is riding one, opponents move
+(velocity above 5 m/s for at least four of six within 20 seconds), at least one `TwCombat.fired`
 happened, and no errors in `get_debug_output`. Take screenshots: the player's view at the wheel,
 an opponent from the side at speed, the HUD after taking a hit, and a before-and-after pair of the
 same spot from a run of the old scene captured before this phase started (capture the before shot
@@ -390,9 +390,9 @@ the host).
 ## What not to do
 
 - Do not move any handling code into the base. It has none, on purpose.
-- Do not make `Tm2Car` extend `GtaCar` to save writing a drivetrain. The point is three distinct
+- Do not make `TwCar` extend `GtaCar` to save writing a drivetrain. The point is three distinct
   cars.
 - Do not touch `addons/3d_player_controller` or `addons/controls`; they are pulled copies and any
   change belongs in their own repositories. Nothing here needs one.
-- Do not rename `RocketCar`, `RocketConst`, `RocketMatch` or the `rocket_*` files; they are fine.
+- Do not rename `RlCar`, `RlConst`, `RlMatch` or the `rocket_*` files; they are fine.
 - Do not add sounds from anywhere. Ask.

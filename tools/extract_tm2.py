@@ -5,7 +5,7 @@ repository, so the assets this writes are git-ignored. Point this at the disc
 image and it produces the level geometry the demo scene expects.
 
     python tools/extract_tm2.py "Twisted Metal 2 (USA) (Track 01).bin"
-    python tools/extract_tm2.py tm2.iso --level ROOF --out addons/gta/assets/twistedmetal2
+    python tools/extract_tm2.py tm2.iso --level ROOF --out addons/gta/tw/assets
 
 The disc holds twelve levels under /LEVELDB as .DPC geometry databases.
 ROOF is Los Angeles, the "Quake Zone Rumble" rooftop arena; SROOF is the
@@ -116,10 +116,10 @@ def build_level(image, key, out_dir):
         points = pts.read_points(p, SCALE)
         res = os.path.join(out_dir, name + '_waypoints.tres')
         header = (
-            '[gd_resource type="Resource" script_class="Tm2Waypoints" '
+            '[gd_resource type="Resource" script_class="TwWaypoints" '
             'load_steps=2 format=3]\n\n'
             '[ext_resource type="Script" '
-            'path="res://addons/gta/scripts/tm2_waypoints.gd" id="1_wp"]\n\n'
+            'path="res://addons/gta/tw/scripts/tw_waypoints.gd" id="1_wp"]\n\n'
             '[resource]\n'
             'script = ExtResource("1_wp")\n'
         )

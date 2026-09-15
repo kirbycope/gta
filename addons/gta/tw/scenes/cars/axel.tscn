@@ -1,0 +1,69 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/tw/scenes/tw_car.tscn" id="1_base"]
+[ext_resource type="Mesh" uid="uid://y20pgrl1q1xj" path="res://addons/gta/tw/assets/cars/axel/Axel.obj" id="2_mesh"]
+[ext_resource type="Texture2D" uid="uid://eh3dxh50jmie" path="res://addons/gta/tw/assets/cars/axel/Axel_1.png" id="tex_0"]
+[ext_resource type="Texture2D" uid="uid://7sjoxeyl1um5" path="res://addons/gta/tw/assets/cars/axel/Axel_0.png" id="tex_1"]
+[ext_resource type="Texture2D" uid="uid://cprehry0oep68" path="res://addons/gta/tw/assets/cars/axel/Axel_4.png" id="tex_2"]
+[ext_resource type="Texture2D" uid="uid://kq7ppew687a6" path="res://addons/gta/tw/assets/cars/axel/Axel_5.png" id="tex_3"]
+[ext_resource type="Texture2D" uid="uid://c8lo808aniurr" path="res://addons/gta/tw/assets/cars/axel/Axel_2.png" id="tex_4"]
+[ext_resource type="Texture2D" uid="uid://ebornsyiokhb" path="res://addons/gta/tw/assets/cars/axel/Axel_3.png" id="tex_5"]
+[ext_resource type="Texture2D" uid="uid://cvsfy1m1u3nb3" path="res://addons/gta/tw/assets/cars/axel/Axel_6.png" id="tex_6"]
+
+[sub_resource type="StandardMaterial3D" id="mat_0"]
+resource_name = "Axel_1"
+albedo_texture = ExtResource("tex_0")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_1"]
+resource_name = "Axel_0"
+albedo_texture = ExtResource("tex_1")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_2"]
+resource_name = "Axel_4"
+albedo_texture = ExtResource("tex_2")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_3"]
+resource_name = "Axel_5"
+albedo_texture = ExtResource("tex_3")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_4"]
+resource_name = "Axel_2"
+albedo_texture = ExtResource("tex_4")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_5"]
+resource_name = "Axel_3"
+albedo_texture = ExtResource("tex_5")
+metallic = 0.5
+cull_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="mat_6"]
+resource_name = "Axel_6"
+albedo_texture = ExtResource("tex_6")
+metallic = 0.5
+cull_mode = 2
+
+[node name="Tm2Axel" instance=ExtResource("1_base")]
+car = &"axel"
+
+[node name="TwCombat" parent="." index="0"]
+car = &"axel"
+
+[node name="Mesh" type="MeshInstance3D" parent="Model"]
+mesh = ExtResource("2_mesh")
+surface_material_override/0 = SubResource("mat_0")
+surface_material_override/1 = SubResource("mat_1")
+surface_material_override/2 = SubResource("mat_2")
+surface_material_override/3 = SubResource("mat_3")
+surface_material_override/4 = SubResource("mat_4")
+surface_material_override/5 = SubResource("mat_5")
+surface_material_override/6 = SubResource("mat_6")

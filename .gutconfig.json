@@ -1,6 +1,10 @@
 {
 	"dirs": [
-		"res://addons/gta/tests"
+		"res://addons/gta/tests",
+		"res://addons/gta/gta/tests",
+		"res://addons/gta/tw/tests",
+		"res://addons/gta/rl/tests",
+		"res://addons/gta/mk/tests"
 	],
 	"include_subdirs": false,
 	"prefix": "test_",
@@ -8,6 +12,10 @@
 	"should_exit": false,
 	"should_exit_on_success": true,
 	"configured_dirs": [
-		"res://addons/gta/tests"
+		"res://addons/gta/tests",
+		"res://addons/gta/gta/tests",
+		"res://addons/gta/tw/tests",
+		"res://addons/gta/rl/tests",
+		"res://addons/gta/mk/tests"
 	]
 }

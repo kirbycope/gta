@@ -15,15 +15,15 @@ extends GutTest
 ## for a car driven through the road car's own drive input, which a battle car
 ## never calls, so every battle car was silent.
 
-const ROCKET_CAR: PackedScene = preload("res://addons/gta/scenes/rocket_car.tscn")
+const ROCKET_CAR: PackedScene = preload("res://addons/gta/rl/scenes/rl_car.tscn")
 const PLAYER: PackedScene = preload("res://addons/3d_player_controller/scenes/player.tscn")
 
-var car: RocketCar
+var car: RlCar
 
 
 func before_each() -> void:
 	car = ROCKET_CAR.instantiate()
-	(car.get_node(^"RocketAi") as RocketAi).enabled = false
+	(car.get_node(^"RlAi") as RlAi).enabled = false
 	add_child_autofree(car)
 	await wait_physics_frames(2)
 
@@ -95,7 +95,7 @@ func test_every_car_carries_its_own_sound() -> void:
 
 
 func test_the_boost_note_follows_the_tank() -> void:
-	car.refill_boost(RocketConst.BOOST_MAX)
+	car.refill_boost(RlConst.BOOST_MAX)
 	for _i: int in 6:
 		car.set_rocket_input(0.0, 0.0, 0.0, 0.0, 0.0, false, true, false)
 		await wait_physics_frames(1)
@@ -111,9 +111,9 @@ func test_a_car_bounces_off_the_world_the_way_rocket_league_says() -> void:
 	# the CR-V's material had bounce zero, so nothing rebounded off anything
 	var material: PhysicsMaterial = car.physics_material_override
 	assert_not_null(material)
-	assert_almost_eq(material.bounce, RocketConst.WORLD_RESTITUTION, 0.01,
+	assert_almost_eq(material.bounce, RlConst.WORLD_RESTITUTION, 0.01,
 		"CARWORLD_COLLISION_RESTITUTION is 0.3")
-	assert_almost_eq(material.friction, RocketConst.WORLD_FRICTION, 0.01,
+	assert_almost_eq(material.friction, RlConst.WORLD_FRICTION, 0.01,
 		"CARWORLD_COLLISION_FRICTION is 0.3")
 
 

@@ -3,7 +3,7 @@ extends VehicleBody3D
 ## A rideable car chassis, and nothing but the chassis.
 ##
 ## This is the base the addon's three cars are built on: [GtaCar] the road car,
-## [RocketCar] the battle car and [Tm2Car] the Twisted Metal one. It holds the
+## [RlCar] the battle car and [TwCar] the Twisted Metal one. It holds the
 ## three things every one of them needs and none of them should write twice: the
 ## wheels, the rideable contract the player controller's [Riding] state expects,
 ## and the multiplayer hand-off that moves the car to whoever is driving it.

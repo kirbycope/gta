@@ -1,0 +1,181 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_car.gd" id="1_kart"]
+[ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_ai.gd" id="2_ai"]
+[ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_item_slot.gd" id="3_slot"]
+[ext_resource type="PackedScene" path="res://addons/gta/scenes/vehicle_camera.tscn" id="4_camera"]
+[ext_resource type="AudioStream" uid="uid://gfahw4ac4782" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Running_1.ogg" id="5_engine"]
+[ext_resource type="AudioStream" uid="uid://i8id81xj4u0r" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Start_3.ogg" id="6_boost"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kart"]
+friction = 0.6
+bounce = 0.15
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kart"]
+size = Vector3(1.05, 0.42, 1.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_livery"]
+albedo_color = Color(0.22, 0.45, 0.85, 1)
+metallic = 0.25
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trim"]
+albedo_color = Color(0.11, 0.12, 0.14, 1)
+metallic = 0.45
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_driver"]
+albedo_color = Color(0.85, 0.72, 0.6, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_chassis"]
+size = Vector3(1.05, 0.3, 1.7)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nose"]
+size = Vector3(0.62, 0.18, 0.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_seat"]
+size = Vector3(0.5, 0.46, 0.14)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_driver"]
+radius = 0.2
+height = 0.78
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wheel"]
+top_radius = 0.19
+bottom_radius = 0.19
+height = 0.16
+radial_segments = 14
+rings = 0
+
+[node name="Kart" type="VehicleBody3D" node_paths=PackedStringArray("wheels")]
+mass = 120.0
+physics_material_override = SubResource("PhysicsMaterial_kart")
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, -0.28, 0)
+contact_monitor = true
+max_contacts_reported = 8
+can_sleep = false
+script = ExtResource("1_kart")
+wheels = [NodePath("FrontLeft"), NodePath("FrontRight"), NodePath("RearLeft"), NodePath("RearRight")]
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
+shape = SubResource("BoxShape3D_kart")
+
+[node name="Chassis" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0)
+mesh = SubResource("BoxMesh_chassis")
+surface_material_override/0 = SubResource("StandardMaterial3D_livery")
+
+[node name="Nose" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.92)
+mesh = SubResource("BoxMesh_nose")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="SeatBack" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.62)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="Driver" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, -0.36)
+mesh = SubResource("CapsuleMesh_driver")
+surface_material_override/0 = SubResource("StandardMaterial3D_driver")
+
+[node name="FrontLeft" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.19, 0.62)
+use_as_steering = true
+wheel_roll_influence = 0.08
+wheel_radius = 0.19
+wheel_rest_length = 0.24
+wheel_friction_slip = 3.4
+suspension_travel = 0.22
+suspension_stiffness = 160.0
+suspension_max_force = 7000.0
+damping_compression = 0.6
+damping_relaxation = 0.75
+
+[node name="Tyre" type="MeshInstance3D" parent="FrontLeft"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_wheel")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="FrontRight" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.19, 0.62)
+use_as_steering = true
+wheel_roll_influence = 0.08
+wheel_radius = 0.19
+wheel_rest_length = 0.24
+wheel_friction_slip = 3.4
+suspension_travel = 0.22
+suspension_stiffness = 160.0
+suspension_max_force = 7000.0
+damping_compression = 0.6
+damping_relaxation = 0.75
+
+[node name="Tyre" type="MeshInstance3D" parent="FrontRight"]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_wheel")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="RearLeft" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.19, -0.66)
+use_as_traction = true
+wheel_roll_influence = 0.08
+wheel_radius = 0.22
+wheel_rest_length = 0.24
+wheel_friction_slip = 3.6
+suspension_travel = 0.22
+suspension_stiffness = 160.0
+suspension_max_force = 7000.0
+damping_compression = 0.6
+damping_relaxation = 0.75
+
+[node name="Tyre" type="MeshInstance3D" parent="RearLeft"]
+transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
+mesh = SubResource("CylinderMesh_wheel")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="RearRight" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.19, -0.66)
+use_as_traction = true
+wheel_roll_influence = 0.08
+wheel_radius = 0.22
+wheel_rest_length = 0.24
+wheel_friction_slip = 3.6
+suspension_travel = 0.22
+suspension_stiffness = 160.0
+suspension_max_force = 7000.0
+damping_compression = 0.6
+damping_relaxation = 0.75
+
+[node name="Tyre" type="MeshInstance3D" parent="RearRight"]
+transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
+mesh = SubResource("CylinderMesh_wheel")
+surface_material_override/0 = SubResource("StandardMaterial3D_trim")
+
+[node name="Seat" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.36)
+
+[node name="VehicleCamera" parent="." instance=ExtResource("4_camera")]
+
+[node name="ItemSlot" type="Node" parent="."]
+script = ExtResource("3_slot")
+
+[node name="SFXEngine" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_engine")
+volume_db = -8.0
+unit_size = 14.0
+max_distance = 60.0
+
+[node name="SFXBoost" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_boost")
+volume_db = -6.0
+pitch_scale = 1.6
+unit_size = 16.0
+max_distance = 70.0
+
+[node name="MkAi" type="Node" parent="."]
+script = ExtResource("2_ai")
+enabled = false

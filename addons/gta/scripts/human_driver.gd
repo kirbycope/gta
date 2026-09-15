@@ -5,8 +5,8 @@ extends Node
 ## The addon's cars take input two ways and cannot tell them apart. A [Player] who has walked up and got
 ## in reaches the car through the rideable contract, [method Vehicle.ride], and that is the road car's way:
 ## you get in, you drive, you get out. The battle cars are driven the other way, through the same virtual
-## pad the AI brains fill, [method RocketCar.set_rocket_input] and [method Tm2Car.set_drive_input]. This
-## node is the human's hand on that pad. It sits under a car the way [RocketAi] and [AiDriver] do, reads
+## pad the AI brains fill, [method RlCar.set_rocket_input] and [method TwCar.set_drive_input]. This
+## node is the human's hand on that pad. It sits under a car the way [RlAi] and [TwAi] do, reads
 ## the keyboard or a joypad each physics frame, and fills the pad. There is nothing to get out of, which
 ## is the point: a demo that puts you straight at the wheel has no walking around and no exit.
 ##

@@ -10,13 +10,13 @@ extends GutTest
 ## therefore judged as a pad press, and on the Twisted Metal car the pad exit is the jump button.
 ## Space ejected you.
 
-const ROCKET_CAR: PackedScene = preload("res://addons/gta/scenes/rocket_car.tscn")
-const TM2_CAR: PackedScene = preload("res://addons/gta/scenes/tm2_car.tscn")
+const ROCKET_CAR: PackedScene = preload("res://addons/gta/rl/scenes/rl_car.tscn")
+const TM2_CAR: PackedScene = preload("res://addons/gta/tw/scenes/tw_car.tscn")
 ## The Controls HUD is what registers the addon's action names into the InputMap; a Player carries one,
 ## and a demo with no Player instances the car's own HUD as a node. The test does the same.
 const CONTROLS: PackedScene = preload("res://addons/gta/scenes/car_controls.tscn")
 
-var car: RocketCar
+var car: RlCar
 var driver: HumanDriver
 
 
@@ -26,8 +26,8 @@ var controls: Controls
 func before_each() -> void:
 	controls = CONTROLS.instantiate() as Controls
 	add_child_autofree(controls)
-	car = ROCKET_CAR.instantiate() as RocketCar
-	(car.get_node(^"RocketAi") as RocketAi).enabled = false
+	car = ROCKET_CAR.instantiate() as RlCar
+	(car.get_node(^"RlAi") as RlAi).enabled = false
 	add_child_autofree(car)
 	await wait_physics_frames(1)
 	driver = HumanDriver.new()
@@ -79,8 +79,8 @@ func test_with_a_hud_in_the_scene_the_hud_s_device_is_the_driver_s() -> void:
 
 func test_with_no_hud_the_last_device_that_spoke_decides() -> void:
 	var lone: HumanDriver = HumanDriver.new()
-	var tm2: Tm2Car = TM2_CAR.instantiate() as Tm2Car
-	(tm2.get_node(^"AiDriver") as AiDriver).enabled = false
+	var tm2: TwCar = TM2_CAR.instantiate() as TwCar
+	(tm2.get_node(^"TwAi") as TwAi).enabled = false
 	add_child_autofree(tm2)
 	await wait_physics_frames(1)
 	tm2.add_child(lone)
@@ -131,8 +131,8 @@ func test_disabled_leaves_the_pad_alone_but_still_hears_the_toggles() -> void:
 
 
 func test_it_drives_the_twisted_metal_car_through_the_same_shape() -> void:
-	var tm2: Tm2Car = TM2_CAR.instantiate() as Tm2Car
-	(tm2.get_node(^"AiDriver") as AiDriver).enabled = false
+	var tm2: TwCar = TM2_CAR.instantiate() as TwCar
+	(tm2.get_node(^"TwAi") as TwAi).enabled = false
 	add_child_autofree(tm2)
 	await wait_physics_frames(1)
 	var hand: HumanDriver = HumanDriver.new()

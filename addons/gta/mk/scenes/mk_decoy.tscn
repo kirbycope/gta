@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/mk_item_box.tscn" id="1_box"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_decoy"]
+transparency = 1
+albedo_color = Color(0.85, 0.72, 0.3, 0.55)
+metallic = 0.1
+roughness = 0.2
+emission_enabled = true
+emission = Color(0.6, 0.35, 0.12, 1)
+emission_energy_multiplier = 0.35
+
+[node name="KartDecoy" instance=ExtResource("1_box")]
+is_decoy = true
+
+[node name="Mesh" parent="." index="1"]
+surface_material_override/0 = SubResource("StandardMaterial3D_decoy")
