@@ -21,7 +21,7 @@ exit clips a car names, makes its camera current and turns the driver's collisio
 touches Player flags or Player UI.
 
 > [!NOTE]
-> Requires `addons/3d_player_controller` (the `Player`, its `Riding` state, the `EnteringCar` / `Driving` / `ExitingCar` animation clips in `player.tscn`, and `PlayerSettingsResource` for the SFX volume) and, through it, [`addons/controls`](https://github.com/kirbycope/godot-controls), which is where `ActionPrompt` and the on-screen button hints live. The car scripts and `VehicleCamera` register their class names on their own; enabling the plugin only adds `GtaCar` and `RlCar` to the Create New Node dialog. The `Vehicle` base is not registered, because a bare chassis is not a car.
+> Requires `addons/3d_player_controller` (the `Player`, its `Riding` state, the `EnteringCar` / `Driving` / `ExitingCar` animation clips in `player.tscn`, and `PlayerSettingsResource` for the SFX volume) and, through it, [`addons/controls`](https://github.com/kirbycope/godot-controls), which is where `ActionPrompt` and the on-screen button hints live. The car scripts and `VehicleCamera` register their class names on their own; enabling the plugin only adds `GtaCar`, `TwCar`, `RlCar` and `MkCar` to the Create New Node dialog. The `Vehicle` base is not registered, because a bare chassis is not a car.
 
 ---
 
