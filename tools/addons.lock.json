@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "de73031648814e9a001dd9723284de3853d5bd95",
-    "pulled": "2026-09-17T23:07:26Z",
+    "commit": "1e11cff828cbcfcde615c1b2ea512c60bd77972a",
+    "pulled": "2026-09-17T23:13:48Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Port the root motion bake to Blender 5's slotted actions"
+    "subject": "Record Godot 4.8's new mipmap import keys"
   },
   "controls": {
-    "commit": "842f9382fac3994b39424f4b5e36366fe885fe7f",
-    "pulled": "2026-09-17T23:07:27Z",
+    "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
+    "pulled": "2026-09-17T23:13:49Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "The editor's own 3D detection, promoting textures to VRAM Compressed"
+    "subject": "Record Godot 4.8's new mipmap import keys"
   }
 }
