@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "8a56ebe377ab903c73efc854b0d1def8981ec376",
-    "pulled": "2026-09-14T06:04:40Z",
+    "commit": "de73031648814e9a001dd9723284de3853d5bd95",
+    "pulled": "2026-09-17T23:07:26Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Hide the chat window until it is wanted, and guard the blend position setter"
+    "subject": "Port the root motion bake to Blender 5's slotted actions"
   },
   "controls": {
-    "commit": "e2a0835fbfd2c47f7d76e5ee395cda32cf40c019",
-    "pulled": "2026-09-14T06:04:41Z",
+    "commit": "842f9382fac3994b39424f4b5e36366fe885fe7f",
+    "pulled": "2026-09-17T23:07:27Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "README: the HUD keeps its size under a UI scale and is hidden with visible"
+    "subject": "The editor's own 3D detection, promoting textures to VRAM Compressed"
   }
 }
