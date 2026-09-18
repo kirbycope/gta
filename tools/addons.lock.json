@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "d94e4cb5c79f2e764417524c128a739f5ddb6743",
-    "pulled": "2026-09-18T01:19:57Z",
+    "commit": "1903b2fa8758ed1cd452572febd7039599c3962f",
+    "pulled": "2026-09-18T15:20:55Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Let Godot expand the animation import blocks it was handed"
+    "subject": "Record the editor's 3D detection promoting textures to VRAM Compressed"
   },
   "controls": {
     "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
-    "pulled": "2026-09-18T01:19:58Z",
+    "pulled": "2026-09-18T15:20:57Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Record Godot 4.8's new mipmap import keys"
