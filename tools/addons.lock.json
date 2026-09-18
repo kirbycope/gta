@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
     "commit": "1e11cff828cbcfcde615c1b2ea512c60bd77972a",
-    "pulled": "2026-09-17T23:13:48Z",
+    "pulled": "2026-09-18T00:00:26Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
     "subject": "Record Godot 4.8's new mipmap import keys"
   },
   "controls": {
     "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
-    "pulled": "2026-09-17T23:13:49Z",
+    "pulled": "2026-09-18T00:00:27Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Record Godot 4.8's new mipmap import keys"

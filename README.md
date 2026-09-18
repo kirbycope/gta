@@ -41,6 +41,40 @@ Clone it, open `project.godot` in Godot, and run the demo scene. The addon is mo
 anywhere first. Installing through the Asset Library takes `addons/` and skips the root
 `project.godot` as a conflict, which is why that file can live here harmlessly.
 
+## The vendored addons
+
+`addons/3d_player_controller/` and `addons/controls/` are not part of this repository. They are
+copies taken from their own repositories by `tools/pull_addons.py`, and both are git-ignored here,
+so git sees nothing when one of them changes. `tools/addons.lock.json` records the commit each copy
+came from.
+
+```bash
+python3 tools/pull_addons.py              # take the latest of every addon
+python3 tools/pull_addons.py --dry-run    # report, change nothing
+git config core.hooksPath .githooks       # once per clone, see below
+```
+
+Two guards keep work here from being lost, because it has been lost this way before: hand-tuned
+animation `.tres` files edited in a vendored copy were quietly overwritten by a later pull, and
+nothing said so at the time.
+
+A pull now refuses to overwrite a file that was edited here and never sent upstream. It tells that
+apart from an ordinary upstream change by diffing against the commit the lock file recorded, since a
+file differing only from the incoming commit is just something new arriving:
+
+```
+3d_player_controller         1e11cff  STOPPED: 1 file(s) edited here since the last pull
+                               assets/mixamo/animations/tuned/Swimming.tres
+                             push them first with tools/push_addons.py, or re-run with --force to overwrite
+```
+
+A `pre-push` hook covers the other direction. It runs `tools/push_addons.py --dry-run` and refuses
+to push this project while any addon here differs from its own repository, so the project half and
+the addon half of a change land together instead of one going out alone. Enable it per clone with
+the `git config` line above, and bypass it once with `git push --no-verify`.
+
+`python3 -m unittest tools/test_addon_common.py` covers both guards.
+
 ## Textures import Lossless
 
 Every texture here imports with `compress/mode=0` (Lossless) and `detect_3d/compress_to=1`, so the

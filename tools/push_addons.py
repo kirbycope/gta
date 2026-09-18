@@ -23,6 +23,7 @@ from addon_common import (
     EXCLUDED_TOP_LEVEL,
     ROOT,
     addon_source,
+    local_checkout,
     load_lock,
     load_manifest,
     mirror,
@@ -53,6 +54,7 @@ def main() -> int:
 
     lock = load_lock()
     pushed = []
+    blocked = False
 
     print(f"Project:  {ROOT}")
     print(f"Addons:   {len(addons)}")
@@ -67,12 +69,36 @@ def main() -> int:
             print(f"{name:<28} not vendored here, skipped")
             continue
 
-        try:
-            cache = sync_cache(addon)
-            run(["git", "checkout", "--quiet", "--force", "-B", branch, f"origin/{branch}"], cwd=cache)
-        except RuntimeError as exc:
-            print(f"{name:<28} FAILED  {exc}")
-            continue
+        # Prefer the clone beside this project: the change then lands in the copy that is worked
+        # in, rather than only in a hidden cache that leaves it behind its own origin.
+        target = local_checkout(addon)
+        where = "local clone" if target else "cache"
+
+        if target:
+            existing = run(["git", "status", "--porcelain", "--ignore-submodules=all"], cwd=target)
+            if existing:
+                print(f"{name:<28} SKIPPED: {target} has {len(existing.splitlines())} uncommitted "
+                      f"change(s) of its own")
+                print(f"{'':<28} commit or stash them there first, so nothing of yours is buried")
+                blocked = True
+                continue
+            try:
+                run(["git", "fetch", "--quiet", "origin", branch], cwd=target)
+                run(["git", "checkout", "--quiet", branch], cwd=target)
+                run(["git", "merge", "--ff-only", "--quiet", f"origin/{branch}"], cwd=target)
+            except RuntimeError as exc:
+                print(f"{name:<28} FAILED  cannot bring {target} up to date: {exc}")
+                continue
+        else:
+            try:
+                target = sync_cache(addon)
+                run(["git", "checkout", "--quiet", "--force", "-B", branch,
+                     f"origin/{branch}"], cwd=target)
+            except RuntimeError as exc:
+                print(f"{name:<28} FAILED  {exc}")
+                continue
+
+        cache = target
 
         # Copy this project's copy over the clone, then let git say what actually differs. The
         # repository's own scaffolding is protected: it is not vendored here, so its absence from
@@ -85,7 +111,7 @@ def main() -> int:
             continue
 
         lines = status.splitlines()
-        print(f"{name:<28} {len(lines)} file(s) differ from {branch}")
+        print(f"{name:<28} {len(lines)} file(s) differ from {branch} ({where})")
         for line in lines[:10]:
             print(f"{'':<28}   {line}")
         if len(lines) > 10:
@@ -94,7 +120,9 @@ def main() -> int:
         if args.dry_run:
             # Leave the cache as upstream so a dry run has no lasting effect.
             run(["git", "reset", "--quiet", "--hard", "HEAD"], cwd=cache)
-            run(["git", "clean", "-qfd"], cwd=cache)
+            # Not fatal: a directory held open by another process cannot be removed, and the reset
+            # above has already put every tracked file back.
+            run(["git", "clean", "-qfd"], cwd=cache, check=False)
             continue
 
         run(["git", "add", "-A"], cwd=cache)
@@ -128,7 +156,7 @@ def main() -> int:
 
     if not pushed:
         print("Nothing to send upstream.")
-        return 0
+        return 1 if blocked else 0
 
     save_lock(lock)
     print(f"{len(pushed)} addon(s) sent upstream: {', '.join(pushed)}")

@@ -1,0 +1,35 @@
+#!/bin/sh
+# Warn before pushing this project while an addon edited here has not been sent upstream.
+#
+# addons/ is git-ignored, so git itself sees nothing when an addon changes: a push of this project
+# would go out with the project half of the work and leave the addon half only on this machine.
+# tools/push_addons.py --dry-run is what can see it.
+#
+# Enable with:  git config core.hooksPath .githooks
+# Bypass once with:  git push --no-verify
+
+# The Mac has python3 only, with no python on PATH, so looking for python alone made this hook
+# exit 0 and guard nothing there. Prefer python3 and fall back for the Windows launcher.
+if command -v python3 >/dev/null 2>&1; then
+    python=python3
+elif command -v python >/dev/null 2>&1; then
+    python=python
+else
+    exit 0
+fi
+[ -f tools/push_addons.py ] || exit 0
+
+report=$("$python" tools/push_addons.py --dry-run 2>/dev/null)
+
+if printf '%s' "$report" | grep -q 'file(s) differ'; then
+    printf '\n' >&2
+    printf 'Addon changes here have not been pushed to their own repositories:\n\n' >&2
+    printf '%s\n' "$report" | grep -E 'differ from|^ +[MADRU?]{1,2} ' >&2
+    printf '\n' >&2
+    printf 'Send them upstream first, so the addon and the project land together:\n' >&2
+    printf '  %s tools/push_addons.py -m "what changed"\n\n' "$python" >&2
+    printf 'Or push anyway with:  git push --no-verify\n\n' >&2
+    exit 1
+fi
+
+exit 0
