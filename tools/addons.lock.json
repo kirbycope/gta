@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "7ff341b53cd61242ad05eba1690c4b34e208e80a",
-    "pulled": "2026-09-19T20:11:33Z",
+    "commit": "d6af67a71dd0c60f409eace9617f1abc5fd69520",
+    "pulled": "2026-09-19T22:39:50Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Drop the redundant Default entry from the Scheme menu"
+    "subject": "Name the layouts after the games they came from"
   },
   "controls": {
     "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
