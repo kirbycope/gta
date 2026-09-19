@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "66fad3d5510db3e332252c7521112dfeb56afc0d",
-    "pulled": "2026-09-19T19:05:41Z",
+    "commit": "7ff341b53cd61242ad05eba1690c4b34e208e80a",
+    "pulled": "2026-09-19T20:11:33Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Let an addon register a control scheme, and save the pick by name"
+    "subject": "Drop the redundant Default entry from the Scheme menu"
   },
   "controls": {
     "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
-    "pulled": "2026-09-19T19:05:42Z",
+    "pulled": "2026-09-19T20:11:34Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Record Godot 4.8's new mipmap import keys"
