@@ -25,7 +25,7 @@ addons/gta/gta/               the road car, and its demo
 addons/gta/tw/                Twisted Metal
 addons/gta/rl/                Rocket League
 addons/gta/mk/                Mario Kart
-addons/gta/resources/         the GTA control scheme, for the player on foot
+addons/gta/resources/control_schemes/  the GTA control scheme, for the player on foot
 tools/extract_tm2.py          builds the Twisted Metal level from your own disc
 tools/extract_mk64.py         reads the kart item odds out of your own Mario Kart 64 ROM
 addons/3d_player_controller/  what the demo drives around as
@@ -35,13 +35,13 @@ addons/gut/                   the test runner
 
 ## The control scheme
 
-`addons/gta/resources/gta_controls.tres` is this addon's pad layout for the player **on foot**, not for the
+`addons/gta/resources/control_schemes/gta.tres` is this addon's pad layout for the player **on foot**, not for the
 car: A sprint, B attack, X jump, Y action, with Focus a free over-the-shoulder aim rather than a lock-on. It is
 a `ControlScheme` from the 3D Player Controller, so a scene puts it on a Player through
 `Player.control_scheme`, and a game that wants it offered in the settings menu announces it once:
 
 ```gdscript
-PlayerControls.register_scheme(preload("res://addons/gta/resources/gta_controls.tres"))
+PlayerControls.register_scheme(preload("res://addons/gta/resources/control_schemes/gta.tres"))
 ```
 
 It lives here rather than in the player controller because it is named after this game. The player controller
