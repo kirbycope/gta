@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "d6af67a71dd0c60f409eace9617f1abc5fd69520",
-    "pulled": "2026-09-19T22:39:50Z",
+    "commit": "daa4c61af67f8650696896ebbd2dd6e1118008f6",
+    "pulled": "2026-09-19T22:51:43Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Name the layouts after the games they came from"
+    "subject": "Name the layouts after their files, and drop the settings migration"
   },
   "controls": {
     "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
