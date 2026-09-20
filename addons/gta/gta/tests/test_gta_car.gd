@@ -85,8 +85,8 @@ func test_the_car_declares_its_side_of_the_rideable_contract() -> void:
 	assert_eq(car.mount_animation, "EnteringCar")
 	assert_eq(car.dismount_animation, "ExitingCar")
 	assert_eq(car.camera, car.chase_camera.camera, "The chase camera is the view the Riding state makes current")
-	assert_eq(car.get_contextual_controls(Controls.InputType.KEYBOARD_MOUSE).get("joypad_button_0"), "Exit")
-	assert_eq(car.get_contextual_controls(Controls.InputType.SONY).get("joypad_button_3"), "Exit")
+	assert_eq(car.get_contextual_controls(Controls.InputType.KEYBOARD_MOUSE).get(car.keyboard_exit_action), "Exit", "The words are keyed by action, so they follow the layout")
+	assert_eq(car.get_contextual_controls(Controls.InputType.SONY).get(car.pad_exit_action), "Exit")
 
 
 func test_a_bail_out_at_speed_skips_the_door_animation() -> void:
