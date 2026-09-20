@@ -9,4 +9,26 @@ action_button_0 = &"sprint"
 action_button_1 = &"attack"
 action_button_2 = &"jump"
 action_button_3 = &"action"
+extra_slots = {
+"axis_4_plus": &"focus",
+"axis_5_plus": &"shoot",
+"button_10": &"throw",
+"button_13": &"last_weapon",
+"button_14": &"next_weapon",
+"button_7": &"crouch",
+"button_8": &"scope",
+"button_9": &"seeker"
+}
+slot_labels = {
+"axis_4_plus": "Aim",
+"axis_5_plus": "Fire",
+"button_0": "Sprint",
+"button_1": "Melee",
+"button_10": "Cover",
+"button_2": "Jump",
+"button_3": "Enter",
+"button_7": "Stealth",
+"button_8": "Zoom",
+"button_9": "Weapons"
+}
 locks_on = false
