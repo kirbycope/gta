@@ -221,11 +221,6 @@ func set_driver(driver: Player) -> void:
 		is_driving_this_car = false
 	super(driver)
 	if driver:
-		# The walk-up prompt gives the Action button back: its "Get In" claim would otherwise be written over the
-		# driver's "Exit" every time the HUD refreshes its labels
-		if menu_displayed and action_prompt:
-			action_prompt.hide_for(driver.controls)
-		menu_displayed = false
 		_play_door_sequence()
 
 
@@ -689,7 +684,9 @@ func _play_door_sequence() -> void:
 
 ## Wired to PlayerDetection.body_entered: the Player who walked up gets the prompt and a "Get In" Action label, GTA style.
 func _on_player_detection_body_entered(body: Node3D) -> void:
-	if body is Player and body.is_multiplayer_authority() and not (body as Player).is_riding:
+	# `riding` is set the moment a mount begins; `is_riding` only once the Riding state is in, and the seat pulls
+	# the body through this area in between, which must not put "Get In" back on a driver's Action button
+	if body is Player and body.is_multiplayer_authority() and (body as Player).riding == null:
 		_show_prompt(body)
 
 ## Wired to PlayerDetection.body_exited: walking away takes the prompt and the label with it.
@@ -706,13 +703,15 @@ func _show_prompt(_player: Player) -> void:
 		action_prompt.show_for(player.controls, "Get In")
 	menu_displayed = true
 
-## Hides the prompt and hands the Action label back to the Player's state; a driver keeps [member player].
+## Hides the prompt and hands the Action label back to the Player's state (a claim left behind would be written
+## over the driver's "Exit" at every label refresh); a driver keeps [member player].
 func _hide_prompt() -> void:
 	menu_displayed = false
-	if player == null or player.riding == self:
+	if player == null:
 		if action_prompt:
 			action_prompt.hide()
 		return
 	if action_prompt:
 		action_prompt.hide_for(player.controls)
-	player = null
+	if player.riding != self:
+		player = null
