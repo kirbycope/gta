@@ -221,6 +221,11 @@ func set_driver(driver: Player) -> void:
 		is_driving_this_car = false
 	super(driver)
 	if driver:
+		# The walk-up prompt gives the Action button back: its "Get In" claim would otherwise be written over the
+		# driver's "Exit" every time the HUD refreshes its labels
+		if menu_displayed and action_prompt:
+			action_prompt.hide_for(driver.controls)
+		menu_displayed = false
 		_play_door_sequence()
 
 

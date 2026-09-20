@@ -38,10 +38,13 @@ func _key_face(action: StringName) -> String:
 
 
 func test_the_words_sit_on_the_buttons_that_do_them() -> void:
+	car._show_prompt(player) # walked up: "Get In" is on the Action button
 	player.mount(car)
 	await wait_physics_frames(2)
 
 	var controls: Controls = player.controls
+	assert_false(car.menu_displayed, "Getting in takes the walk-up prompt down")
+	assert_eq(controls.prompt_action_label, "", "and gives the Action button back, so Exit is not written over")
 	assert_eq(controls.action_label(car.keyboard_accelerate_action).text, "Accelerate", "Space accelerates")
 	assert_eq(_key_face(car.keyboard_accelerate_action), "keyboard_space_icon_outline.svg", "drawn as Space")
 	assert_eq(controls.action_label(car.keyboard_brake_action).text, "Brake", "Shift brakes")
