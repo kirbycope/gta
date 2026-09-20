@@ -180,14 +180,15 @@ func ride_input(rider: Player, event: InputEvent) -> void:
 		rider.dismount()
 
 
-## Rideable contract: label names on the Player's controls to their text while driving. A car with
-## more to say overrides this; what is here is only the button that gets back out.
+## Rideable contract: the Player's controls to their text while driving. A car with more to say overrides
+## this; what is here is only the button that gets back out, keyed by the exit action for the device so the
+## word sits on whichever button the rider's layout gives that action, drawn as its key on the keyboard set.
 func get_contextual_controls(input_type_: int) -> Dictionary:
 	var controls: Dictionary = {
 		"left_joystick": "Steer",
 		"right_joystick": "Camera",
 	}
-	controls["joypad_button_0" if input_type_ == Controls.InputType.KEYBOARD_MOUSE else "joypad_button_3"] = "Exit"
+	controls[keyboard_exit_action if input_type_ == Controls.InputType.KEYBOARD_MOUSE else pad_exit_action] = "Exit"
 	return controls
 
 

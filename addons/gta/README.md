@@ -48,9 +48,8 @@ This repository is the project the demo is built from. It uses the layout the
 expects, with the addon at `addons/gta/` and a `project.godot` at the root, so cloning it and
 opening it in Godot is all it takes. The addon is edited in place, with nothing copied first.
 
-The player controller and the Controls addon sit under `addons/` beside it. They are not committed
-here; `tools/addons.json` lists them and `python tools/pull_addons.py` fetches them, so run that
-once after cloning.
+The player controller and the Controls addon sit under `addons/` beside it; both are dependencies,
+fetched rather than committed here.
 
 ---
 
@@ -63,7 +62,7 @@ once after cloning.
 
 A car is driven one of two ways, and cannot tell them apart. A `Player` who walks up and gets in reaches it through the rideable contract below; that is the road car's way, and the only demo that needs a `Player`. The two battle demos have no `Player` at all: a `HumanDriver` node under the car fills the same virtual pad the AI brains fill, from the keyboard or a joypad, and there is nothing to get out of. Their on-screen controls are `CarControls` (`scenes/car_controls.tscn`), the Controls addon's HUD with only the car's slots mapped; it registers the car actions with the same keys the player controller binds, and the driver labels its buttons with what the car says they do.
 
-Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player.controls, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. Setting its `look_target` locks it onto a node instead, keeping that node in view with the car between the two, which is what the Rocket League demo's ball cam is; left null it behaves exactly as it always has. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels (`"joypad_button_0": "Exit"`).
+Standing in `PlayerDetection` shows the prompt (`ActionPrompt.show_for(player.controls, "Get In")`); Action calls `Player.mount(vehicle)`. The `Riding` state calls back `mount(player)`, which puts the Player at `EnterCar` and starts the chase camera, then plays `mount_animation` (`EnteringCar`) and, once it ends, calls `ride(player, delta)` every physics frame: the car seats the Player on `DriverSeat`, reads accelerate / brake / handbrake / steer from its own action exports (resolved for the `input_type` the state keeps current) and feeds its drivetrain. `camera` is the `VehicleCamera` (a spring arm behind the car that follows the direction of travel once it moves, or the facing at rest, with manual look that holds for a moment); the state makes it current and hands the Player's own back on dismount. Setting its `look_target` locks it onto a node instead, keeping that node in view with the car between the two, which is what the Rocket League demo's ball cam is; left null it behaves exactly as it always has. The exit action in `ride_input` calls `player.dismount()`: at rest the state plays `dismount_animation` (`ExitingCar`) first, above `BAIL_OUT_SPEED` the car calls `dismount(true)` and the Player is straight out. `blocks_hands` holsters weapons and hides the crosshair, `disables_collision` turns the driver's collision shape off inside the body, and `get_contextual_controls(input_type)` names the labels by the actions the car reads (`keyboard_exit_action: "Exit"`), so each word sits on whichever button the rider's layout gives that action and the keyboard set draws it as the key.
 
 ### Multiplayer
 
@@ -126,28 +125,6 @@ Run just them while working on the demo:
 ```powershell
 & 'C:\Godot\godot.exe' --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://addons/gta/tests -gprefix=test_rocket_league_demo -gexit
 ```
-
-One thing to know if you write more of them: headless Godot has seen no keyboard, so it reports its
-input device as touch and a car resolves the gamepad binding for every action. The tests set
-`input_type` to `KEYBOARD_MOUSE` before pressing anything.
-
-### Filming a test run
-
-The demo tests drive a real match, so they are worth watching rather than only reading. Godot's
-Movie Maker mode records them, which needs a rendering window and so cannot be combined with
-`--headless`:
-
-```powershell
-& 'C:\Godot\godot.exe' --path . --write-movie tests.avi -s addons/gut/gut_cmdln.gd `
-  -gdir=res://addons/gta/tests -gprefix=test_rocket_league_demo -gcompact_mode -gopacity=80 -gexit
-ffmpeg -i tests.avi -c:v libx264 -crf 26 -pix_fmt yuv420p tests.mp4
-```
-
-`-gcompact_mode` shrinks the runner to a corner panel, which otherwise covers half the pitch, and
-`-gopacity` fades it. Movie Maker fixes the frame rate and advances time a frame at a time rather
-than in real time, so the recording is of the simulation and not of how fast the machine happened to
-be; the whole file comes out around 48 seconds. The `.avi` it writes is uncompressed-ish and
-enormous, about 130 MB for that, which is what the ffmpeg line is for.
 
 ---
 

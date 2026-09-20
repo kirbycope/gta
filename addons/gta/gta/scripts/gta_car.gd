@@ -192,24 +192,24 @@ func ride_input(_player: Player, event: InputEvent) -> void:
 		_player.dismount()
 
 ## Rideable contract: label names on the Player's controls to their text while driving.
+## Keyed by the actions the car reads for the device, so each word sits on whichever button the rider's layout
+## gives that action, and the keyboard set draws that button as the key: Space accelerates, Shift brakes, E gets
+## out, T is the handbrake. The radio is on the d-pad and J / L, which no layout moves.
 func get_contextual_controls(input_type_: int) -> Dictionary:
+	var keyboard: bool = input_type_ == Controls.InputType.KEYBOARD_MOUSE
 	var controls: Dictionary = {
-		"joypad_button_10": "Handbrake",
 		"joypad_button_13": "Prev\nStation",
 		"joypad_button_14": "Next\nStation",
 		"left_joystick": "Steer",
 		"right_joystick": "Camera",
+		(keyboard_accelerate_action if keyboard else pad_accelerate_action): "Accelerate",
+		(keyboard_brake_action if keyboard else pad_brake_action): "Brake",
+		(keyboard_handbrake_action if keyboard else pad_handbrake_action): "Handbrake",
+		(keyboard_exit_action if keyboard else pad_exit_action): "Exit",
 	}
-	if input_type_ == Controls.InputType.KEYBOARD_MOUSE:
-		controls["joypad_button_3"] = "Accelerate"
-		controls["joypad_button_1"] = "Brake"
-		controls["joypad_button_0"] = "Exit"
+	if keyboard:
 		controls["key_j"] = "Prev\nStation"
 		controls["key_l"] = "Next\nStation"
-	else:
-		controls["joypad_axis_4_plus"] = "Brake"
-		controls["joypad_axis_5_plus"] = "Accelerate"
-		controls["joypad_button_3"] = "Exit"
 	return controls
 
 ## The road car's own side of taking a driver, on top of the base's hand-off: the door opens and closes

@@ -17,12 +17,9 @@ extends Node3D
 ## dropping rays onto the arena's collision, which needs the game running; open
 ## a car's scene to change its look.
 ##
-## Two scenes use this. [code]twisted_metal.tscn[/code] plays the arena pulled
-## out of the game disc by [code]tools/extract_tm2.py[/code], with the AI on the
-## level's own waypoints. [code]twisted_metal_fanmade.tscn[/code] plays the
-## Sketchfab remake of the scrapped version of the same level, which has no
-## waypoints of its own, so they are sampled off its surface instead. Between
-## them they are a like for like comparison of the two maps.
+## [code]demo.tscn[/code] plays the arena pulled out of the game disc by
+## [code]tools/extract_tm2.py[/code], with the AI on the level's own waypoints;
+## a level without waypoints of its own has them sampled off its surface instead.
 
 const ASSETS: String = "res://addons/gta/tw/assets"
 const CAR_SCENES: String = "res://addons/gta/tw/scenes/cars" ## One scene per ripped car, named by roster key.

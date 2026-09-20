@@ -137,26 +137,6 @@ that scale the drivable quads come out about 6 m across, the waypoints about 25 
 Los Angeles play area 252 x 166 m, which agree with each other, but the game's own constant has not
 been found.
 
-## The fan remake, side by side
-
-`twisted_metal_fanmade.tscn` loads Angel V Mendez's Sketchfab remake of the scrapped version of the
-same level, so the two can be compared in the same game with the same cars. The comparison:
-
-| | Extracted from the disc | Fan remake |
-|---|---|---|
-| Geometry | 2,406 verts, 2,586 faces | 16,455 verts, 9,297 tris |
-| Surfacing | the game's own vertex colours; textures not decoded yet | 34 textures with normals and UVs |
-| Layout | rooftops over a street tier, as shipped | the scrapped street level, tidied up by its author |
-| AI path | the level's own 140 `.PTS` waypoints | none, so the drivable surface is sampled instead |
-| Scale | already metres, straight out of the extractor | unknown units, measured and fitted to 250 m |
-
-The same script drives both. A level that brings no waypoints has them sampled off its surface, and a
-level with no collision gets a trimesh built for it. Each level is an `Arena` node in its own demo
-scene, at its own scale: the extracted arena is already in metres and sits at 1, and the fan remake is
-in whatever units its author used and sits at 18.177, which is the 250 metres the arena should be
-across over the 13.75 units the model measures once it is in the tree. Both maps wrap themselves in
-huge painted scenery, which is stripped by size so the engine's own sky shows instead.
-
 ## Known rough edges
 
 - The ripped car models are wound mostly inside out: between 64 and 86 percent of each car's
