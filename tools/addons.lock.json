@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "ffe06d429fea03c32ccda7dc279829cdab12b99b",
-    "pulled": "2026-09-20T22:47:46Z",
+    "commit": "fc6675787ad600f562c867bd72cc9f231946e216",
+    "pulled": "2026-09-20T22:54:42Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Skip a physics frame whose delta is zero"
+    "subject": "Thaw the clock whenever the tree runs behind a menu"
   },
   "controls": {
     "commit": "16569a90fb5cc706460c8df7806ee9ab34fea8af",
-    "pulled": "2026-09-20T22:47:47Z",
+    "pulled": "2026-09-20T22:54:43Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Let a slot's key art change live and expose the device an event names"
