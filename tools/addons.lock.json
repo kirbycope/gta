@@ -1,16 +1,16 @@
 {
   "3d_player_controller": {
-    "commit": "daa4c61af67f8650696896ebbd2dd6e1118008f6",
-    "pulled": "2026-09-19T22:51:43Z",
+    "commit": "ffe06d429fea03c32ccda7dc279829cdab12b99b",
+    "pulled": "2026-09-20T22:47:46Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Name the layouts after their files, and drop the settings migration"
+    "subject": "Skip a physics frame whose delta is zero"
   },
   "controls": {
-    "commit": "3681c4c8e029540341d7191378dbd5d71c1c0450",
-    "pulled": "2026-09-19T20:11:34Z",
+    "commit": "16569a90fb5cc706460c8df7806ee9ab34fea8af",
+    "pulled": "2026-09-20T22:47:47Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Record Godot 4.8's new mipmap import keys"
+    "subject": "Let a slot's key art change live and expose the device an event names"
   }
 }
