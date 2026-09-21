@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "ba68496cf5988947db3d3c4db77913cda581c9ce",
-    "pulled": "2026-09-21T03:51:49Z",
+    "commit": "b267f92ed1a7c7f90e266cae780d2b243df7fc3c",
+    "pulled": "2026-09-21T04:13:49Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Point the tests and the README at the moved vfx and equipment scenes"
+    "subject": "Put the Player's screen in one scene, and its animation graph in a resource"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
