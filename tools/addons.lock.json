@@ -1,14 +1,14 @@
 {
   "3d_player_controller": {
-    "commit": "fc6675787ad600f562c867bd72cc9f231946e216",
-    "pulled": "2026-09-20T22:54:42Z",
+    "commit": "83076ff7a5ecad641bd4e6409b246c66c7a0b95c",
+    "pulled": "2026-09-21T00:08:55Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Thaw the clock whenever the tree runs behind a menu"
+    "subject": "Take the vendored addons at their latest"
   },
   "controls": {
     "commit": "16569a90fb5cc706460c8df7806ee9ab34fea8af",
-    "pulled": "2026-09-20T22:54:43Z",
+    "pulled": "2026-09-21T00:08:56Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Let a slot's key art change live and expose the device an event names"
