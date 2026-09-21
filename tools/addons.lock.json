@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "8db762c6da6cfa4be5073e15d5c29bf6a05683e5",
-    "pulled": "2026-09-21T03:42:45Z",
+    "commit": "ba68496cf5988947db3d3c4db77913cda581c9ce",
+    "pulled": "2026-09-21T03:51:49Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Stop shadowing GDScript's built-in functions"
+    "subject": "Point the tests and the README at the moved vfx and equipment scenes"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
