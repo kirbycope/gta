@@ -7,15 +7,15 @@
     "subject": "No shared icon on the library nodes, and a preview cast that is heard and explained"
   },
   "controls": {
-    "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
-    "pulled": "2026-09-21T03:07:14Z",
+    "commit": "87f6e8b5e3b7e18596444fcc193564ba98e48700",
+    "pulled": "2026-09-21T22:45:42Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
-    "subject": "Fetch GUT with the pull tool instead of committing it"
+    "subject": "Targeting, the Player template, synchronizers over RPCs, and credits in CREDITS.md"
   },
   "gut": {
     "commit": "aeb5d4f3f7f0a6c9b5e178876d6c99b791fda605",
-    "pulled": "2026-09-21T03:07:14Z",
+    "pulled": "2026-09-21T22:45:43Z",
     "ref": "v9.7.1",
     "repo": "https://github.com/bitwes/Gut.git",
     "subject": "Version bump, documentation for 9.7.1 release (#847)"
