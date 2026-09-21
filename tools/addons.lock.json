@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "ef96eea85f536e9b3d2cc4d3abaa24325f83ee49",
-    "pulled": "2026-09-21T13:57:48Z",
+    "commit": "a24e77a36796b8861ffa22e113ace442a92b8c44",
+    "pulled": "2026-09-21T14:40:12Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Keep a Player's preset name when Steam is up"
+    "subject": "Follow the renamed audio nodes, and keep the HUD wiring through an editor save"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
