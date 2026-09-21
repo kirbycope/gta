@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "83076ff7a5ecad641bd4e6409b246c66c7a0b95c",
-    "pulled": "2026-09-21T00:08:55Z",
+    "commit": "5e2717b3d7e59abf04523f015f87756a61709402",
+    "pulled": "2026-09-21T03:08:03Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Take the vendored addons at their latest"
+    "subject": "Follow the control scheme files to their game names in the scripts"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
