@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "5e2717b3d7e59abf04523f015f87756a61709402",
-    "pulled": "2026-09-21T03:08:03Z",
+    "commit": "2d8f9955b8750d186b282a4fcd29a4b267dc9b19",
+    "pulled": "2026-09-21T03:37:14Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Follow the control scheme files to their game names in the scripts"
+    "subject": "Name the audio scene as it is in the README"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
