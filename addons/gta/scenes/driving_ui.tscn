@@ -5,7 +5,6 @@
 [ext_resource type="Texture2D" uid="uid://cidqwxk42n0xr" path="res://addons/3d_player_controller/assets/needle.svg" id="2_xnu4r"]
 
 [node name="DrivingUI" type="CanvasLayer" unique_id=1110728206]
-visible = false
 script = ExtResource("1_xnu4r")
 
 [node name="Speedometer" type="Control" parent="." unique_id=1518217328]
