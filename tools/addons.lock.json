@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "841ac4ba4928992e272c75c824dc348152cea430",
-    "pulled": "2026-09-21T16:37:52Z",
+    "commit": "cbb50f4604a4364cb89325fe155ee325bae36aff",
+    "pulled": "2026-09-21T17:25:43Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Carry the uid sidecars of the ability library scripts"
+    "subject": "No shared icon on the library nodes, and a preview cast that is heard and explained"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
