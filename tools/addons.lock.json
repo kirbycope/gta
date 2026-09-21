@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "b267f92ed1a7c7f90e266cae780d2b243df7fc3c",
-    "pulled": "2026-09-21T04:13:49Z",
+    "commit": "ef96eea85f536e9b3d2cc4d3abaa24325f83ee49",
+    "pulled": "2026-09-21T13:57:48Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Put the Player's screen in one scene, and its animation graph in a resource"
+    "subject": "Keep a Player's preset name when Steam is up"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
