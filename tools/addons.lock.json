@@ -1,21 +1,21 @@
 {
   "3d_player_controller": {
-    "commit": "cbb50f4604a4364cb89325fe155ee325bae36aff",
-    "pulled": "2026-09-21T17:25:43Z",
+    "commit": "d4b638039c3e0642fcebbde1034fcbb2a5e5e384",
+    "pulled": "2026-09-21T22:46:27Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "No shared icon on the library nodes, and a preview cast that is heard and explained"
+    "subject": "Targeting, the Player template, synchronizers over RPCs, and credits in CREDITS.md"
   },
   "controls": {
     "commit": "87f6e8b5e3b7e18596444fcc193564ba98e48700",
-    "pulled": "2026-09-21T22:45:42Z",
+    "pulled": "2026-09-21T22:46:27Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Targeting, the Player template, synchronizers over RPCs, and credits in CREDITS.md"
   },
   "gut": {
     "commit": "aeb5d4f3f7f0a6c9b5e178876d6c99b791fda605",
-    "pulled": "2026-09-21T22:45:43Z",
+    "pulled": "2026-09-21T22:46:28Z",
     "ref": "v9.7.1",
     "repo": "https://github.com/bitwes/Gut.git",
     "subject": "Version bump, documentation for 9.7.1 release (#847)"
