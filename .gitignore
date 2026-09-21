@@ -35,6 +35,7 @@ addons/gta/tw/assets/.src/
 # probability tables are the game's data, so they are built locally from a copy
 # you own and are never committed here.
 addons/gta/mk/assets/
+addons/gut/
 
 # Screenshots and films of the demos, including whatever Godot's Movie Maker
 # mode writes. The addon README's "Filming a test run" recipe drops a .avi in

@@ -25,6 +25,7 @@ from addon_common import (
     addon_source,
     local_checkout,
     load_lock,
+    is_third_party,
     load_manifest,
     mirror,
     run,
@@ -63,11 +64,18 @@ def main() -> int:
     for addon in addons:
         name = addon["name"]
         source = ROOT / "addons" / name
-        branch = addon["ref"]
 
         if not source.exists():
             print(f"{name:<28} not vendored here, skipped")
             continue
+
+        # Other people's work is pinned to a release and only ever pulled; an edit made here has
+        # nowhere to go but upstream's issue tracker, so say so rather than trying to push it.
+        if is_third_party(addon):
+            print(f"{name:<28} third party, never pushed")
+            continue
+
+        branch = addon["ref"]
 
         # Prefer the clone beside this project: the change then lands in the copy that is worked
         # in, rather than only in a hidden cache that leaves it behind its own origin.

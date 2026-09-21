@@ -10,7 +10,10 @@ written to tools/addons.lock.json, so what is vendored is always traceable to a 
     python tools/pull_addons.py --dry-run       report what would change, touch nothing
     python tools/pull_addons.py --locked        take the commits in the lock file, not the ref
 
-The addons are committed to this repository, so review the diff and commit as usual afterwards.
+The copies under addons/ are git-ignored, GUT and the other third-party addons included; only
+the manifest and the lock are committed, so a fresh clone runs this once before anything else.
+A third-party addon (`"third_party": true`) is pinned to a release tag or commit and never pushed
+to; one published only as a release archive names it with `"archive": <url>` instead of a repo.
 """
 
 from __future__ import annotations
@@ -27,6 +30,9 @@ from addon_common import (
     local_edits,
     mirror,
     run,
+    is_archive,
+    resolve_ref,
+    sync_archive,
     save_lock,
     sweep_replace_fragments,
     sync_cache,
@@ -71,26 +77,39 @@ def main() -> int:
         name = addon["name"]
         dest = ROOT / "addons" / name
 
-        try:
-            cache = sync_cache(addon, fetch=not args.offline)
-        except RuntimeError as exc:
-            print(f"{name:<28} FAILED  {exc}")
-            continue
-
-        if args.locked and name in lock:
-            target = lock[name]["commit"]
+        if is_archive(addon):
+            # A release archive: no repository, no commits. The lock holds the URL and a digest, and
+            # the edit guard below has no earlier tree to diff against, so the removal guard is all.
+            try:
+                if args.locked and name in lock and "archive" in lock[name]:
+                    addon = dict(addon, archive=lock[name]["archive"])
+                cache, commit = sync_archive(addon, fetch=not args.offline)
+            except (RuntimeError, OSError) as exc:
+                print(f"{name:<28} FAILED  {exc}")
+                continue
+            subject = addon["archive"].rsplit("/", 1)[-1]
+            previous = None
         else:
-            target = f"origin/{addon['ref']}"
+            try:
+                cache = sync_cache(addon, fetch=not args.offline)
+            except RuntimeError as exc:
+                print(f"{name:<28} FAILED  {exc}")
+                continue
 
-        try:
-            run(["git", "checkout", "--quiet", "--force", target], cwd=cache)
-        except RuntimeError as exc:
-            print(f"{name:<28} FAILED  cannot check out {target}: {exc}")
-            continue
+            try:
+                if args.locked and name in lock:
+                    target = lock[name]["commit"]
+                else:
+                    # A branch on origin, a release tag (a third-party addon is pinned to one) or a commit.
+                    target = resolve_ref(cache, addon["ref"])
+                run(["git", "checkout", "--quiet", "--force", target], cwd=cache)
+            except RuntimeError as exc:
+                print(f"{name:<28} FAILED  cannot check out {addon['ref']}: {exc}")
+                continue
 
-        commit = run(["git", "rev-parse", "HEAD"], cwd=cache)
-        subject = run(["git", "log", "-1", "--pretty=%s"], cwd=cache)
-        previous = lock.get(name, {}).get("commit")
+            commit = run(["git", "rev-parse", "HEAD"], cwd=cache)
+            subject = run(["git", "log", "-1", "--pretty=%s"], cwd=cache)
+            previous = lock.get(name, {}).get("commit")
 
         # Look before touching anything, so a pull that would destroy unpushed work can stop.
         origin = addon_source(cache, name)
@@ -177,12 +196,15 @@ def main() -> int:
 
         if not args.dry_run:
             lock[name] = {
-                "repo": addon["repo"],
-                "ref": addon["ref"],
                 "commit": commit,
                 "subject": subject,
                 "pulled": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             }
+            if is_archive(addon):
+                lock[name]["archive"] = addon["archive"]  # commit holds the archive's SHA-256
+            else:
+                lock[name]["repo"] = addon["repo"]
+                lock[name]["ref"] = addon["ref"]
 
     print()
 

@@ -66,6 +66,78 @@ def save_lock(data: dict) -> None:
     LOCKFILE.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def is_third_party(addon: dict) -> bool:
+    """Whether the addon is somebody else's work: pulled and pinned like the rest, never pushed to."""
+    return bool(addon.get("third_party", False))
+
+
+def resolve_ref(cache: Path, ref: str) -> str:
+    """What to check out for a manifest ref: a branch on origin, else a tag, else a commit."""
+    for candidate in (f"origin/{ref}", f"refs/tags/{ref}", ref):
+        try:
+            run(["git", "rev-parse", "--verify", "--quiet", f"{candidate}^{{commit}}"], cwd=cache)
+            return candidate
+        except RuntimeError:
+            continue
+    raise RuntimeError(f"{ref} is not a branch, tag or commit of {cache.name}")
+
+
+def is_archive(addon: dict) -> bool:
+    """Whether the addon is published as a release archive rather than a git repository."""
+    return "archive" in addon
+
+
+def sync_archive(addon: dict, fetch: bool = True) -> tuple[Path, str]:
+    """Download the addon's release archive and unpack it into .addon_cache/<name>.
+
+    Some addons (GodotSteam's GDExtension) are only published as a zip or tarball of prebuilt
+    binaries, with no repository to clone. The archive is kept beside the unpacked tree as
+    .addon_cache/<name>.<ext>, downloaded again only when the manifest names a different URL, and
+    the lock records its URL and SHA-256 in place of a commit. Returns the unpacked tree and the digest.
+    """
+    import hashlib
+    import shutil
+    import tarfile
+    import urllib.request
+    import zipfile
+
+    CACHE.mkdir(exist_ok=True)
+    url = addon["archive"]
+    ext = ".zip" if url.lower().endswith(".zip") else ".tar" + ("." + url.rsplit(".", 1)[-1] if not url.endswith(".tar") else "")
+    archive = CACHE / (addon["name"] + ext)
+    stamp = CACHE / (addon["name"] + ".url")
+    path = CACHE / addon["name"]
+
+    if fetch and not (archive.exists() and stamp.exists() and stamp.read_text(encoding="utf-8").strip() == url):
+        print(f"  downloading {url}")
+        with urllib.request.urlopen(url) as response, archive.open("wb") as out:
+            shutil.copyfileobj(response, out)
+        stamp.write_text(url + "\n", encoding="utf-8")
+        if path.exists():
+            shutil.rmtree(path)
+    if not archive.exists():
+        raise RuntimeError(f"{archive.name} is not in the cache; run without --offline")
+
+    if not path.exists():
+        path.mkdir()
+        if ext == ".zip":
+            with zipfile.ZipFile(archive) as z:
+                z.extractall(path)
+        else:
+            with tarfile.open(archive) as t:
+                t.extractall(path)
+        # A single top-level folder is the archive's own wrapper, not part of the layout.
+        entries = [p for p in path.iterdir() if not p.name.startswith("__MACOSX")]
+        if len(entries) == 1 and entries[0].is_dir():
+            inner = entries[0]
+            for child in list(inner.iterdir()):
+                shutil.move(str(child), str(path / child.name))
+            inner.rmdir()
+
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    return path, digest
+
+
 def sync_cache(addon: dict, fetch: bool = True) -> Path:
     """Clone the addon's repository into .addon_cache/<name>, or fetch it if already there."""
     CACHE.mkdir(exist_ok=True)
@@ -75,7 +147,7 @@ def sync_cache(addon: dict, fetch: bool = True) -> Path:
         print(f"  cloning {addon['repo']}")
         run(["git", "clone", "--quiet", addon["repo"], str(path)])
     elif fetch:
-        run(["git", "fetch", "--quiet", "origin"], cwd=path)
+        run(["git", "fetch", "--quiet", "--tags", "origin"], cwd=path)
 
     return path
 
@@ -88,6 +160,11 @@ def addon_source(cache: Path, name: str) -> Path:
     yet converted still keep the addon at their root. Both are handled by looking for plugin.cfg.
     """
     nested = cache / "addons" / name
+    if not nested.exists():
+        # An archive may unpack with the addon folder at its root rather than under addons/.
+        found = [p for p in cache.rglob(name) if p.is_dir() and (p / "plugin.cfg").exists()]
+        if found:
+            nested = found[0]
     # plugin.cfg marks an editor plugin; a GDExtension has a .gdextension file and no plugin.cfg.
     if (nested / "plugin.cfg").exists() or any(nested.glob("*.gdextension")):
         return nested
