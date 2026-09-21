@@ -1,10 +1,10 @@
 {
   "3d_player_controller": {
-    "commit": "a24e77a36796b8861ffa22e113ace442a92b8c44",
-    "pulled": "2026-09-21T14:40:12Z",
+    "commit": "841ac4ba4928992e272c75c824dc348152cea430",
+    "pulled": "2026-09-21T16:37:52Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Follow the renamed audio nodes, and keep the HUD wiring through an editor save"
+    "subject": "Carry the uid sidecars of the ability library scripts"
   },
   "controls": {
     "commit": "760d612291f7e327d0600f23e718237ec9b979c8",
