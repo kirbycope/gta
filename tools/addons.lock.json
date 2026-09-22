@@ -1,21 +1,21 @@
 {
   "3d_player_controller": {
-    "commit": "3de236e7196386b0720596651dcdc08b6684dfe2",
-    "pulled": "2026-09-21T23:46:47Z",
+    "commit": "77f1132132cac4791c2bea3535975fd2ef407b24",
+    "pulled": "2026-09-22T00:19:36Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-3d-player-controller-addon.git",
-    "subject": "Every Steam call waits for the Steamworks session, not just the client"
+    "subject": "The crosshair cuts the gapped plus out of the Kenney sheet again"
   },
   "controls": {
     "commit": "87f6e8b5e3b7e18596444fcc193564ba98e48700",
-    "pulled": "2026-09-21T23:46:48Z",
+    "pulled": "2026-09-22T00:19:37Z",
     "ref": "main",
     "repo": "https://github.com/kirbycope/godot-controls.git",
     "subject": "Targeting, the Player template, synchronizers over RPCs, and credits in CREDITS.md"
   },
   "gut": {
     "commit": "aeb5d4f3f7f0a6c9b5e178876d6c99b791fda605",
-    "pulled": "2026-09-21T23:46:48Z",
+    "pulled": "2026-09-22T00:19:38Z",
     "ref": "v9.7.1",
     "repo": "https://github.com/bitwes/Gut.git",
     "subject": "Version bump, documentation for 9.7.1 release (#847)"
