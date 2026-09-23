@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://6n6s0hg75now"]
 
-[ext_resource type="Texture2D" uid="uid://cvy38tabsewje" path="res://addons/3d_player_controller/assets/kenney_nl/Icons/Input Prompts/Xbox Series/Vector/xbox_button_outline_75.svg" id="1_i8lnr"]
+[ext_resource type="Texture2D" uid="uid://cvy38tabsewje" path="res://addons/controls/assets/kenney_nl/Icons/Input Prompts/Xbox Series/Vector/xbox_button_outline_75.svg" id="1_i8lnr"]
 [ext_resource type="Script" uid="uid://chanwb6rlis3" path="res://addons/gta/scripts/driving_ui.gd" id="1_xnu4r"]
 [ext_resource type="Texture2D" uid="uid://cidqwxk42n0xr" path="res://addons/3d_player_controller/assets/needle.svg" id="2_xnu4r"]
 
