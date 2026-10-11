@@ -151,7 +151,9 @@ func _ready() -> void:
 ## Put the car model's wheels on the physics wheels and paint it for the team.
 ##
 ## The model is a scene instanced under [member model], scaled so its wheelbase
-## is the Octane's; its body stays where it is and only dresses the hitbox.
+## is the Octane's and set so its wheel arches sit on the resting wheel
+## centres, which hang below the hitbox the way the game's do; its body only
+## dresses the hitbox.
 ## Its wheels are separate nodes, one per corner in [member model_wheels] in
 ## the order of [member wheels], and each is moved under its [VehicleWheel3D]
 ## and centred on it, so it steers, spins and rides the suspension with the
@@ -173,7 +175,8 @@ func _dress_with_model() -> void:
 		if wheel == null or corner == null:
 			continue
 		corner.reparent(wheel, true)
-		corner.position = Vector3.ZERO
+		# on the physics wheel's axle, but kept at its own track so it stays in its arch
+		corner.position = Vector3(corner.position.x, 0.0, 0.0)
 	var colour: Color = paint_blue if team == Team.BLUE else paint_orange
 	_finish(dressed.get_node_or_null(model_paint) as MeshInstance3D, colour)
 	_finish(dressed.get_node_or_null(model_accent) as MeshInstance3D, colour.darkened(0.45))

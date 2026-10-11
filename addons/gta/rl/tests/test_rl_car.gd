@@ -547,7 +547,9 @@ func test_the_model_dresses_the_hitbox_and_its_wheels_ride_the_physics_wheels() 
 		var dressed: Array[Node] = wheel.find_children("*", "MeshInstance3D", true, false)
 		assert_gt(dressed.size(), 1, "%s carries a wheel mesh from the model as well as the hidden tyre" % wheel.name)
 		var corner: Node3D = wheel.get_child(wheel.get_child_count() - 1) as Node3D
-		assert_almost_eq(corner.position, Vector3.ZERO, Vector3.ONE * 0.001, "centred on the physics wheel")
+		assert_almost_eq(corner.position.y, 0.0, 0.001, "on the physics wheel's axle")
+		assert_almost_eq(corner.position.z, 0.0, 0.001)
+		assert_lt(absf(corner.position.x), 0.1, "kept at its own track, which is within a few centimetres of the physics wheel's")
 	var paint: MeshInstance3D = car.get_node(^"Model/Car Rig/DEF-Body/Body") as MeshInstance3D
 	assert_not_null(paint.material_override, "the paint is a team finish")
 	assert_eq((paint.material_override as StandardMaterial3D).albedo_color, car.paint_blue)

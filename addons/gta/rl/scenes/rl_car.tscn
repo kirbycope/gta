@@ -49,7 +49,7 @@ model_accent = NodePath("Car Rig/DEF-Body/Paint")
 blockout_parts = Array[NodePath]([NodePath("Body"), NodePath("Nose"), NodePath("FrontLeft/Tyre"), NodePath("FrontRight/Tyre"), NodePath("RearLeft/Tyre"), NodePath("RearRight/Tyre"), NodePath("Model/Car Rig/DEF-Wheel_Ft_L/LF Brack"), NodePath("Model/Car Rig/DEF-WheelBrake_Ft_R"), NodePath("Model/Car Rig/DEF-WheelBrake_Bk_L"), NodePath("Model/Car Rig/DEF-WheelBrake_Bk_R")])
 
 [node name="Model" parent="." instance=ExtResource("7_fennec")]
-transform = Transform3D(2.88, 0, 0, 0, 2.88, 0, 0, 0, 2.88, 0, 0, 0.0875)
+transform = Transform3D(2.88, 0, 0, 0, 2.88, 0, 0, 0, 2.88, 0, -0.15, 0.0875)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.20755, 0.138757)
