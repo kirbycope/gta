@@ -13,7 +13,7 @@ friction = 0.0
 bounce = 0.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kart"]
-size = Vector3(1.05, 0.3, 1.7)
+size = Vector3(0.95, 0.3, 1.2)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_livery"]
 albedo_color = Color(0.22, 0.45, 0.85, 1)
@@ -30,10 +30,10 @@ albedo_color = Color(0.85, 0.72, 0.6, 1)
 roughness = 0.75
 
 [sub_resource type="BoxMesh" id="BoxMesh_chassis"]
-size = Vector3(1.05, 0.3, 1.7)
+size = Vector3(0.8, 0.3, 1.2)
 
 [sub_resource type="BoxMesh" id="BoxMesh_nose"]
-size = Vector3(0.62, 0.18, 0.42)
+size = Vector3(0.5, 0.18, 0.3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_seat"]
 size = Vector3(0.5, 0.46, 0.14)
@@ -69,22 +69,22 @@ mesh = SubResource("BoxMesh_chassis")
 surface_material_override/0 = SubResource("StandardMaterial3D_livery")
 
 [node name="Nose" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.92)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.5)
 mesh = SubResource("BoxMesh_nose")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="SeatBack" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -0.45)
 mesh = SubResource("BoxMesh_seat")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="Driver" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, -0.36)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, -0.26)
 mesh = SubResource("CapsuleMesh_driver")
 surface_material_override/0 = SubResource("StandardMaterial3D_driver")
 
 [node name="FrontLeft" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.19, 0.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0.19, 0.42)
 
 [node name="Tyre" type="MeshInstance3D" parent="FrontLeft"]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
@@ -92,7 +92,7 @@ mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="FrontRight" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.19, 0.62)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42, 0.19, 0.42)
 
 [node name="Tyre" type="MeshInstance3D" parent="FrontRight"]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
@@ -100,7 +100,7 @@ mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="RearLeft" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.19, -0.66)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 0.19, -0.42)
 
 [node name="Tyre" type="MeshInstance3D" parent="RearLeft"]
 transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
@@ -108,7 +108,7 @@ mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="RearRight" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.19, -0.66)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.44, 0.19, -0.42)
 
 [node name="Tyre" type="MeshInstance3D" parent="RearRight"]
 transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
@@ -116,7 +116,7 @@ mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
 [node name="Seat" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.36)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.26)
 
 [node name="VehicleCamera" parent="." instance=ExtResource("4_camera")]
 script = ExtResource("7_mk_camera")

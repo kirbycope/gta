@@ -112,15 +112,15 @@ class SceneTest(unittest.TestCase):
     def _manifest(self) -> dict:
         poses = {pose: {"files": [f"{pose}_{i:02d}.png" for i in range(35)]} for pose in mk.SPRITE_KART_POSES}
         poses["ring_level"] = {"files": [f"ring_level_{i:02d}.png" for i in range(20)]}
-        return {"size": {"pixel_size_for_1_4_m_frame": 0.021875}, "poses": poses}
+        return {"size": {"pixel_size_as_game": 0.025424}, "poses": poses}
 
-    def test_scene_lists_every_frame_once_at_the_1_4_m_pixel_size(self) -> None:
+    def test_scene_lists_every_frame_once_at_the_games_own_size(self) -> None:
         text = mk.kart_scene_text(self._manifest(), "res://k/toad", "res://s/mk_sprite_kart.gd", "uid://abc")
         self.assertIn("[gd_scene load_steps=337 format=3]", text)
         self.assertEqual(text.count('type="Texture2D"'), 9 * 35 + 20)
         self.assertIn('uid="uid://abc" path="res://s/mk_sprite_kart.gd"', text)
         self.assertIn('[node name="MkSpriteKart" type="Sprite3D"]', text)
-        self.assertIn("pixel_size = 0.021875", text)
+        self.assertIn("pixel_size = 0.025424", text)
         self.assertIn('path="res://k/toad/level_34.png"', text)
         self.assertIn("spin_ring = Array[Texture2D]([ExtResource(", text)
         for pose in mk.SPRITE_KART_POSES:

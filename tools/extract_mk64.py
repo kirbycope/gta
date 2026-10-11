@@ -741,8 +741,8 @@ def res_path(path: Path, root: Path) -> str:
 
 def kart_scene_text(manifest: dict, frames_res_dir: str, script_res: str, script_uid: str) -> str:
     """A drop-in kart scene for ``MkAssets.kart_model``: one MkSpriteKart with
-    the character's frames in its pose arrays, by path, at the pixel size that
-    draws the 64 pixel frame 1.4 m tall."""
+    the character's frames in its pose arrays, by path, at the size the game
+    draws them: 1.5 m for the 59 rows that reach its screen."""
     ext: list[str] = []
     ids: dict[str, str] = {}
 
@@ -765,7 +765,7 @@ def kart_scene_text(manifest: dict, frames_res_dir: str, script_res: str, script
              f'[ext_resource type="Script"{uid} path="{script_res}" id="1_script"]',
              *ext, "",
              '[node name="MkSpriteKart" type="Sprite3D"]',
-             f"pixel_size = {manifest['size']['pixel_size_for_1_4_m_frame']}",
+             f"pixel_size = {manifest['size']['pixel_size_as_game']}",
              'script = ExtResource("1_script")',
              *properties, ""]
     return "\n".join(lines)
