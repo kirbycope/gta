@@ -56,6 +56,7 @@ signal item_used(item: int) ## This kart used the item in its slot.
 ## decoration keeps it.
 @export var stock_model_parts: Array[NodePath] = [
 	^"Chassis", ^"Nose", ^"SeatBack", ^"Driver",
+	^"FrontLeft/Tyre", ^"FrontRight/Tyre", ^"RearLeft/Tyre", ^"RearRight/Tyre",
 ]
 @export_group("")
 
@@ -758,6 +759,12 @@ func _brake_frame() -> void:
 
 
 # --- The force (func_80030150) ---------------------------------------------------------------------------------------
+
+## The gradient under the kart in degrees, nose down positive, as the game's
+## [code]slopeAccel[/code] reads it; the sprite kart picks its pitch pose from this.
+func pitch_degrees() -> float:
+	return _slope_degrees()
+
 
 ## The gradient under the kart in degrees, negative uphill, as [code]slopeAccel[/code] reads.
 func _slope_degrees() -> float:

@@ -199,6 +199,21 @@ A replacement kart stands in for the whole stock body, so the boxes and the caps
 than left inside it. A replacement driver stands in for the figure alone, because a kart model that
 already has somebody sitting in it does not want a second one.
 
+Mario Kart 64's own karts are not models at all. Each character's kart was rendered once from a half
+ring of angles in nine poses, the kart pitched nose up or nose down by the slope under it (there is
+no wheels-turned pose; steering and the drift show as the slide angle added to the view angle), and
+the game draws the frame nearest the angle the camera sees the kart from, mirrored for the half of
+the ring it did not store: twenty frames 2.86 degrees apart out to 57 degrees from behind, then
+nine degrees apart to head on, with a separate ring of twenty for a spin-out (`func_8002934C` and
+`func_80029200` in the decompilation's `src/player_controller.c`). `tools/extract_mk64.py` reads
+those frames out of your ROM into `karts/<character>/` (a `manifest.json` each lists every pose,
+frame and angle) and writes `karts/<roster key>.tscn` for each driver: an `MkSpriteKart`, the
+addon's billboard that does the same picking from the frames in its arrays, placed by the mapping in
+`karts/roster.json` (light class to Toad, Peach and Yoshi, standard to Mario and Luigi, heavy to
+Donkey Kong, Wario and Bowser; change the file and rerun the script to reseat them). The frames are
+the game's data and stay in this git-ignored folder; the billboard script is the addon's and is
+tested with blank frames.
+
 Two things to know. This chassis drives along **+Z**, so a kart model is expected nose along +Z too;
 anything authored the other way round is turned with the kart's `model_yaw_degrees` export rather
 than by editing the file. And nothing checks scale or licence: a model that arrives ten times too big

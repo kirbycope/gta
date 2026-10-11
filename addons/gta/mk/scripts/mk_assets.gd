@@ -27,6 +27,11 @@ extends RefCounted
 ##   sounds/drift.ogg        the drift
 ## [/codeblock]
 ##
+## A kart entry may be a [code].tscn[/code] rather than a mesh: that is what
+## [code]tools/extract_mk64.py[/code] writes for the game's own karts, which are
+## rings of pre-rendered frames rather than models, as an [MkSpriteKart]
+## billboard with the frames in its arrays.
+##
 ## [b]Which way a model faces.[/b] This chassis drives along +Z, so a kart model
 ## is expected nose along +Z too. Anything authored the other way round is
 ## turned with [member MkCar.model_yaw_degrees] rather than by editing the
