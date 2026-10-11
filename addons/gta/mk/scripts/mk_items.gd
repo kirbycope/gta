@@ -23,10 +23,11 @@ extends RefCounted
 ## hundred, the rolling index makes consecutive draws non independent, and the
 ## race frame counter stirs it. [method draw] reproduces all three.
 ##
-## [b]The one thing this cannot ship.[/b] Those tables are not in the decomp
-## source. They are ROM data reached through a segment pointer, which is why the
-## decomp only ever names the symbol. [code]tools/extract_mk64.py[/code] reads
-## them out of your own copy of the game into
+## [b]The one thing this cannot ship.[/b] Those tables are not in the decomp's
+## C. They are ROM data reached through a segment pointer, a Torch asset entry
+## in the MIO0-compressed common data segment, which is why the decomp's source
+## only ever names the symbol. [code]tools/extract_mk64.py[/code] reads them out
+## of your own copy of the game into
 ## [code]item_curves.tres[/code]. Without that file the roulette falls back to
 ## [constant FALLBACK_CURVE], an even spread that is deliberately not the real
 ## odds and says so through [method has_real_odds], so a demo runs on a fresh

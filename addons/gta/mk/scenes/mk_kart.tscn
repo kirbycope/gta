@@ -137,6 +137,11 @@ pitch_scale = 1.6
 unit_size = 16.0
 max_distance = 70.0
 
+[node name="SFXDrift" type="AudioStreamPlayer3D" parent="."]
+volume_db = -10.0
+unit_size = 12.0
+max_distance = 50.0
+
 [node name="MkAi" type="Node" parent="."]
 script = ExtResource("2_ai")
 enabled = false

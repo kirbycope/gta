@@ -9,12 +9,14 @@ extends Resource
 ## appears in that position's hundred. [MkItems] explains the draw; this
 ## resource is the tables it draws from.
 ##
-## They are not in the decompilation. They live in the ROM behind a segment
-## pointer, which is why the decomp source only ever names the symbol
+## They are not in the decompilation's C. They live in the ROM's common data
+## segment, a MIO0 block the decomp lists as a Torch asset entry and reaches
+## through a segment pointer, which is why its source only ever names the symbol
 ## [code]common_grand_prix_human_item_curve[/code] without defining it.
 ## [code]tools/extract_mk64.py[/code] reads them out of your own copy of the game
-## and writes one of these; without that file [MkItems] falls back to an even
-## spread that is marked as not the real odds rather than passed off as them.
+## and writes one of these per mode; without the grand prix file [MkItems] falls
+## back to an even spread that is marked as not the real odds rather than passed
+## off as them.
 ##
 ## [member curves] is stored flat, [constant MkItems.CURVE_LENGTH] entries per
 ## position one after another, because that is the shape the ROM holds and

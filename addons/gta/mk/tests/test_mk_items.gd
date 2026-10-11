@@ -82,6 +82,40 @@ func test_the_placeholder_odds_say_they_are_placeholder_odds() -> void:
 	assert_gt(MkItems.FALLBACK_CURVE.size(), 0, "but a draw still produces something")
 
 
+func test_the_extracted_tables_are_the_games_own() -> void:
+	# only on a machine where tools/extract_mk64.py has been run against a ROM;
+	# the file is git-ignored, so a fresh clone has nothing to check here
+	if not MkItems.has_real_odds():
+		pending("no item_curves.tres extracted on this machine")
+		return
+	var curves: Resource = load(MkItems.CURVES_PATH)
+	assert_true(curves is MkItemCurves, "the extractor writes an MkItemCurves")
+	if not curves is MkItemCurves:
+		return
+	var tables: MkItemCurves = curves as MkItemCurves
+	assert_eq(tables.mode, &"grand_prix_human", "the file MkItems loads is the grand prix human one")
+	assert_eq(tables.positions, MkConst.RACERS, "one table per finishing position")
+	assert_eq(tables.curves.size(), MkConst.RACERS * MkItems.CURVE_LENGTH,
+		"a hundred entries for each of the eight positions, back to back")
+	assert_eq(tables.source_sha1.length(), 40, "traceable to the ROM it came from")
+	for rank in range(MkConst.RACERS):
+		var curve: PackedInt32Array = MkItems.curve_for_rank(rank)
+		assert_eq(curve.size(), MkItems.CURVE_LENGTH, "position %d is a hundred long" % (rank + 1))
+		for item: int in curve:
+			assert_between(item, MkItems.Item.HAZARD, MkItems.Item.SUPER_BOOST,
+				"position %d hands out a real item, never an empty slot" % (rank + 1))
+	# the shape the game is known for: the leader never gets the heavy items and
+	# the back marker lives on them, which is what tells a real table from the
+	# placeholder spread
+	var leader: Dictionary = tables.odds_for_rank(0)
+	var last: Dictionary = tables.odds_for_rank(MkConst.RACERS - 1)
+	for heavy: int in [MkItems.Item.INVINCIBILITY, MkItems.Item.JOLT, MkItems.Item.LEADER_SHOT]:
+		assert_false(leader.has(heavy), "first place never draws %s" % MkItems.display_name(heavy))
+		assert_true(last.has(heavy), "eighth place can draw %s" % MkItems.display_name(heavy))
+	assert_true(leader.has(MkItems.Item.HAZARD), "first place mostly gets hazards")
+	assert_false(last.has(MkItems.Item.HAZARD), "eighth place never gets a single hazard")
+
+
 func test_the_super_boost_runs_for_the_games_own_twenty_seconds() -> void:
 	assert_eq(MkItems.SUPER_BOOST_FRAMES, 600, "consume_item sets the timer to 0x258")
 	assert_almost_eq(MkConst.frames(MkItems.SUPER_BOOST_FRAMES), 20.0, 0.001,

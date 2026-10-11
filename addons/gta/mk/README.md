@@ -103,9 +103,11 @@ This is the one thing the demo cannot ship, and it says so on screen rather than
 Mario Kart 64 does not roll weighted dice. It keeps a flat hundred entry table for each finishing
 position and reads whatever sits at the index its rolling counter lands on, so the odds for a
 position are that table. `MkItems.draw` reproduces that exactly, rolling index and all. The tables
-themselves are not in the decompilation: it names the symbol
-`common_grand_prix_human_item_curve` but never defines it, because the data is reached through a
-segment pointer and lives in the ROM.
+themselves are not in the decompilation's C: it names the symbol
+`common_grand_prix_human_item_curve` and reaches it through a segment pointer, and the data is a
+Torch asset entry (`yamls/us/common_data.yml`) that the build reads out of the ROM, from the common
+data segment, 0x0D, a single MIO0 block at ROM offset 0x132B50, with the grand prix human tables at
+0x8150 inside it and the CPU, versus and battle tables after them.
 
 `tools/extract_mk64.py` reads them out of a ROM you own:
 
@@ -113,13 +115,20 @@ segment pointer and lives in the ROM.
 python tools/extract_mk64.py "Mario Kart 64 (U) [!].z64"
 ```
 
-It verifies the ROM against the three builds the decompilation supports, searches for the tables both
-in the clear and inside every MIO0 block, and writes `addons/gta/mk/assets/item_curves.tres`
-if it finds them. On the US ROM it does not: the tables are not stored in the clear, and matching the
-decomp's own published course vertices against the ROM the same way also finds nothing, so both sit
-behind the game's segment scheme rather than being addressable directly. The script reports that and
-writes nothing rather than inventing a table. Until it finds one, the demo draws from a clearly
-marked even spread and the HUD says so.
+It verifies the ROM against the three builds the decompilation supports, decompresses that segment
+(and, for a build that keeps it elsewhere, every other MIO0 block, checking each for the same
+layout), validates every hundred (sixteen item ids, no empty slots, the leader without a star,
+lightning or blue shell and the back marker with all three) and writes
+`addons/gta/mk/assets/item_curves.tres` for the grand prix human tables, which `MkItems` loads, and
+beside it `item_curves_grand_prix_cpu.tres`, three versus files and `item_curves_battle.tres`, which
+nothing reads yet. Each hundred is stored sorted (thirty bananas, five bunches, thirty green
+shells...), and the rolling index does the shuffling at run time; the earlier version of the script
+reached the block and rejected it for that very reason. The folder is git-ignored: the tables are the
+game's data, built from your copy, and are not redistributed here. Without the file the demo draws
+from a clearly marked even spread and the HUD says so; with it, first place is 30 bananas, 30 green
+shells, 10 fake boxes, 10 mushrooms and five each of bunches, triple greens, red shells and Boos, and
+last place is 30 stars, 20 triple reds, 20 lightning, 15 blue shells, 10 super mushrooms and 5 triple
+mushrooms.
 
 ## The course is one path
 

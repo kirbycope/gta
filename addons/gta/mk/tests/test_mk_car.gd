@@ -63,6 +63,13 @@ func test_the_body_is_the_models_and_not_the_physics_engines() -> void:
 	assert_true(_kart.lock_rotation, "and the pose is the facing, never a tumble")
 
 
+func test_the_kart_has_a_player_for_each_sound_a_drop_in_can_replace() -> void:
+	# MkAssets fills these from assets/sounds/<name>.ogg; the drift one was missing from the scene,
+	# so a dropped-in drift sound was loaded and never played
+	for sound: String in ["SFXEngine", "SFXBoost", "SFXDrift"]:
+		assert_not_null(_kart.get_node_or_null(NodePath(sound)), "%s is in the kart scene" % sound)
+
+
 func test_top_speed_comes_from_the_roster_and_the_engine_class() -> void:
 	assert_almost_eq(_kart.top_speed(), MkRoster.top_speed(&"rook", &"150cc"), 0.0001, "the kart's ceiling is its driver's")
 	assert_almost_eq(_kart.ceiling_speed_units(), 320.0, 0.0001, "a standard kart at 150cc runs to a topSpeed of 320")
