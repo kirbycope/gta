@@ -1,18 +1,19 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_car.gd" id="1_kart"]
 [ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_ai.gd" id="2_ai"]
 [ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_item_slot.gd" id="3_slot"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/vehicle_camera.tscn" id="4_camera"]
+[ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_camera.gd" id="7_mk_camera"]
 [ext_resource type="AudioStream" uid="uid://gfahw4ac4782" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Running_1.ogg" id="5_engine"]
 [ext_resource type="AudioStream" uid="uid://i8id81xj4u0r" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Start_3.ogg" id="6_boost"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kart"]
-friction = 0.6
-bounce = 0.15
+friction = 0.0
+bounce = 0.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kart"]
-size = Vector3(1.05, 0.42, 1.7)
+size = Vector3(1.05, 0.3, 1.7)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_livery"]
 albedo_color = Color(0.22, 0.45, 0.85, 1)
@@ -48,19 +49,18 @@ height = 0.16
 radial_segments = 14
 rings = 0
 
-[node name="Kart" type="VehicleBody3D" node_paths=PackedStringArray("wheels")]
+[node name="Kart" type="VehicleBody3D"]
 mass = 120.0
 physics_material_override = SubResource("PhysicsMaterial_kart")
-center_of_mass_mode = 1
-center_of_mass = Vector3(0, -0.28, 0)
+gravity_scale = 0.0
+lock_rotation = true
 contact_monitor = true
 max_contacts_reported = 8
 can_sleep = false
 script = ExtResource("1_kart")
-wheels = [NodePath("FrontLeft"), NodePath("FrontRight"), NodePath("RearLeft"), NodePath("RearRight")]
 
 [node name="Collision" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 shape = SubResource("BoxShape3D_kart")
 
 [node name="Chassis" type="MeshInstance3D" parent="."]
@@ -83,72 +83,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, -0.36)
 mesh = SubResource("CapsuleMesh_driver")
 surface_material_override/0 = SubResource("StandardMaterial3D_driver")
 
-[node name="FrontLeft" type="VehicleWheel3D" parent="."]
+[node name="FrontLeft" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.19, 0.62)
-use_as_steering = true
-wheel_roll_influence = 0.08
-wheel_radius = 0.19
-wheel_rest_length = 0.24
-wheel_friction_slip = 3.4
-suspension_travel = 0.22
-suspension_stiffness = 160.0
-suspension_max_force = 7000.0
-damping_compression = 0.6
-damping_relaxation = 0.75
 
 [node name="Tyre" type="MeshInstance3D" parent="FrontLeft"]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
-[node name="FrontRight" type="VehicleWheel3D" parent="."]
+[node name="FrontRight" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.19, 0.62)
-use_as_steering = true
-wheel_roll_influence = 0.08
-wheel_radius = 0.19
-wheel_rest_length = 0.24
-wheel_friction_slip = 3.4
-suspension_travel = 0.22
-suspension_stiffness = 160.0
-suspension_max_force = 7000.0
-damping_compression = 0.6
-damping_relaxation = 0.75
 
 [node name="Tyre" type="MeshInstance3D" parent="FrontRight"]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
-[node name="RearLeft" type="VehicleWheel3D" parent="."]
+[node name="RearLeft" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.19, -0.66)
-use_as_traction = true
-wheel_roll_influence = 0.08
-wheel_radius = 0.22
-wheel_rest_length = 0.24
-wheel_friction_slip = 3.6
-suspension_travel = 0.22
-suspension_stiffness = 160.0
-suspension_max_force = 7000.0
-damping_compression = 0.6
-damping_relaxation = 0.75
 
 [node name="Tyre" type="MeshInstance3D" parent="RearLeft"]
 transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
 mesh = SubResource("CylinderMesh_wheel")
 surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 
-[node name="RearRight" type="VehicleWheel3D" parent="."]
+[node name="RearRight" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.19, -0.66)
-use_as_traction = true
-wheel_roll_influence = 0.08
-wheel_radius = 0.22
-wheel_rest_length = 0.24
-wheel_friction_slip = 3.6
-suspension_travel = 0.22
-suspension_stiffness = 160.0
-suspension_max_force = 7000.0
-damping_compression = 0.6
-damping_relaxation = 0.75
 
 [node name="Tyre" type="MeshInstance3D" parent="RearRight"]
 transform = Transform3D(0, 1.16, 0, -1.16, 0, 0, 0, 0, 1.16, 0, 0, 0)
@@ -159,6 +119,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_trim")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.36)
 
 [node name="VehicleCamera" parent="." instance=ExtResource("4_camera")]
+script = ExtResource("7_mk_camera")
 
 [node name="ItemSlot" type="Node" parent="."]
 script = ExtResource("3_slot")

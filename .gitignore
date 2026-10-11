@@ -43,3 +43,4 @@ addons/gut/
 recordings/
 *.avi
 *.mp4
+/watchdog/

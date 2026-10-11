@@ -19,12 +19,14 @@ extends RefCounted
 ## heavy    2.0 2.0 2.0 1.6 1.0 1.0 1.0 1.8 1.8 1.2   slow midrange, strong top end
 ## [/codeblock]
 ##
-## Each row is ten bands across the kart's own top speed, and
-## [code]player_accelerate[/code] scales the first seven by 3.2 and the last
-## three by 2.8. A light kart pulls away hardest in the middle of the rev range
-## and keeps the best top speed; a heavy one is dead through the midrange and
-## then comes back strong. That is the whole handling difference between the
-## game's characters, and it is reproduced exactly.
+## Each row is ten bands across the kart's own top speed. A person's kart adds
+## the row as it is ([code]player_accelerate_alternative[/code]); a computer's
+## scales the first seven bands by 3.2 and the last three by 2.8
+## ([code]player_accelerate[/code]), which is the game's rubber band. A light
+## kart pulls away hardest in the middle of the rev range and keeps the best top
+## speed; a heavy one is dead through the midrange and then comes back strong.
+## That is the whole handling difference between the game's characters, and it
+## is reproduced exactly.
 ##
 ## [constant KART_BOX] is the one place the classes do not line up neatly. The
 ## decomp's [code]gKartBoundingBoxSizeTable[/code] gives 6.0 to only two of the
@@ -38,8 +40,9 @@ const CURVES: Dictionary = {
 	&"heavy": [2.0, 2.0, 2.0, 1.6, 1.0, 1.0, 1.0, 1.8, 1.8, 1.2],
 }
 
-## [code]player_accelerate[/code] scales the curve by band: 3.2 up to band 6,
-## then 2.8 for the last three.
+## [code]player_accelerate[/code], the computer drivers' path, scales the curve
+## by band: 3.2 up to band 6, then 2.8 for the last three. A person's kart adds
+## the row unscaled; see [method acceleration_fraction] and [MkCar].
 const CURVE_SCALE_LOW: float = 3.2
 const CURVE_SCALE_HIGH: float = 2.8
 const CURVE_SCALE_SPLIT: int = 7 ## The first band that takes the lower scale.
@@ -94,13 +97,16 @@ static func top_speed(driver: StringName, engine_class: StringName = &"150cc") -
 	return MkConst.top_speed(engine_class, is_light(driver))
 
 
-## How much speed [param driver] gains this frame, as a fraction of their top
-## speed per second, at [param speed_fraction] of top speed.
-##
-## This is [code]player_accelerate[/code] in one expression. The game works in
-## its own topSpeed units and adds to them once a frame; dividing by the top
-## speed makes the answer a fraction, and multiplying by the frame rate makes it
-## per second, so it can drive a Godot kart at any refresh rate.
+## The ten band curve for [param driver], or empty when they are not in the roster.
+static func curve_for(driver: StringName) -> Array:
+	return CURVES.get(kart_class(driver), [])
+
+
+## What a computer driver's kart adds to its currentSpeed this frame at
+## [param speed_fraction] of top speed: [code]player_accelerate[/code] in one
+## expression, the band's value times its scale. A person's kart adds the band
+## unscaled ([code]player_accelerate_alternative[/code]), which [MkCar] does from
+## [method curve_for].
 static func acceleration_fraction(driver: StringName, speed_fraction: float) -> float:
 	var curve: Array = CURVES.get(kart_class(driver), [])
 	if curve.is_empty():

@@ -231,6 +231,7 @@ func _put_back(kart: MkCar) -> void:
 	kart.angular_velocity = Vector3.ZERO
 	kart.current_speed = 0.0
 	kart.global_transform = Transform3D(basis.orthonormalized(), here + Vector3.UP * RECOVERY_HEIGHT)
+	kart.sync_from_transform()
 	kart_recovered.emit(kart)
 
 
@@ -289,11 +290,13 @@ func _freeze_karts(held: bool) -> void:
 		kart.freeze = held
 		kart.set_drive_input(false, held, false, 0.0)
 		var ai: Node = kart.get_node_or_null(^"MkAi")
-		if ai != null:
-			ai.set(&"enabled", not held)
 		var human: Node = kart.get_node_or_null(^"HumanDriver")
 		if human != null:
 			human.set(&"enabled", not held)
+		# a kart with a person at the pad keeps its brain off: two hands on one pad
+		# re-arm the hop every frame and the kart bunny-hops down the straight
+		if ai != null:
+			ai.set(&"enabled", not held and human == null)
 
 
 ## Measure everybody's progress along the curve, count any laps that were

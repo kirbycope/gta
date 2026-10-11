@@ -108,12 +108,12 @@ func _drive() -> void:
 
 	var to_aim: Vector3 = (aim - _kart.global_position).slide(Vector3.UP).normalized()
 	var facing: Vector3 = _kart.forward().slide(Vector3.UP).normalized()
-	# Positive steer is left, matching the project's own move axis and the
-	# chassis: a kart given steering +0.5 was measured turning left. So the sign
-	# is taken off the kart's own right vector, and negated, rather than from a
-	# cross product whose handedness is easy to get backwards.
-	var right: Vector3 = _kart.global_transform.basis.x
-	var steer: float = -signf(to_aim.dot(right)) * facing.angle_to(to_aim)
+	# Positive steer is left, matching the project's own move axis and the kart:
+	# the stick is mirrored into the game's own right-positive reading inside
+	# MkCar. So an aim point on the kart's right wants a negative steer, and the
+	# right is the kart's own, not the basis's X, which with the nose on +Z is
+	# the left hand side.
+	var steer: float = -signf(to_aim.dot(_kart.right())) * facing.angle_to(to_aim)
 	steer = clampf(steer / deg_to_rad(35.0), -1.0, 1.0)
 
 	var bend: float = rad_to_deg((further - aim).slide(Vector3.UP).normalized()
@@ -165,21 +165,19 @@ func _radius_through(a: Vector3, b: Vector3, c: Vector3) -> float:
 	return (ab * bc * ca) / (4.0 * area)
 
 
-## The catch up speed, when this kart is far enough back to have earned it.
-##
-## The game's own figure cannot be used directly: it lives in an accumulator
-## whose conversion to the units a kart's speed is kept in the decomp never
-## states, and reading 380 as a topSpeed would put a trailing kart above every
-## ceiling in the table. So what is reproduced is the shape, a trailing kart
-## being pulled toward its ceiling at [constant MkConst.CPU_CATCHUP_RATE] a
-## frame rather than having to build up to it, and the magnitude is left alone.
+## The catch up, when this kart is far enough back to have earned it: the
+## game's [code]CPU_FAST_EFFECT[/code], which [MkCar] turns into the 380 of
+## extra force [code]func_80030150[/code] gives a computer kart (fourteen
+## percent on a 150cc force of 4096), and which the game switches on for a kart
+## that has had somebody ahead of it for 61 frames over 50 km/h
+## ([code]func_8002BF4C[/code]). The place count here stands in for that rule.
 func _apply_catchup() -> void:
+	_kart.is_cpu = true
 	if _race == null or catchup_places <= 0:
+		_kart.cpu_fast = false
 		return
-	if _race.rank_of(_kart) < catchup_places:
-		return
-	_kart.current_speed = move_toward(
-		_kart.current_speed, _kart.ceiling_speed_units(), MkConst.CPU_CATCHUP_RATE)
+	var behind: bool = _race.rank_of(_kart) >= catchup_places
+	_kart.cpu_fast = behind and MkConst.ms_to_kmh(absf(_kart.forward_speed())) >= MkConst.CPU_CATCHUP_MIN_KMH
 
 
 ## Use whatever is in the slot once it is worth using.
@@ -189,7 +187,7 @@ func _use_items(_delta: float) -> void:
 	if MkItems.is_boost(_slot.item):
 		# a boost is wasted in a corner, so wait for the kart to be pointing
 		# roughly where it is going
-		if absf(_kart.steering) < deg_to_rad(8.0):
+		if absf(_kart.turn_angle) < deg_to_rad(8.0):
 			_slot.use()
 		return
 	if MkItems.is_dropped(_slot.item):

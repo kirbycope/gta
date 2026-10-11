@@ -20,36 +20,71 @@ Open `addons/gta/mk/scenes/demo.tscn` and press play.
 |---|---|---|
 | Steer | A / D | Left stick |
 | Accelerate | Space | Right trigger |
-| Brake and reverse | Shift | Left trigger |
-| Drift, and hop into one | Q | Left bumper |
+| Brake, and with S held at a standstill, reverse | Shift | Left trigger |
+| Hop, and over 20 km/h a drift | Q | Left bumper |
 | Use the item you are holding | T | Right bumper |
 | Camera | Mouse | Right stick |
 
 ## How it drives
 
-A kart is not a car with the gearbox taken out, so `MkCar` is built on `Vehicle` directly rather
-than on `GtaCar`. Three things make up the whole feel, and all three are Mario Kart 64's own.
+A kart is not a car with the gearbox taken out, and `MkCar` is not built on a wheel of any kind.
+Mario Kart 64's kart is a point with a facing, moved by one line a frame, and that line is what
+`mk_car.gd` runs, in the game's own thirtieths of a second:
 
-**A ten band acceleration curve.** The game holds a speed in its own units and, once a frame, adds to
-it from a table picked by how close to top speed it already is. There are eight of those tables in
-the game and they resolve to exactly three distinct rows, which is why `MkRoster` has three classes
-rather than eight characters. A light kart pulls hardest through the midrange and keeps the highest
-top speed; a heavy one is dead in the middle and comes back strong near the top.
+```
+v += (force * facing + gravity + lateral - v * 0.12 * 5800) / 6000
+```
 
-**A hop into a drift.** Holding the drift button with the stick over hops the kart and starts a
-slide. The longer it is held the more charge it builds, and letting go at or past the second step
-pays a mini turbo lasting the game's own 31 frames. A drifting kart also keeps far more of its yaw
-rate as drive force than a turning one does, which is why drifting a corner is quicker than steering
-it even before the turbo lands.
+Everything the game feels like is in that line. The drag term and the divisor give the velocity an
+8.6 frame lag behind the facing: turn the nose and the kart goes on the way it was going for a third
+of a second, which is the slide; stop turning and it settles. The kart settles where the force
+balances the drag, 70.6 km/h at 150cc, and every number that decides the force and the facing is in
+`MkConst` with the line of the decompilation it came from.
+
+**The throttle fills a number.** With A held, `player_accelerate_alternative` adds the character's
+ten band table to `currentSpeed` once a frame, 2.0 a frame for a standard kart through the low bands
+and 0.4 through the last, so 0 to a 150cc top of 320 takes 323 frames, nearly eleven seconds, most of
+it in the last bands; the force is `currentSpeed` squared over 25. A computer's kart runs the CPU path, `player_accelerate`, which scales the table by 3.2, and that
+gap is the game's rubber band. Off the throttle the number loses 1.0 a frame; B takes 1.2, 2.5 once the
+brake slide has counted up, and 4.0 under 20 km/h.
+
+**The force is cut by the turn, the surface and the slope** (`func_80030150`). Every degree the kart
+slides costs a hundredth of the force while steering and only 0.004 while drifting, which is why a
+drift is faster than a steered corner; each tyre on grass costs 0.09 (0.03 for one of them), so four
+on grass is thirty percent gone; a slope costs 0.026 over 3 per degree; under 20 km/h the kart is given
+a fifth more.
+
+**Steering turns the facing, and only the facing** (`func_80033AE0`). The stick is smoothed through the
+game's steering ladder, divided by `8 + currentSpeed / 50`, scaled by a per km/h table and the
+character's handling figure, and that is the yaw rate: about 50 degrees a second at top speed with a
+full stick, drawn by the velocity lagging the nose, not by a wheel. There is no steering lock.
+
+**The hop is the drift.** R hops the kart (`kart_hop`: 0.93 units a frame with a jerk of 0.03, about
+half a metre), and over 20 km/h the hop is a drift at once. The drift lasts while R is held and the
+kart is sliding more than six degrees; while it does, the stick can only pick a point between 40 and
+53 on the drift's own side, inside or outside, and cannot straighten it.
+
+**The mini turbo is charged by the wiggle, not the hold** (`update_drift_state_counter`). With the
+kart sliding one way, the charge counter climbs only while the stick is pushed the other way;
+bringing it back after 18 or more frames bumps the charge. Two wiggles and letting go of R pays the
+turbo: 580 of force on top of the kart's 4096 for 31 frames, fourteen percent, about 80 km/h. A
+mushroom is 400 for 80 frames and goes past the loss. A drift held to the outside at its counter cap
+costs 4.0 a frame and halves the integrator's response: the game punishes a held drift.
 
 **Items by rank.** Item boxes fill the slot, and what comes out depends on where you are lying. See
 the item odds below for the part of this that could not be shipped.
+
+**The camera is the game's too** (`mk_camera.gd`): 38.5 units behind, 11.6 above, looking 19.2 ahead,
+and its yaw chases the kart's by a capped step, 500 units a frame with the stick centred and less
+while steering, so the kart turns across the screen before the view comes round; through a drift it
+leads the kart by twelve degrees.
 
 ## Where the numbers come from
 
 `MkConst` and `MkRoster` are read out of the [mk64
 decompilation](https://github.com/n64decomp/mk64) rather than tuned by feel, the same way
-`RlConst` is read out of RocketSim. Each constant names the file and symbol it came from.
+`RlConst` is read out of RocketSim. Each constant names the file and symbol it came from, and
+`docs/source_review.md` in this repository is the read of the kart code the port was rewritten from.
 
 The unit scale is derived rather than guessed, and it is worth setting out because everything else
 rests on it. `func_80030150` converts a kart's speed for the speedometer with `(speed / 18) * 216`,
@@ -57,13 +92,6 @@ which is speed times twelve, and the speedometer reads km/h. So one game unit pe
 and at the game's 30 fps that makes one game unit a ninth of a metre. Two independent checks agree:
 the kart's own collision size of 5.5 units comes out 1.22 m across, which is a real go-kart, and the
 game's courses come out the size of real circuits.
-
-From there the drive model falls out. Velocity is integrated as
-`v += ((force - v * 0.12 * kartFriction) / 6000) / divisor`, so a kart settles where drive force
-balances drag, at `force / (0.12 * 5800)`. The force is `topSpeed * topSpeed / 25`. That this is
-really the relationship is not inference: the decomp's own precomputed force table holds 3364, 3844,
-4096 and 2401, which are exactly 290, 310, 320 and 245 squared over 25. A 150cc kart therefore
-settles at 70.6 km/h, and `test_kart_const.gd` asserts every one of those figures.
 
 What could not be read out of the decompilation is listed in `MkConst.UNSOURCED` rather than
 invented, the same way `TwRoster` handles its gaps.
@@ -175,6 +203,12 @@ which is the other reason it is not part of the repository.
   shot flies at whoever is winning instead of arcing over the field, and the jolt has no shrinking.
 - There is one course, one engine class in practice, and no grand prix around it: no points, no cups
   and no results table between races.
+- The computer drivers run the human kart model with the CPU acceleration scaling and the catch-up
+  force; the game's own CPU path (`control_cpu_movement`) steers along a baked path and is not ported.
+- Walls stop the kart and cost the game's 6 units a frame; the game's own terrain response is not
+  ported, and nor is the landing tumble. Another kart is not a wall: a bump between karts is left to
+  the physics bodies, because charging the wall deceleration for it stalled the whole field at the
+  first corner, and the game's own kart-to-kart response is not ported either.
 - No split screen, and nothing here has been driven over a network. The `Vehicle` authority handling
   underneath is intact and the item slot and boxes are written for it, but it has not been played
   with two Steam clients.

@@ -102,5 +102,7 @@ func test_the_gaps_are_named_rather_than_filled_in() -> void:
 	var joined: String = " ".join(MkConst.UNSOURCED)
 	assert_string_contains(joined, "item probability curves",
 		"the item odds live in the ROM, and that is said out loud")
-	assert_string_contains(joined, "BOOST_SPEED_SCALE",
-		"the boost magnitude is a judgement, because the decomp's figure is in other units")
+	assert_string_contains(joined, "lateral kick",
+		"which way the game's lateral kick points is a reading of its matrix handedness, and that is said out loud")
+	assert_false("BOOST_SPEED_SCALE" in joined,
+		"the boost is no longer a judgement: the mini turbo's 580 and the mushroom's 400 are the decomp's own force figures")
