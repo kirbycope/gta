@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://addons/gta/rl/scripts/rl_car.gd" id="1_car"]
+[ext_resource type="PackedScene" uid="uid://jxnglojfa54t" path="res://addons/gta/rl/assets/fennec/fennec.gltf" id="7_fennec"]
 [ext_resource type="Script" path="res://addons/gta/rl/scripts/rl_ai.gd" id="2_ai"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/vehicle_camera.tscn" id="3_camera"]
 [ext_resource type="AudioStream" uid="uid://gfahw4ac4782" path="res://addons/gta/assets/gravitysound/Car Sound Effects/Driving/Engine Running_1.ogg" id="4_boost"]
@@ -42,6 +43,13 @@ max_contacts_reported = 8
 can_sleep = false
 script = ExtResource("1_car")
 wheels = [NodePath("FrontLeft"), NodePath("FrontRight"), NodePath("RearLeft"), NodePath("RearRight")]
+model_wheels = Array[NodePath]([NodePath("Car Rig/DEF-Wheel_Ft_L"), NodePath("Car Rig/DEF-Wheel_Ft_R"), NodePath("Car Rig/DEF-Wheel_Bk_L"), NodePath("Car Rig/DEF-Wheel_Bk_R")])
+model_paint = NodePath("Car Rig/DEF-Body/Body")
+model_accent = NodePath("Car Rig/DEF-Body/Paint")
+blockout_parts = Array[NodePath]([NodePath("Body"), NodePath("Nose"), NodePath("FrontLeft/Tyre"), NodePath("FrontRight/Tyre"), NodePath("RearLeft/Tyre"), NodePath("RearRight/Tyre"), NodePath("Model/Car Rig/DEF-Wheel_Ft_L/LF Brack"), NodePath("Model/Car Rig/DEF-WheelBrake_Ft_R"), NodePath("Model/Car Rig/DEF-WheelBrake_Bk_L"), NodePath("Model/Car Rig/DEF-WheelBrake_Bk_R")])
+
+[node name="Model" parent="." instance=ExtResource("7_fennec")]
+transform = Transform3D(2.88, 0, 0, 0, 2.88, 0, 0, 0, 2.88, 0, 0, 0.0875)
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.20755, 0.138757)

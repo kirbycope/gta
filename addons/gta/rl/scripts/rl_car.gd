@@ -51,6 +51,22 @@ const SURFACE_PROBE: float = 1.2 ## How far to feel for the surface under the wh
 const BOOST_PITCH_RANGE: Vector2 = Vector2(0.9, 1.25) ## Boost note, idle to flat out.
 
 @export var team: Team = Team.BLUE
+
+@export_group("Model")
+## The car model instanced in the scene; empty keeps the blockout boxes.
+@export var model: NodePath = ^"Model"
+## The model's wheel nodes, one per corner in the order of [member wheels];
+## each is moved under its physics wheel on ready. See [method _dress_with_model].
+@export var model_wheels: Array[NodePath] = []
+## The model mesh that takes the team's paint, and the one that takes the
+## darker trim of it.
+@export var model_paint: NodePath = ^""
+@export var model_accent: NodePath = ^""
+## The blockout meshes the scene carries for a car with no model, hidden when there is one.
+@export var blockout_parts: Array[NodePath] = [^"Body", ^"Nose", ^"FrontLeft/Tyre", ^"FrontRight/Tyre", ^"RearLeft/Tyre", ^"RearRight/Tyre"]
+@export var paint_blue: Color = Color(0.16, 0.42, 0.95)
+@export var paint_orange: Color = Color(0.98, 0.5, 0.12)
+@export_group("")
 @export var is_ai: bool = false ## An AI car ignores [method ride] and waits for [method set_rocket_input].
 
 @export_group("Rocket League Actions")
@@ -129,6 +145,49 @@ func _ready() -> void:
 	jumped.connect(_on_jumped)
 	dodged.connect(_on_dodged)
 	bumped.connect(_on_bumped)
+	_dress_with_model()
+
+
+## Put the car model's wheels on the physics wheels and paint it for the team.
+##
+## The model is a scene instanced under [member model], scaled so its wheelbase
+## is the Octane's; its body stays where it is and only dresses the hitbox.
+## Its wheels are separate nodes, one per corner in [member model_wheels] in
+## the order of [member wheels], and each is moved under its [VehicleWheel3D]
+## and centred on it, so it steers, spins and rides the suspension with the
+## physics wheel rather than sitting painted on the body. The blockout meshes
+## the scene carries for a car with no model are hidden. The mesh named by
+## [member model_paint] gets the team's colour, the way the real car's paint
+## finish follows the team.
+func _dress_with_model() -> void:
+	var dressed: Node3D = get_node_or_null(model) as Node3D
+	if dressed == null:
+		return
+	for path: NodePath in blockout_parts:
+		var part: Node3D = get_node_or_null(path) as Node3D
+		if part != null:
+			part.visible = false
+	for i: int in mini(wheels.size(), model_wheels.size()):
+		var wheel: VehicleWheel3D = wheels[i]
+		var corner: Node3D = dressed.get_node_or_null(model_wheels[i]) as Node3D
+		if wheel == null or corner == null:
+			continue
+		corner.reparent(wheel, true)
+		corner.position = Vector3.ZERO
+	var colour: Color = paint_blue if team == Team.BLUE else paint_orange
+	_finish(dressed.get_node_or_null(model_paint) as MeshInstance3D, colour)
+	_finish(dressed.get_node_or_null(model_accent) as MeshInstance3D, colour.darkened(0.45))
+
+
+## A metallic paint finish in [param colour] on [param mesh], if there is one.
+static func _finish(mesh: MeshInstance3D, colour: Color) -> void:
+	if mesh == null:
+		return
+	var finish := StandardMaterial3D.new()
+	finish.albedo_color = colour
+	finish.metallic = 0.35
+	finish.roughness = 0.45
+	mesh.material_override = finish
 
 
 ## The way the car is pointing. This chassis is built nose along positive z,

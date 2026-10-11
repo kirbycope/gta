@@ -536,3 +536,18 @@ func test_ball_cam_with_no_ball_on_the_pitch_locks_onto_nothing() -> void:
 	car.is_ball_cam = true
 	assert_null(car.chase_camera.look_target)
 	assert_true(car.is_ball_cam, "The setting stands even with nothing to point at")
+
+
+func test_the_model_dresses_the_hitbox_and_its_wheels_ride_the_physics_wheels() -> void:
+	# the Fennec is instanced under Model; on ready each of its wheel nodes moves under a
+	# VehicleWheel3D, centred on it, the blockout boxes hide, and the paint takes the team's colour
+	assert_not_null(car.get_node_or_null(^"Model"), "the Fennec is in the scene")
+	assert_false((car.get_node(^"Body") as Node3D).visible, "the hitbox box is hidden under the model")
+	for wheel: VehicleWheel3D in car.wheels:
+		var dressed: Array[Node] = wheel.find_children("*", "MeshInstance3D", true, false)
+		assert_gt(dressed.size(), 1, "%s carries a wheel mesh from the model as well as the hidden tyre" % wheel.name)
+		var corner: Node3D = wheel.get_child(wheel.get_child_count() - 1) as Node3D
+		assert_almost_eq(corner.position, Vector3.ZERO, Vector3.ONE * 0.001, "centred on the physics wheel")
+	var paint: MeshInstance3D = car.get_node(^"Model/Car Rig/DEF-Body/Body") as MeshInstance3D
+	assert_not_null(paint.material_override, "the paint is a team finish")
+	assert_eq((paint.material_override as StandardMaterial3D).albedo_color, car.paint_blue)

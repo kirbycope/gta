@@ -123,3 +123,17 @@ func test_the_prediction_is_capped_rather_than_running_forever() -> void:
 	var far: Vector3 = ball.predict(60.0)
 	var capped: Vector3 = ball.predict(RlBall.PREDICT_MAX_TIME)
 	assert_almost_eq(far.x, capped.x, 0.01, "Asking further ahead than the cap gives the cap")
+
+
+func test_the_ball_model_is_the_ball_s_size() -> void:
+	# the CGTrader model comes in at 4.2 mm across; scaled in the scene it has to match the collision sphere
+	var model: Node3D = ball.get_node_or_null(^"Model") as Node3D
+	assert_not_null(model, "the ball model is in the scene")
+	var drawn := AABB()
+	var first: bool = true
+	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		var box: AABB = ball.global_transform.affine_inverse() * (mesh.global_transform * mesh.get_aabb())
+		drawn = box if first else drawn.merge(box)
+		first = false
+	assert_almost_eq(drawn.size.x, RlConst.BALL_RADIUS * 2.0, 0.1, "as wide as the collision sphere")
+	assert_almost_eq(drawn.get_center(), Vector3.ZERO, Vector3.ONE * 0.05, "centred on the body")

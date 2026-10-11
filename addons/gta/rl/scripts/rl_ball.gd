@@ -23,7 +23,6 @@ signal touched(car: RlCar) ## A car hit the ball; the match credits goals from t
 const PREDICT_STEP: float = 1.0 / 60.0 ## Prediction runs at the physics tick.
 const PREDICT_MAX_TIME: float = 6.0 ## Nothing asks further ahead than this.
 
-@onready var _mesh: MeshInstance3D = $Mesh
 
 var _last_touch_by: RlCar = null ## Who hit it last, for crediting a goal.
 var _touch_cooldown: Dictionary = {} ## Car to seconds left, so one hit is not counted sixty times.

@@ -202,8 +202,11 @@ every action name, and `VehicleCamera` exports the lock-on's tilt limit.
 
 ## Known rough edges
 
-- The cars and the pitch are an untextured blockout. The car is an Octane sized box at the published
-  hitbox of 120.507 by 86.6994 by 38.6591 uu, not a model.
+- The pitch is an untextured blockout. The car is a Fennec model dressed over the published Octane
+  hitbox of 120.507 by 86.6994 by 38.6591 uu (the Fennec shares it), scaled so its wheelbase is the
+  Octane's and with its wheels moved onto the physics wheels, and the ball is a model of the game's
+  ball at 91.25 uu; both are credited in `CREDITS.md`. A car scene with no `Model` falls back to the
+  box the hitbox is.
 - The sound is the addon's own Gravity Sound car effects put to new use: an engine loop pitched by
   speed for boost, an engine start for the jump, a crash for impacts. They are placeholders that
   happen to be licensed and already here. A boost whoosh, a goal horn and a ball hit want real
