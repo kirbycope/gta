@@ -137,3 +137,19 @@ func test_the_ball_model_is_the_ball_s_size() -> void:
 		first = false
 	assert_almost_eq(drawn.size.x, RlConst.BALL_RADIUS * 2.0, 0.1, "as wide as the collision sphere")
 	assert_almost_eq(drawn.get_center(), Vector3.ZERO, Vector3.ONE * 0.05, "centred on the body")
+
+
+func test_the_ball_model_wears_the_scene_s_finishes_not_the_fbx_s_white() -> void:
+	# the FBX's two materials come in white with emission on, which is a blown-out blob; the import
+	# remaps them to the panel and band finishes beside the model
+	var model: Node3D = ball.get_node(^"Model") as Node3D
+	var names := {}
+	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		for surface: int in mesh.mesh.get_surface_count():
+			var material: BaseMaterial3D = mesh.mesh.surface_get_material(surface) as BaseMaterial3D
+			assert_not_null(material, "%s has a material" % mesh.name)
+			if material != null:
+				names[material.resource_path.get_file()] = true
+				assert_false(material.emission_enabled, "%s does not glow" % mesh.name)
+	assert_true(names.has("ball_side.tres"), "the panels wear the side finish: %s" % [names.keys()])
+	assert_true(names.has("ball_band.tres"), "the bands wear the band finish: %s" % [names.keys()])
