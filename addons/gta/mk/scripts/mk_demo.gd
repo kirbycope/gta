@@ -20,8 +20,8 @@ extends Node3D
 ## [b]The course[/b] is [code]scenes/mario_raceway.tscn[/code], Mario Raceway
 ## laid out from the game's own path, item box and tree data with a primitive
 ## road and walls in the shape of the real ones; see [MkCourse]. When
-## [code]tools/mk64_course.py[/code] has built the ripped course into the
-## git-ignored assets folder, the real thing stands in for the primitives.
+## the ripped course [code]tools/mk64_course.py[/code] builds is in the assets
+## folder, as it is here, the real thing stands in for the primitives.
 
 @export var player_kart: NodePath = ^"Karts/Kart1" ## Which kart you drive.
 

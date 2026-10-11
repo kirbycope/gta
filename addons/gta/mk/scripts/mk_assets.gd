@@ -9,9 +9,10 @@ extends RefCounted
 ## This class is the seam for replacing them. Put a model or a sound in
 ## [constant ROOT] under the name of the thing it replaces and it is picked up
 ## the next time the scene runs; take it away again and the primitives come
-## back. Nothing here is required, nothing is fetched, and nothing is committed:
-## [constant ROOT] is git-ignored, the same way the Twisted Metal demo treats the
-## files [code]tools/extract_tm2.py[/code] builds off your own disc.
+## back. Nothing here is required and nothing is fetched: [constant ROOT] is
+## committed with the game's own karts and course in it, the same way the
+## Twisted Metal demo commits the level [code]tools/extract_tm2.py[/code]
+## builds off the disc.
 ##
 ## [b]The layout.[/b] Every entry is optional and the extension may be any that
 ## Godot imports, so a [code].glb[/code] and a [code].obj[/code] are both fine.

@@ -5,12 +5,12 @@ extends Node3D
 ##
 ## The scene is the primitive course and it is what a fresh clone races on:
 ## the road is a slab extruded along the real road's centre line, the walls
-## are boxes where the game's fences stand, and the trees, the castle and the
-## sign are primitives of the right size in the right place. Its collision is
-## the shape of the real course.
+## are boxes where the game's fences stand, and the trees, the grandstand and
+## the warp pipe are primitives of the right size in the right place. Its
+## collision is the shape of the real course.
 ##
-## [member model] names a glTF of the real course in the git-ignored assets
-## folder, written by [code]tools/mk64_course.py[/code] from your own rip. When
+## [member model] names a glTF of the real course in the assets folder,
+## written by [code]tools/mk64_course.py[/code] from a rip of the course. When
 ## it is there it is instanced here as [code]DropInModel[/code], the primitive
 ## dressing is hidden and its collision switched off, and the model's own
 ## collision-only nodes take over, with the ones named for grass and sand

@@ -123,8 +123,8 @@ lightning or blue shell and the back marker with all three) and writes
 beside it `item_curves_grand_prix_cpu.tres`, three versus files and `item_curves_battle.tres`, which
 nothing reads yet. Each hundred is stored sorted (thirty bananas, five bunches, thirty green
 shells...), and the rolling index does the shuffling at run time; the earlier version of the script
-reached the block and rejected it for that very reason. The folder is git-ignored: the tables are the
-game's data, built from your copy, and are not redistributed here. Without the file the demo draws
+reached the block and rejected it for that very reason. The folder is committed, the same way the
+Twisted Metal level is, so the demo races the real tables on a fresh clone. Without the file it draws
 from a clearly marked even spread and the HUD says so; with it, first place is 30 bananas, 30 green
 shells, 10 fake boxes, 10 mushrooms and five each of bunches, triple greens, red shells and Boos, and
 last place is 30 stars, 20 triple reds, 20 lightning, 15 blue shells, 10 super mushrooms and 5 triple
@@ -144,7 +144,7 @@ warp pipe. Two things come of it:
   where the fences stand, cylinders and spheres for the trees, a box for the grandstand and a
   hollow cylinder for the warp pipe the road runs through. The collision is the shape of the real
   course; only the dressing is primitive, and it is what a fresh clone races on.
-- **The ripped course**, `addons/gta/mk/assets/courses/mario_raceway.glb`, git-ignored. The textured
+- **The ripped course**, `addons/gta/mk/assets/courses/mario_raceway.glb`, committed. The textured
   model converted to metres and the game's axes, with collision-only nodes for the road, the grass,
   the sand and the solid things. `MkCourse` swaps it in for the primitives when it is there and tags
   its grass and sand for the kart's surface tables; the racing line, the grid and the item boxes are
@@ -191,8 +191,8 @@ not getting any, and that is what is tested for.
 
 The karts here are the addon's own simple shapes. If you would rather race something else, drop it in
 and it is picked up the next time the scene runs; take it away and the primitives come back. Nothing
-is required, nothing is fetched for you, and nothing you put here is committed: the folder is
-git-ignored, the same way the Twisted Metal demo treats the files it builds off your own disc.
+is required and nothing is fetched for you. The folder is committed, the game's own karts and
+course included, the same way the Twisted Metal demo commits the level it builds off the disc.
 
 ```
 addons/gta/mk/assets/
@@ -225,8 +225,8 @@ frame and angle) and writes `karts/<roster key>.tscn` for each driver: an `MkSpr
 addon's billboard that does the same picking from the frames in its arrays, placed by the mapping in
 `karts/roster.json` (light class to Toad, Peach and Yoshi, standard to Mario and Luigi, heavy to
 Donkey Kong, Wario and Bowser; change the file and rerun the script to reseat them). The frames are
-the game's data and stay in this git-ignored folder; the billboard script is the addon's and is
-tested with blank frames.
+the game's data and live in this folder; the billboard script is the addon's and is tested with
+blank frames.
 
 Two things to know. This chassis drives along **+Z**, so a kart model is expected nose along +Z too;
 anything authored the other way round is turned with the kart's `model_yaw_degrees` export rather

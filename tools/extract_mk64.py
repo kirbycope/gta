@@ -25,10 +25,10 @@ Run this against a ROM you own::
 
     python tools/extract_mk64.py "Mario Kart 64 (U) [!].z64"
 
-What it writes goes to ``addons/gta/mk/assets/``, which is git-ignored,
-exactly as ``tools/extract_tm2.py`` treats the files it pulls off a Twisted
-Metal 2 disc: the converted result is yours, built from your own copy, and is
-not redistributed by this repository.
+What it writes goes to ``addons/gta/mk/assets/``, which is committed,
+exactly as ``tools/extract_tm2.py`` commits the level it builds off a Twisted
+Metal 2 disc; rerunning the script against the same ROM writes the same
+files.
 
 Where the tables are. The decomp's asset description for the US build,
 ``yamls/us/common_data.yml``, declares segment ``0x0D`` as the MIO0 block at

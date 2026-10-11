@@ -31,10 +31,6 @@ __pycache__/
 # copies the converter reads, and it rebuilds them from the disc on demand.
 addons/gta/tw/assets/.src/
 
-# Read out of your own Mario Kart 64 ROM by tools/extract_mk64.py. The item
-# probability tables are the game's data, so they are built locally from a copy
-# you own and are never committed here.
-addons/gta/mk/assets/
 addons/gut/
 
 # Screenshots and films of the demos, including whatever Godot's Movie Maker

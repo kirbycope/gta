@@ -11,7 +11,7 @@ extends Sprite3D
 ## [code]src/player_controller.c[/code], with whatever frames it is given:
 ## [code]tools/extract_mk64.py[/code] writes a drop-in kart scene (see
 ## [MkAssets]) that is one of these with the ROM's own frames in its arrays.
-## The frames are the game's data and live in the git-ignored assets folder;
+## The frames are the game's data and live in the committed assets folder;
 ## this script is only the rule for showing them.
 ##
 ## [b]The pose is pitch, not steering.[/b] The game's nine frame sets are the

@@ -1,0 +1,3327 @@
+{
+ "character": "luigi",
+ "character_id": 1,
+ "source": {
+  "rom_sha1": "579c48e211ae952530ffc8738709f078d5dd215e",
+  "frames_rom_offset": "0x145470",
+  "wheel_palettes_rom_offset": "0x1BBE6C",
+  "palette_rom_offset": "0x1E006C",
+  "format": "64x64 CI8 in MIO0, RGBA16 palette of 0xC0 kart + 0x40 wheel colours"
+ },
+ "frame_size": [
+  64,
+  64
+ ],
+ "rows_drawn_by_game": 59,
+ "content_rows": [
+  8,
+  61
+ ],
+ "content_height_px": 54,
+ "content_note": "content_rows span the drive and ring poses; each pose lists its own, and the tumble frames can fill the whole square",
+ "angle": {
+  "zero": "camera straight behind the kart; 180 is head on",
+  "measure": "bearing from camera to kart minus the kart's heading, positive with the camera on the kart's left side (nose points to the right of the frame)",
+  "coverage": "frames cover 0-180; for 180-360 use the frame for 360 - angle mirrored horizontally (UNK_002_UNKNOWN_0x4, func_8002934C line 771)",
+  "mirror_above_deg": 180.703,
+  "fine_step_deg": 2.856,
+  "fine_until_deg": 56.953,
+  "coarse_step_deg": 8.998,
+  "rule": "a in 65536ths of a turn, folded to 0..0x7FF9 by a = -a when a >= 0x7FF9; drive: a // 0x208 while a // 128 < 0x51, else 15 + a // 1638, max 34; ring (spin out): a // 1638, 20 and over wraps to 0"
+ },
+ "size": {
+  "unit_metres": 0.1111111111111111,
+  "drawn_height_m": 1.5,
+  "drawn_width_m": 1.5,
+  "pixel_size_for_1_4_m_frame": 0.021875,
+  "pixel_size_for_1_4_m_content": 0.025926,
+  "pixel_size_as_game": 0.025424
+ },
+ "poses": {
+  "nose_up_10": {
+   "kind": "drive",
+   "anim_group_selector": 0,
+   "group": 8,
+   "pitch_deg": [
+    -90,
+    -10
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288
+   ],
+   "files": [
+    "nose_up_10_00.png",
+    "nose_up_10_01.png",
+    "nose_up_10_02.png",
+    "nose_up_10_03.png",
+    "nose_up_10_04.png",
+    "nose_up_10_05.png",
+    "nose_up_10_06.png",
+    "nose_up_10_07.png",
+    "nose_up_10_08.png",
+    "nose_up_10_09.png",
+    "nose_up_10_10.png",
+    "nose_up_10_11.png",
+    "nose_up_10_12.png",
+    "nose_up_10_13.png",
+    "nose_up_10_14.png",
+    "nose_up_10_15.png",
+    "nose_up_10_16.png",
+    "nose_up_10_17.png",
+    "nose_up_10_18.png",
+    "nose_up_10_19.png",
+    "nose_up_10_20.png",
+    "nose_up_10_21.png",
+    "nose_up_10_22.png",
+    "nose_up_10_23.png",
+    "nose_up_10_24.png",
+    "nose_up_10_25.png",
+    "nose_up_10_26.png",
+    "nose_up_10_27.png",
+    "nose_up_10_28.png",
+    "nose_up_10_29.png",
+    "nose_up_10_30.png",
+    "nose_up_10_31.png",
+    "nose_up_10_32.png",
+    "nose_up_10_33.png",
+    "nose_up_10_34.png"
+   ],
+   "content_rows": [
+    10,
+    60
+   ]
+  },
+  "nose_up_7": {
+   "kind": "drive",
+   "anim_group_selector": 1,
+   "group": 7,
+   "pitch_deg": [
+    -10,
+    -7
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288
+   ],
+   "files": [
+    "nose_up_7_00.png",
+    "nose_up_7_01.png",
+    "nose_up_7_02.png",
+    "nose_up_7_03.png",
+    "nose_up_7_04.png",
+    "nose_up_7_05.png",
+    "nose_up_7_06.png",
+    "nose_up_7_07.png",
+    "nose_up_7_08.png",
+    "nose_up_7_09.png",
+    "nose_up_7_10.png",
+    "nose_up_7_11.png",
+    "nose_up_7_12.png",
+    "nose_up_7_13.png",
+    "nose_up_7_14.png",
+    "nose_up_7_15.png",
+    "nose_up_7_16.png",
+    "nose_up_7_17.png",
+    "nose_up_7_18.png",
+    "nose_up_7_19.png",
+    "nose_up_7_20.png",
+    "nose_up_7_21.png",
+    "nose_up_7_22.png",
+    "nose_up_7_23.png",
+    "nose_up_7_24.png",
+    "nose_up_7_25.png",
+    "nose_up_7_26.png",
+    "nose_up_7_27.png",
+    "nose_up_7_28.png",
+    "nose_up_7_29.png",
+    "nose_up_7_30.png",
+    "nose_up_7_31.png",
+    "nose_up_7_32.png",
+    "nose_up_7_33.png",
+    "nose_up_7_34.png"
+   ],
+   "content_rows": [
+    10,
+    60
+   ]
+  },
+  "nose_up_3": {
+   "kind": "drive",
+   "anim_group_selector": 2,
+   "group": 6,
+   "pitch_deg": [
+    -7,
+    -3
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268
+   ],
+   "files": [
+    "nose_up_3_00.png",
+    "nose_up_3_01.png",
+    "nose_up_3_02.png",
+    "nose_up_3_03.png",
+    "nose_up_3_04.png",
+    "nose_up_3_05.png",
+    "nose_up_3_06.png",
+    "nose_up_3_07.png",
+    "nose_up_3_08.png",
+    "nose_up_3_09.png",
+    "nose_up_3_10.png",
+    "nose_up_3_11.png",
+    "nose_up_3_12.png",
+    "nose_up_3_13.png",
+    "nose_up_3_14.png",
+    "nose_up_3_15.png",
+    "nose_up_3_16.png",
+    "nose_up_3_17.png",
+    "nose_up_3_18.png",
+    "nose_up_3_19.png",
+    "nose_up_3_20.png",
+    "nose_up_3_21.png",
+    "nose_up_3_22.png",
+    "nose_up_3_23.png",
+    "nose_up_3_24.png",
+    "nose_up_3_25.png",
+    "nose_up_3_26.png",
+    "nose_up_3_27.png",
+    "nose_up_3_28.png",
+    "nose_up_3_29.png",
+    "nose_up_3_30.png",
+    "nose_up_3_31.png",
+    "nose_up_3_32.png",
+    "nose_up_3_33.png",
+    "nose_up_3_34.png"
+   ],
+   "content_rows": [
+    9,
+    59
+   ]
+  },
+  "nose_up_2": {
+   "kind": "drive",
+   "anim_group_selector": 3,
+   "group": 5,
+   "pitch_deg": [
+    -3,
+    -2
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248
+   ],
+   "files": [
+    "nose_up_2_00.png",
+    "nose_up_2_01.png",
+    "nose_up_2_02.png",
+    "nose_up_2_03.png",
+    "nose_up_2_04.png",
+    "nose_up_2_05.png",
+    "nose_up_2_06.png",
+    "nose_up_2_07.png",
+    "nose_up_2_08.png",
+    "nose_up_2_09.png",
+    "nose_up_2_10.png",
+    "nose_up_2_11.png",
+    "nose_up_2_12.png",
+    "nose_up_2_13.png",
+    "nose_up_2_14.png",
+    "nose_up_2_15.png",
+    "nose_up_2_16.png",
+    "nose_up_2_17.png",
+    "nose_up_2_18.png",
+    "nose_up_2_19.png",
+    "nose_up_2_20.png",
+    "nose_up_2_21.png",
+    "nose_up_2_22.png",
+    "nose_up_2_23.png",
+    "nose_up_2_24.png",
+    "nose_up_2_25.png",
+    "nose_up_2_26.png",
+    "nose_up_2_27.png",
+    "nose_up_2_28.png",
+    "nose_up_2_29.png",
+    "nose_up_2_30.png",
+    "nose_up_2_31.png",
+    "nose_up_2_32.png",
+    "nose_up_2_33.png",
+    "nose_up_2_34.png"
+   ],
+   "content_rows": [
+    9,
+    58
+   ]
+  },
+  "level": {
+   "kind": "drive",
+   "anim_group_selector": 4,
+   "group": 4,
+   "pitch_deg": [
+    -2,
+    2
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248
+   ],
+   "files": [
+    "level_00.png",
+    "level_01.png",
+    "level_02.png",
+    "level_03.png",
+    "level_04.png",
+    "level_05.png",
+    "level_06.png",
+    "level_07.png",
+    "level_08.png",
+    "level_09.png",
+    "level_10.png",
+    "level_11.png",
+    "level_12.png",
+    "level_13.png",
+    "level_14.png",
+    "level_15.png",
+    "level_16.png",
+    "level_17.png",
+    "level_18.png",
+    "level_19.png",
+    "level_20.png",
+    "level_21.png",
+    "level_22.png",
+    "level_23.png",
+    "level_24.png",
+    "level_25.png",
+    "level_26.png",
+    "level_27.png",
+    "level_28.png",
+    "level_29.png",
+    "level_30.png",
+    "level_31.png",
+    "level_32.png",
+    "level_33.png",
+    "level_34.png"
+   ],
+   "content_rows": [
+    9,
+    58
+   ]
+  },
+  "nose_down_2": {
+   "kind": "drive",
+   "anim_group_selector": 5,
+   "group": 3,
+   "pitch_deg": [
+    2,
+    3
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248
+   ],
+   "files": [
+    "nose_down_2_00.png",
+    "nose_down_2_01.png",
+    "nose_down_2_02.png",
+    "nose_down_2_03.png",
+    "nose_down_2_04.png",
+    "nose_down_2_05.png",
+    "nose_down_2_06.png",
+    "nose_down_2_07.png",
+    "nose_down_2_08.png",
+    "nose_down_2_09.png",
+    "nose_down_2_10.png",
+    "nose_down_2_11.png",
+    "nose_down_2_12.png",
+    "nose_down_2_13.png",
+    "nose_down_2_14.png",
+    "nose_down_2_15.png",
+    "nose_down_2_16.png",
+    "nose_down_2_17.png",
+    "nose_down_2_18.png",
+    "nose_down_2_19.png",
+    "nose_down_2_20.png",
+    "nose_down_2_21.png",
+    "nose_down_2_22.png",
+    "nose_down_2_23.png",
+    "nose_down_2_24.png",
+    "nose_down_2_25.png",
+    "nose_down_2_26.png",
+    "nose_down_2_27.png",
+    "nose_down_2_28.png",
+    "nose_down_2_29.png",
+    "nose_down_2_30.png",
+    "nose_down_2_31.png",
+    "nose_down_2_32.png",
+    "nose_down_2_33.png",
+    "nose_down_2_34.png"
+   ],
+   "content_rows": [
+    9,
+    58
+   ]
+  },
+  "nose_down_3": {
+   "kind": "drive",
+   "anim_group_selector": 6,
+   "group": 2,
+   "pitch_deg": [
+    3,
+    7
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228
+   ],
+   "files": [
+    "nose_down_3_00.png",
+    "nose_down_3_01.png",
+    "nose_down_3_02.png",
+    "nose_down_3_03.png",
+    "nose_down_3_04.png",
+    "nose_down_3_05.png",
+    "nose_down_3_06.png",
+    "nose_down_3_07.png",
+    "nose_down_3_08.png",
+    "nose_down_3_09.png",
+    "nose_down_3_10.png",
+    "nose_down_3_11.png",
+    "nose_down_3_12.png",
+    "nose_down_3_13.png",
+    "nose_down_3_14.png",
+    "nose_down_3_15.png",
+    "nose_down_3_16.png",
+    "nose_down_3_17.png",
+    "nose_down_3_18.png",
+    "nose_down_3_19.png",
+    "nose_down_3_20.png",
+    "nose_down_3_21.png",
+    "nose_down_3_22.png",
+    "nose_down_3_23.png",
+    "nose_down_3_24.png",
+    "nose_down_3_25.png",
+    "nose_down_3_26.png",
+    "nose_down_3_27.png",
+    "nose_down_3_28.png",
+    "nose_down_3_29.png",
+    "nose_down_3_30.png",
+    "nose_down_3_31.png",
+    "nose_down_3_32.png",
+    "nose_down_3_33.png",
+    "nose_down_3_34.png"
+   ],
+   "content_rows": [
+    9,
+    59
+   ]
+  },
+  "nose_down_7": {
+   "kind": "drive",
+   "anim_group_selector": 7,
+   "group": 1,
+   "pitch_deg": [
+    7,
+    10
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208
+   ],
+   "files": [
+    "nose_down_7_00.png",
+    "nose_down_7_01.png",
+    "nose_down_7_02.png",
+    "nose_down_7_03.png",
+    "nose_down_7_04.png",
+    "nose_down_7_05.png",
+    "nose_down_7_06.png",
+    "nose_down_7_07.png",
+    "nose_down_7_08.png",
+    "nose_down_7_09.png",
+    "nose_down_7_10.png",
+    "nose_down_7_11.png",
+    "nose_down_7_12.png",
+    "nose_down_7_13.png",
+    "nose_down_7_14.png",
+    "nose_down_7_15.png",
+    "nose_down_7_16.png",
+    "nose_down_7_17.png",
+    "nose_down_7_18.png",
+    "nose_down_7_19.png",
+    "nose_down_7_20.png",
+    "nose_down_7_21.png",
+    "nose_down_7_22.png",
+    "nose_down_7_23.png",
+    "nose_down_7_24.png",
+    "nose_down_7_25.png",
+    "nose_down_7_26.png",
+    "nose_down_7_27.png",
+    "nose_down_7_28.png",
+    "nose_down_7_29.png",
+    "nose_down_7_30.png",
+    "nose_down_7_31.png",
+    "nose_down_7_32.png",
+    "nose_down_7_33.png",
+    "nose_down_7_34.png"
+   ],
+   "content_rows": [
+    9,
+    61
+   ]
+  },
+  "nose_down_10": {
+   "kind": "drive",
+   "anim_group_selector": 8,
+   "group": 0,
+   "pitch_deg": [
+    10,
+    90
+   ],
+   "coverage": "0-180",
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 2.856
+    },
+    {
+     "index": 1,
+     "from_deg": 2.856,
+     "to_deg": 5.713
+    },
+    {
+     "index": 2,
+     "from_deg": 5.713,
+     "to_deg": 8.569
+    },
+    {
+     "index": 3,
+     "from_deg": 8.569,
+     "to_deg": 11.426
+    },
+    {
+     "index": 4,
+     "from_deg": 11.426,
+     "to_deg": 14.282
+    },
+    {
+     "index": 5,
+     "from_deg": 14.282,
+     "to_deg": 17.139
+    },
+    {
+     "index": 6,
+     "from_deg": 17.139,
+     "to_deg": 19.995
+    },
+    {
+     "index": 7,
+     "from_deg": 19.995,
+     "to_deg": 22.852
+    },
+    {
+     "index": 8,
+     "from_deg": 22.852,
+     "to_deg": 25.708
+    },
+    {
+     "index": 9,
+     "from_deg": 25.708,
+     "to_deg": 28.564
+    },
+    {
+     "index": 10,
+     "from_deg": 28.564,
+     "to_deg": 31.421
+    },
+    {
+     "index": 11,
+     "from_deg": 31.421,
+     "to_deg": 34.277
+    },
+    {
+     "index": 12,
+     "from_deg": 34.277,
+     "to_deg": 37.134
+    },
+    {
+     "index": 13,
+     "from_deg": 37.134,
+     "to_deg": 39.99
+    },
+    {
+     "index": 14,
+     "from_deg": 39.99,
+     "to_deg": 42.847
+    },
+    {
+     "index": 15,
+     "from_deg": 42.847,
+     "to_deg": 45.703
+    },
+    {
+     "index": 16,
+     "from_deg": 45.703,
+     "to_deg": 48.56
+    },
+    {
+     "index": 17,
+     "from_deg": 48.56,
+     "to_deg": 51.416
+    },
+    {
+     "index": 18,
+     "from_deg": 51.416,
+     "to_deg": 54.272
+    },
+    {
+     "index": 19,
+     "from_deg": 54.272,
+     "to_deg": 56.953
+    },
+    {
+     "index": 20,
+     "from_deg": null,
+     "to_deg": null,
+     "note": "never selected"
+    },
+    {
+     "index": 21,
+     "from_deg": 56.953,
+     "to_deg": 62.985
+    },
+    {
+     "index": 22,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 23,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 24,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 25,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 26,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 27,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 28,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 29,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 30,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 31,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 32,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 33,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 34,
+     "from_deg": 170.958,
+     "to_deg": 180.0
+    }
+   ],
+   "rom_frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208
+   ],
+   "files": [
+    "nose_down_10_00.png",
+    "nose_down_10_01.png",
+    "nose_down_10_02.png",
+    "nose_down_10_03.png",
+    "nose_down_10_04.png",
+    "nose_down_10_05.png",
+    "nose_down_10_06.png",
+    "nose_down_10_07.png",
+    "nose_down_10_08.png",
+    "nose_down_10_09.png",
+    "nose_down_10_10.png",
+    "nose_down_10_11.png",
+    "nose_down_10_12.png",
+    "nose_down_10_13.png",
+    "nose_down_10_14.png",
+    "nose_down_10_15.png",
+    "nose_down_10_16.png",
+    "nose_down_10_17.png",
+    "nose_down_10_18.png",
+    "nose_down_10_19.png",
+    "nose_down_10_20.png",
+    "nose_down_10_21.png",
+    "nose_down_10_22.png",
+    "nose_down_10_23.png",
+    "nose_down_10_24.png",
+    "nose_down_10_25.png",
+    "nose_down_10_26.png",
+    "nose_down_10_27.png",
+    "nose_down_10_28.png",
+    "nose_down_10_29.png",
+    "nose_down_10_30.png",
+    "nose_down_10_31.png",
+    "nose_down_10_32.png",
+    "nose_down_10_33.png",
+    "nose_down_10_34.png"
+   ],
+   "content_rows": [
+    9,
+    61
+   ]
+  },
+  "ring_nose_down_7": {
+   "kind": "ring",
+   "anim_group_selectors": [
+    7,
+    8
+   ],
+   "pitch_deg": [
+    7,
+    90
+   ],
+   "coverage": "0-180",
+   "step_deg": 8.998,
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 8.998
+    },
+    {
+     "index": 1,
+     "from_deg": 8.998,
+     "to_deg": 17.996
+    },
+    {
+     "index": 2,
+     "from_deg": 17.996,
+     "to_deg": 26.993
+    },
+    {
+     "index": 3,
+     "from_deg": 26.993,
+     "to_deg": 35.991
+    },
+    {
+     "index": 4,
+     "from_deg": 35.991,
+     "to_deg": 44.989
+    },
+    {
+     "index": 5,
+     "from_deg": 44.989,
+     "to_deg": 53.987
+    },
+    {
+     "index": 6,
+     "from_deg": 53.987,
+     "to_deg": 62.985
+    },
+    {
+     "index": 7,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 8,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 9,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 10,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 11,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 12,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 13,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 14,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 15,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 16,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 17,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 18,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 19,
+     "from_deg": 170.958,
+     "to_deg": 179.956
+    }
+   ],
+   "rom_frames": [
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208
+   ],
+   "files": [
+    "ring_nose_down_7_00.png",
+    "ring_nose_down_7_01.png",
+    "ring_nose_down_7_02.png",
+    "ring_nose_down_7_03.png",
+    "ring_nose_down_7_04.png",
+    "ring_nose_down_7_05.png",
+    "ring_nose_down_7_06.png",
+    "ring_nose_down_7_07.png",
+    "ring_nose_down_7_08.png",
+    "ring_nose_down_7_09.png",
+    "ring_nose_down_7_10.png",
+    "ring_nose_down_7_11.png",
+    "ring_nose_down_7_12.png",
+    "ring_nose_down_7_13.png",
+    "ring_nose_down_7_14.png",
+    "ring_nose_down_7_15.png",
+    "ring_nose_down_7_16.png",
+    "ring_nose_down_7_17.png",
+    "ring_nose_down_7_18.png",
+    "ring_nose_down_7_19.png"
+   ],
+   "content_rows": [
+    9,
+    61
+   ]
+  },
+  "ring_nose_down_3": {
+   "kind": "ring",
+   "anim_group_selectors": [
+    6
+   ],
+   "pitch_deg": [
+    3,
+    7
+   ],
+   "coverage": "0-180",
+   "step_deg": 8.998,
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 8.998
+    },
+    {
+     "index": 1,
+     "from_deg": 8.998,
+     "to_deg": 17.996
+    },
+    {
+     "index": 2,
+     "from_deg": 17.996,
+     "to_deg": 26.993
+    },
+    {
+     "index": 3,
+     "from_deg": 26.993,
+     "to_deg": 35.991
+    },
+    {
+     "index": 4,
+     "from_deg": 35.991,
+     "to_deg": 44.989
+    },
+    {
+     "index": 5,
+     "from_deg": 44.989,
+     "to_deg": 53.987
+    },
+    {
+     "index": 6,
+     "from_deg": 53.987,
+     "to_deg": 62.985
+    },
+    {
+     "index": 7,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 8,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 9,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 10,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 11,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 12,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 13,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 14,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 15,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 16,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 17,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 18,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 19,
+     "from_deg": 170.958,
+     "to_deg": 179.956
+    }
+   ],
+   "rom_frames": [
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228
+   ],
+   "files": [
+    "ring_nose_down_3_00.png",
+    "ring_nose_down_3_01.png",
+    "ring_nose_down_3_02.png",
+    "ring_nose_down_3_03.png",
+    "ring_nose_down_3_04.png",
+    "ring_nose_down_3_05.png",
+    "ring_nose_down_3_06.png",
+    "ring_nose_down_3_07.png",
+    "ring_nose_down_3_08.png",
+    "ring_nose_down_3_09.png",
+    "ring_nose_down_3_10.png",
+    "ring_nose_down_3_11.png",
+    "ring_nose_down_3_12.png",
+    "ring_nose_down_3_13.png",
+    "ring_nose_down_3_14.png",
+    "ring_nose_down_3_15.png",
+    "ring_nose_down_3_16.png",
+    "ring_nose_down_3_17.png",
+    "ring_nose_down_3_18.png",
+    "ring_nose_down_3_19.png"
+   ],
+   "content_rows": [
+    8,
+    59
+   ]
+  },
+  "ring_level": {
+   "kind": "ring",
+   "anim_group_selectors": [
+    3,
+    4,
+    5
+   ],
+   "pitch_deg": [
+    -3,
+    3
+   ],
+   "coverage": "0-180",
+   "step_deg": 8.998,
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 8.998
+    },
+    {
+     "index": 1,
+     "from_deg": 8.998,
+     "to_deg": 17.996
+    },
+    {
+     "index": 2,
+     "from_deg": 17.996,
+     "to_deg": 26.993
+    },
+    {
+     "index": 3,
+     "from_deg": 26.993,
+     "to_deg": 35.991
+    },
+    {
+     "index": 4,
+     "from_deg": 35.991,
+     "to_deg": 44.989
+    },
+    {
+     "index": 5,
+     "from_deg": 44.989,
+     "to_deg": 53.987
+    },
+    {
+     "index": 6,
+     "from_deg": 53.987,
+     "to_deg": 62.985
+    },
+    {
+     "index": 7,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 8,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 9,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 10,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 11,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 12,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 13,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 14,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 15,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 16,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 17,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 18,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 19,
+     "from_deg": 170.958,
+     "to_deg": 179.956
+    }
+   ],
+   "rom_frames": [
+    229,
+    230,
+    231,
+    232,
+    233,
+    234,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248
+   ],
+   "files": [
+    "ring_level_00.png",
+    "ring_level_01.png",
+    "ring_level_02.png",
+    "ring_level_03.png",
+    "ring_level_04.png",
+    "ring_level_05.png",
+    "ring_level_06.png",
+    "ring_level_07.png",
+    "ring_level_08.png",
+    "ring_level_09.png",
+    "ring_level_10.png",
+    "ring_level_11.png",
+    "ring_level_12.png",
+    "ring_level_13.png",
+    "ring_level_14.png",
+    "ring_level_15.png",
+    "ring_level_16.png",
+    "ring_level_17.png",
+    "ring_level_18.png",
+    "ring_level_19.png"
+   ],
+   "content_rows": [
+    9,
+    58
+   ]
+  },
+  "ring_nose_up_3": {
+   "kind": "ring",
+   "anim_group_selectors": [
+    2
+   ],
+   "pitch_deg": [
+    -7,
+    -3
+   ],
+   "coverage": "0-180",
+   "step_deg": 8.998,
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 8.998
+    },
+    {
+     "index": 1,
+     "from_deg": 8.998,
+     "to_deg": 17.996
+    },
+    {
+     "index": 2,
+     "from_deg": 17.996,
+     "to_deg": 26.993
+    },
+    {
+     "index": 3,
+     "from_deg": 26.993,
+     "to_deg": 35.991
+    },
+    {
+     "index": 4,
+     "from_deg": 35.991,
+     "to_deg": 44.989
+    },
+    {
+     "index": 5,
+     "from_deg": 44.989,
+     "to_deg": 53.987
+    },
+    {
+     "index": 6,
+     "from_deg": 53.987,
+     "to_deg": 62.985
+    },
+    {
+     "index": 7,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 8,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 9,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 10,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 11,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 12,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 13,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 14,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 15,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 16,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 17,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 18,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 19,
+     "from_deg": 170.958,
+     "to_deg": 179.956
+    }
+   ],
+   "rom_frames": [
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268
+   ],
+   "files": [
+    "ring_nose_up_3_00.png",
+    "ring_nose_up_3_01.png",
+    "ring_nose_up_3_02.png",
+    "ring_nose_up_3_03.png",
+    "ring_nose_up_3_04.png",
+    "ring_nose_up_3_05.png",
+    "ring_nose_up_3_06.png",
+    "ring_nose_up_3_07.png",
+    "ring_nose_up_3_08.png",
+    "ring_nose_up_3_09.png",
+    "ring_nose_up_3_10.png",
+    "ring_nose_up_3_11.png",
+    "ring_nose_up_3_12.png",
+    "ring_nose_up_3_13.png",
+    "ring_nose_up_3_14.png",
+    "ring_nose_up_3_15.png",
+    "ring_nose_up_3_16.png",
+    "ring_nose_up_3_17.png",
+    "ring_nose_up_3_18.png",
+    "ring_nose_up_3_19.png"
+   ],
+   "content_rows": [
+    9,
+    59
+   ]
+  },
+  "ring_nose_up_7": {
+   "kind": "ring",
+   "anim_group_selectors": [
+    0,
+    1
+   ],
+   "pitch_deg": [
+    -90,
+    -7
+   ],
+   "coverage": "0-180",
+   "step_deg": 8.998,
+   "angles": [
+    {
+     "index": 0,
+     "from_deg": 0.0,
+     "to_deg": 8.998
+    },
+    {
+     "index": 1,
+     "from_deg": 8.998,
+     "to_deg": 17.996
+    },
+    {
+     "index": 2,
+     "from_deg": 17.996,
+     "to_deg": 26.993
+    },
+    {
+     "index": 3,
+     "from_deg": 26.993,
+     "to_deg": 35.991
+    },
+    {
+     "index": 4,
+     "from_deg": 35.991,
+     "to_deg": 44.989
+    },
+    {
+     "index": 5,
+     "from_deg": 44.989,
+     "to_deg": 53.987
+    },
+    {
+     "index": 6,
+     "from_deg": 53.987,
+     "to_deg": 62.985
+    },
+    {
+     "index": 7,
+     "from_deg": 62.985,
+     "to_deg": 71.982
+    },
+    {
+     "index": 8,
+     "from_deg": 71.982,
+     "to_deg": 80.98
+    },
+    {
+     "index": 9,
+     "from_deg": 80.98,
+     "to_deg": 89.978
+    },
+    {
+     "index": 10,
+     "from_deg": 89.978,
+     "to_deg": 98.976
+    },
+    {
+     "index": 11,
+     "from_deg": 98.976,
+     "to_deg": 107.974
+    },
+    {
+     "index": 12,
+     "from_deg": 107.974,
+     "to_deg": 116.971
+    },
+    {
+     "index": 13,
+     "from_deg": 116.971,
+     "to_deg": 125.969
+    },
+    {
+     "index": 14,
+     "from_deg": 125.969,
+     "to_deg": 134.967
+    },
+    {
+     "index": 15,
+     "from_deg": 134.967,
+     "to_deg": 143.965
+    },
+    {
+     "index": 16,
+     "from_deg": 143.965,
+     "to_deg": 152.963
+    },
+    {
+     "index": 17,
+     "from_deg": 152.963,
+     "to_deg": 161.96
+    },
+    {
+     "index": 18,
+     "from_deg": 161.96,
+     "to_deg": 170.958
+    },
+    {
+     "index": 19,
+     "from_deg": 170.958,
+     "to_deg": 179.956
+    }
+   ],
+   "rom_frames": [
+    269,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288
+   ],
+   "files": [
+    "ring_nose_up_7_00.png",
+    "ring_nose_up_7_01.png",
+    "ring_nose_up_7_02.png",
+    "ring_nose_up_7_03.png",
+    "ring_nose_up_7_04.png",
+    "ring_nose_up_7_05.png",
+    "ring_nose_up_7_06.png",
+    "ring_nose_up_7_07.png",
+    "ring_nose_up_7_08.png",
+    "ring_nose_up_7_09.png",
+    "ring_nose_up_7_10.png",
+    "ring_nose_up_7_11.png",
+    "ring_nose_up_7_12.png",
+    "ring_nose_up_7_13.png",
+    "ring_nose_up_7_14.png",
+    "ring_nose_up_7_15.png",
+    "ring_nose_up_7_16.png",
+    "ring_nose_up_7_17.png",
+    "ring_nose_up_7_18.png",
+    "ring_nose_up_7_19.png"
+   ],
+   "content_rows": [
+    10,
+    60
+   ]
+  },
+  "tumble": {
+   "kind": "animation",
+   "coverage": "animation",
+   "note": "played by the crash animation counter (unk_0A8 >> 8), not by camera angle",
+   "rom_frames": [
+    289,
+    290,
+    291,
+    292,
+    293,
+    294,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319,
+    320
+   ],
+   "files": [
+    "tumble_00.png",
+    "tumble_01.png",
+    "tumble_02.png",
+    "tumble_03.png",
+    "tumble_04.png",
+    "tumble_05.png",
+    "tumble_06.png",
+    "tumble_07.png",
+    "tumble_08.png",
+    "tumble_09.png",
+    "tumble_10.png",
+    "tumble_11.png",
+    "tumble_12.png",
+    "tumble_13.png",
+    "tumble_14.png",
+    "tumble_15.png",
+    "tumble_16.png",
+    "tumble_17.png",
+    "tumble_18.png",
+    "tumble_19.png",
+    "tumble_20.png",
+    "tumble_21.png",
+    "tumble_22.png",
+    "tumble_23.png",
+    "tumble_24.png",
+    "tumble_25.png",
+    "tumble_26.png",
+    "tumble_27.png",
+    "tumble_28.png",
+    "tumble_29.png",
+    "tumble_30.png",
+    "tumble_31.png"
+   ],
+   "content_rows": [
+    0,
+    62
+   ]
+  }
+ }
+}

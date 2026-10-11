@@ -12,7 +12,7 @@ Two things come out of this script, and the demo needs only the first:
   the road runs through. The collision is the shape of the real course; only the dressing is
   primitive.
 
-* ``addons/gta/mk/assets/courses/mario_raceway.glb``, the **ripped course**, which is git-ignored:
+* ``addons/gta/mk/assets/courses/mario_raceway.glb``, the **ripped course**, committed too:
   the textured model converted to metres and the game's own axes, with collision-only nodes for
   the road, the grass, the sand and the solid things. ``MkCourse`` swaps it in for the primitives
   when it is there. The rip is the one on The Models Resource (a Blender export of the course as
