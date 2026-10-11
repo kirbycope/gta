@@ -204,6 +204,110 @@ func test_it_is_not_supersonic_standing_still() -> void:
 	assert_false(car.is_supersonic)
 
 
+# ---------------------------------------------------- the springs and drive -----
+
+func test_the_scene_s_wheels_carry_rocketsim_s_springs() -> void:
+	# the figures live in the scene, so this is what stops them drifting from
+	# RlConst: stiffness and damping over the chassis mass, the rest length
+	# less the travel, and no force limit, per wheel
+	for wheel: VehicleWheel3D in car.wheels:
+		var front: bool = wheel.use_as_steering
+		var which: String = wheel.name
+		assert_almost_eq(wheel.suspension_stiffness, RlConst.wheel_stiffness(front), 0.001, which)
+		assert_almost_eq(wheel.damping_compression, RlConst.wheel_damping_compression(front), 0.001, which)
+		assert_almost_eq(wheel.damping_relaxation, RlConst.wheel_damping_relaxation(front), 0.001, which)
+		assert_almost_eq(wheel.wheel_rest_length,
+			RlConst.OCTANE_SPRING_REST_FRONT if front else RlConst.OCTANE_SPRING_REST_BACK, 0.0001, which)
+		assert_almost_eq(wheel.suspension_travel, RlConst.SUSPENSION_TRAVEL, 0.0001, which)
+		assert_gt(wheel.suspension_max_force, 100000.0, which + " has no force limit worth the name")
+
+
+func test_a_car_at_rest_keeps_all_four_wheels_on_the_ground() -> void:
+	# the old springs were two percent damped and the car bounced for ever, with
+	# wheels_down reading zero every other tenth of a second and jump presses
+	# lost in the gaps
+	car.place_at(Vector3(0.0, RlConst.CAR_RESPAWN_HEIGHT, 0.0), 0.0)
+	await wait_physics_frames(60)
+	var off: int = 0
+	for i: int in 60:
+		await wait_physics_frames(1)
+		if car.wheels_down < 4:
+			off += 1
+	assert_eq(off, 0, "A second at rest with every wheel down every frame")
+
+
+func test_full_throttle_reaches_ten_metres_a_second_in_well_under_two_seconds() -> void:
+	# 1600 uu/s^2 falling to 160 at 1400 puts the game's car at 1230 uu/s after
+	# a second and 1400 after 2.24; the quarter engine never saw 10 m/s in six
+	car.place_at(Vector3(0.0, RlConst.CAR_RESPAWN_HEIGHT, 0.0), 0.0)
+	await wait_physics_frames(30)
+	car.set_rocket_input(1.0, 0.0, 0.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(60)
+	var after_a_second: float = car.linear_velocity.length()
+	await wait_physics_frames(30)
+	var after_a_second_and_a_half: float = car.linear_velocity.length()
+	assert_between(after_a_second, 9.0, 13.5, "About 12.3 m/s after a second, less what the wheels take")
+	assert_gt(after_a_second_and_a_half, 10.0)
+	assert_lt(after_a_second_and_a_half, RlConst.CAR_MAX_DRIVE_SPEED + 0.1, "And never past the drive ceiling")
+
+
+func test_the_brake_pulls_up_at_thirty_five() -> void:
+	car.place_at(Vector3(0.0, RlConst.CAR_RESPAWN_HEIGHT, 0.0), 0.0)
+	await wait_physics_frames(30)
+	car.set_rocket_input(1.0, 0.0, 0.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(60)
+	var before: float = car.linear_velocity.dot(car.nose())
+	car.set_rocket_input(-1.0, 0.0, 0.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(12)
+	var lost: float = before - car.linear_velocity.dot(car.nose())
+	assert_between(lost, 5.5, 8.5, "A fifth of a second at 3500 uu/s^2 is 7 m/s")
+
+
+func test_a_powerslide_keeps_the_drive() -> void:
+	# a slide takes the grip across to a tenth and the drive to a half, and the
+	# car keeps going; with the two under one cap it used to spin to a stop
+	car.place_at(Vector3(0.0, RlConst.CAR_RESPAWN_HEIGHT, 0.0), 0.0)
+	await wait_physics_frames(30)
+	car.set_rocket_input(1.0, 0.0, 0.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(60)
+	car.set_rocket_input(1.0, 1.0, 0.0, 1.0, 0.0, false, false, true)
+	await wait_physics_frames(60)
+	assert_gt(car.linear_velocity.length(), 4.0, "Still moving a second into a full-lock slide on the throttle")
+	assert_gt(absf(car.angular_velocity.y), 1.0, "And coming round")
+
+
+func test_a_pitch_from_rest_in_the_air_builds_at_the_published_rate() -> void:
+	# 12.46 rad/s^2 of pitch, so a tenth of a second of full stick is about
+	# 1.2 rad/s; the unscaled torque used to hit the 5.5 cap inside 0.04 s
+	car.place_at(Vector3(0.0, 20.0, 0.0), 0.0)
+	await wait_physics_frames(2)
+	car.set_rocket_input(0.0, 0.0, 1.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(6)
+	var rate: float = absf(car.angular_velocity.dot(car.global_transform.basis.x))
+	assert_between(rate, 0.9, 1.7, "Pitch rate after six or seven ticks of full stick")
+
+
+func test_a_dodge_hangs_in_the_air_long_enough_to_come_round() -> void:
+	# a jump, then a second press with the stick forward: the dodge torque is at
+	# the cap inside 25 ms and the fall is damped through the torque window, so
+	# the car is still off the ground and well past upside down at 0.65 s rather
+	# than on its roof
+	watch_signals(car)
+	car.place_at(Vector3(0.0, RlConst.CAR_RESPAWN_HEIGHT, 0.0), 0.0)
+	await wait_physics_frames(30)
+	car.set_rocket_input(0.0, 0.0, 0.0, 0.0, 0.0, true, false, false)
+	await wait_physics_frames(6)
+	car.set_rocket_input(0.0, 0.0, 0.0, 0.0, 0.0, false, false, false)
+	await wait_physics_frames(14)
+	car.set_rocket_input(0.0, 0.0, -1.0, 0.0, 0.0, true, false, false)
+	await wait_physics_frames(2)
+	assert_signal_emitted(car, "dodged")
+	await wait_physics_frames(37)
+	assert_eq(car.wheels_down, 0, "Still airborne at the end of the torque window")
+	assert_gt(absf(car.angular_velocity.dot(car.global_transform.basis.x)), 4.5,
+		"Spinning at about the 5.5 rad/s cap, less what the other axes carry")
+
+
 # ------------------------------------------------- three wheels is ground -----
 
 func test_the_ground_is_three_wheels_rather_than_one() -> void:

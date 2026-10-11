@@ -63,13 +63,23 @@ of it was quietly fatal. The road car's engine audio only ever runs for a car dr
 `set_drive_input`, which a battle car never calls, so **every battle car was silent**.
 
 Rocket League drives its cars on Bullet's raycast vehicle and Godot's `VehicleBody3D` is a port of
-that same raycast vehicle, so the body, wheels and suspension are a fair match; everything above
-them is Rocket League's own.
+that same raycast vehicle, so the body, wheels and suspension are the same formula; everything above
+them is Rocket League's own. The springs are RocketSim's figures carried over exactly: its stiffness
+of 500 and damping of 25 and 40 are scaled per wheel by 35.75 in front and 54.265 behind (which sum to
+the car's 180) where Godot scales by the chassis mass, so the scene's wheels carry 99.3 and 150.7, and
+the car sits still at rest instead of bouncing on its springs. The old guess of 220 with 0.55 of
+damping was two percent of critical, and the bounce was what ate jumps and made the car wobble.
 
-On the ground the throttle follows a torque curve that reaches zero at 14.1 m/s, which is why boost
-is the only way past it, and the steering lock shrinks with speed off a second curve. In the air the
-wheels are doing nothing, so the car is flown directly: pitch, yaw and roll are angular
-accelerations against a damping term that falls away as the stick is pushed.
+On the ground the throttle is 1600 uu/s^2 at rest falling along a torque curve to zero at 14.1 m/s,
+which is why boost is the only way past it, and it pushes the chassis rather than the wheels: Godot's
+wheels cap the drive and the sideways grip under one figure, so a powerslide that cut the grip to a
+tenth cut the drive with it. The wheels hold the car up and hold it across, on Rocket League's two
+grip curves (all the grip rolling straight, a fifth sliding, a tenth on the handbrake), and the
+steering lock shrinks with speed off its own curve; at full lock the car turns the radii Chip
+measured, 3.9 m at 930 uu/s. In the air the wheels are doing nothing, so the car is flown directly:
+pitch, yaw and roll are the published torques turned into angular accelerations through
+`CAR_TORQUE_SCALE` (12.46, 9.11 and 38.35 rad/s^2), against a damping term that falls away as the
+stick is pushed, except roll's, which is always on.
 
 Gravity on this pitch is 6.5 m/s squared, a third under Earth's, set by an `Area3D` over the whole
 arena rather than by changing the project.
@@ -123,10 +133,11 @@ the ball at 91.25 uu across with its 60 percent bounce, a top speed of 2300 uu/s
 and dodge timings, the air control torques, the five kickoff spots, the four respawn spots and all
 thirty four boost pads.
 
-What could not be sourced is listed in `RlConst.UNSOURCED` rather than invented: the suspension
-figures in Godot's own units, the wheel friction, the match clock, the AI's thresholds and the
-camera settings. The field of view is Rocket League's 110; the camera is further back and higher
-than the game's, because this is an untextured blockout with nothing to judge distance against.
+What could not be sourced is listed in `RlConst.UNSOURCED` rather than invented: the wheel grip
+figure (Godot caps the sideways impulse where RocketSim damps it, so the figure is set to reproduce
+Chip's measured radii), the match clock, the AI's thresholds and the camera. No published source
+states the game's camera defaults; the settings the professional guides agree on are used, 110
+degrees of view, 270 uu back, 100 up and 3 degrees down, low and tight on a car 1.2 m long.
 
 ## The pitch
 
@@ -197,12 +208,15 @@ every action name, and `VehicleCamera` exports the lock-on's tilt limit.
   speed for boost, an engine start for the jump, a crash for impacts. They are placeholders that
   happen to be licensed and already here. A boost whoosh, a goal horn and a ball hit want real
   sounds.
-- Godot's `VehicleWheel3D` has one grip scalar where Rocket League has separate lateral and
-  longitudinal friction curves with their own handbrake factors, and it does not report its wheel
-  contact normals, so the surface under a car is found with one ray from the chassis instead of
-  averaged over four wheels. Both are in `RlConst.UNSOURCED`.
-- A dodge does not quite complete its rotation before the torque window closes, because the
-  published 5.5 rad/s angular cap bites first. Auto-flip is what gets you off your roof afterwards.
+- Godot's `VehicleWheel3D` caps the sideways impulse at the suspension force times one grip figure
+  where RocketSim damps it without a cap, so the figure is set to reproduce Chip's measured turning
+  radii rather than read from a file; it is in `RlConst.UNSOURCED`. The two grip curves and the
+  handbrake factors are applied on top of it, and the drive goes through the chassis so the cap never
+  touches it.
+- A dodge turns about 270 degrees before the wheels touch: the torque is at the 5.5 rad/s cap for its
+  0.65 s (205 degrees), the fall is damped through that window the way `Car.cpp` does it, and the
+  pitch damping takes the rest; the car lands nose down and rocks onto its wheels. That is the
+  game's own arithmetic, measured here rather than tuned.
 - Hitting the wall transition at full boost launches the car off it rather than carrying it up in
   contact, because a four metre radius cannot be followed at twenty metres a second. Rolling on at a
   more measured speed drives up properly. The real game behaves much the same way, but its curve is

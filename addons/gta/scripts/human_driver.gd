@@ -22,8 +22,8 @@ const JOYPAD_DEADZONE: float = 0.2 ## Stick noise below this is not a person cho
 ## The on-screen controls HUD, when the scene has one. It is what registers the addon's action names
 ## into the InputMap, so a demo with no [Player] instances it as a node. With one here the driver does
 ## for it what a [Player] does for its own: follows its idea of the input device, labels its buttons
-## with what the car says they do, and shows or hides it by the player's HUD setting, which on a
-## desktop keeps the touch overlay off the screen.
+## with what the car says they do, and draws the whole set or only the labelled slots by the player's
+## HUD setting, which on a desktop keeps the touch overlay off the screen and the hints on it.
 @export var controls: Controls
 
 ## Which bindings the car reads, kept equal to [member Vehicle.input_type] on the car.
@@ -44,7 +44,19 @@ func _ready() -> void:
 		# have to be put back after it speaks rather than before
 		controls.input_type_changed.connect(_on_controls_input_type_changed)
 		controls.contextual_labels_requested.connect(_apply_labels)
+		_tell_the_hud_the_device()
 		_apply_hud_visibility()
+
+
+## A pad plugged in before anything is pressed: the HUD assumes touch until it hears a device, and
+## drew pad glyphs with the keyboard's words on them (Accelerate on Y, Jump on the stick) until the
+## first button. The driver already knows there is a pad, so the HUD is told, and its own change
+## signal then puts the pad's words on the pad's buttons.
+func _tell_the_hud_the_device() -> void:
+	if controls == null or input_type == Controls.InputType.KEYBOARD_MOUSE:
+		return
+	if controls.current_input_type == Controls.InputType.TOUCH:
+		controls.current_input_type = input_type as Controls.InputType
 
 
 ## The last device that spoke picks the bindings; toggles (the ball cam) are read off the event here,
@@ -76,13 +88,19 @@ func _on_controls_input_type_changed(value: int) -> void:
 	_apply_hud_visibility()
 
 
-## The same rule a [Player] applies to its own controls: the player's HUD setting decides, and on
-## its default a desktop with no touchscreen draws nothing until a pad or the touch screen speaks.
+## The same rule a [Player] applies to its own controls ([method Player.apply_hud_visibility]): the
+## whole set is drawn on a touchscreen or when the player's HUD setting says Shown; otherwise the HUD
+## stays on in [member Controls.contextual_only] mode, which draws only the slots a label was written
+## on. Every slot the cars label is one of those, so a joypad or a keyboard still sees Jump on A, Boost
+## on B and Accelerate on RT, and nothing else. Hiding the node outright, which this used to do, left a
+## pad with no idea what its buttons did.
 func _apply_hud_visibility() -> void:
 	if controls == null:
 		return
-	controls.visible = PlayerSettingsResource.load_or_create().hud_shown(
+	var shown: bool = PlayerSettingsResource.load_or_create().hud_shown(
 		controls.current_input_type, DisplayServer.is_touchscreen_available())
+	controls.contextual_only = not shown
+	controls.visible = true
 
 
 func _physics_process(_delta: float) -> void:

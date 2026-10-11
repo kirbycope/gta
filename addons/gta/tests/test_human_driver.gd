@@ -106,14 +106,40 @@ func test_with_no_hud_the_last_device_that_spoke_decides() -> void:
 	assert_eq(lone.input_type, Controls.InputType.MICROSOFT, "A real push does")
 
 
-func test_the_hud_is_shown_or_hidden_by_the_player_s_setting_as_a_player_would() -> void:
-	# the default setting is Auto, which on a desktop with no touchscreen draws no overlay
+func test_the_hud_draws_the_whole_set_or_only_the_hints_by_the_player_s_setting_as_a_player_would() -> void:
+	# the default setting is Auto, which on a desktop with no touchscreen draws only the labelled slots
 	var settings: PlayerSettingsResource = PlayerSettingsResource.load_or_create()
 	var want: bool = settings.hud_shown(controls.current_input_type, DisplayServer.is_touchscreen_available())
-	assert_eq(controls.visible, want, "The driver applies the same rule the Player applies to its own HUD")
+	assert_true(controls.visible, "The HUD is never hidden outright: a pad has to be able to see its hints")
+	assert_eq(controls.contextual_only, not want, "The driver applies the same rule the Player applies to its own HUD")
 	if not DisplayServer.is_touchscreen_available() and settings.hud_mode == PlayerSettingsResource.HudMode.AUTO:
-		controls.current_input_type = Controls.InputType.KEYBOARD_MOUSE
-		assert_false(controls.visible, "and so a keyboard on a desktop shows no touch overlay")
+		controls.current_input_type = Controls.InputType.MICROSOFT
+		driver._on_controls_input_type_changed(Controls.InputType.MICROSOFT)
+		assert_true(controls.visible, "A joypad on a desktop keeps the HUD")
+		assert_true(controls.contextual_only, "drawn as hints rather than the touch overlay")
+		var jump: Label = controls.action_label(car.pad_jump_action)
+		assert_not_null(jump, "The car's jump sits on a slot the HUD has")
+		if jump != null:
+			assert_true(controls.is_label_contextual(jump), "and the car's word on it is what makes the slot show")
+
+
+func test_a_pad_plugged_in_at_the_start_puts_the_hud_on_the_pad_set() -> void:
+	# headless Godot has no joypad, so the driver's own reading is set by hand; the HUD still thinks
+	# touch, which is what it did on the user's desk with a controller in and nothing pressed yet
+	controls.current_input_type = Controls.InputType.TOUCH
+	driver.input_type = Controls.InputType.MICROSOFT
+	driver._tell_the_hud_the_device()
+	assert_eq(controls.current_input_type, Controls.InputType.MICROSOFT, "The HUD takes the driver's word for the device")
+	var accelerate: Label = controls.action_label(car.pad_accelerate_action)
+	assert_not_null(accelerate)
+	if accelerate != null:
+		assert_eq(accelerate.text, "Accelerate", "and the pad's words are on the pad's buttons: the right trigger accelerates")
+	assert_eq(controls.action_label(car.pad_jump_action).text, "Jump", "A jumps")
+	# a keyboard driver leaves a touch HUD alone, since there is nothing better to tell it
+	controls.current_input_type = Controls.InputType.TOUCH
+	driver.input_type = Controls.InputType.KEYBOARD_MOUSE
+	driver._tell_the_hud_the_device()
+	assert_eq(controls.current_input_type, Controls.InputType.TOUCH)
 
 
 func test_disabled_leaves_the_pad_alone_but_still_hears_the_toggles() -> void:

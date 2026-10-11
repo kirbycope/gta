@@ -168,48 +168,120 @@ line for a 4x4 such as `LANDSTAL`; the line itself is game data and is not in th
 come from a copy of the game or the modding wikis), or keep the hand-tuned car and say so in the README the
 way the Twisted Metal demo already does.
 
-## Twisted Metal 2: nothing to check against
+## Twisted Metal 2: the wrong level, and nothing to check it against
 
-Neither list has a Twisted Metal project, and a search for a decompilation or reverse-engineering effort
-finds none; the PS1 game has never been taken apart in public. `TwRoster` says exactly where its numbers
-come from (the speedrun.com stat guide and the wiki) and `UNSOURCED` lists everything else, which is the
-right shape for a game with no source. The only review possible is internal: the roster's speeds are
-consistent with the tables, the handling exports are judgements and are labelled as such. Nothing to do
-here until a source exists.
+Two things the first read of this section missed, and both came from going and playing it.
 
-## Rocket League: sound, with three small gaps
+**The arena is not Los Angeles.** The extractor's table maps the disc's `ROOF` database to
+"los_angeles", and the README calls it "the Quake Zone Rumble rooftop arena". The game's own level
+table, read out of the executable by the TwistedMetal2Recomp project (`docs/LEVELS.md`), says `01
+FREEWAY` is Los Angeles: Quake Zone Rumble and `05 ROOF` is New York: The Big Leap. The Prima guide's
+Los Angeles chapter describes a flat course "with no hidden areas", five first-aid kits, a fire pit below
+grass level, two tunnels each with "a rooftop level to drive on and a ramp to get you up there", a warp
+pad, the Hollywood sign and a generator; the manual says you are "no longer restricted to the freeway".
+New York is the level the GameFAQs guide warns has "a lot of edges" and where "turbo is a big no-no".
+So the demo has been a fragment of New York's rooftops with Los Angeles's name on it, and every
+complaint about it is a complaint about driving New York with no walls.
 
-RocketSim is a reimplementation rather than Psyonix's code, but it is the reference everyone uses and the
-port cites it. Every constant in `RlConst` that I checked against `RLConst.h` matches: gravity 650, car
-mass 180 and ball 30, 2300 and 1410, the steer and powerslide curves point for point, 2975/3 and 3175/3
-boost, 875/3 and 4375/3 jump, 0.025 and 0.2 and 1.25, the flip torques 260 and 224, the flip scales 1,
-1.9, 2.5 and 16/15, the damping window 0.15 to 0.21, the air control torques (130, 95, 400) and damping
-(30, 20, 50), the bump curves, the hitbox and wheel offsets. (The brake figure of 3500 uu/s^2 is the RLBot
-wiki's; RocketSim's `BRAKE_TORQUE_AMOUNT` is a wheel torque of 180 x 14.58, a different quantity.)
+**Measured in the demo**, fourteen seconds from the lights, logged every half second:
 
-The step order follows `Car.cpp`, the sticky force and the non-sticky friction curve are there, the dodge
-impulse is scaled with speed and thrown flat the way RocketSim does it, the bump curves hand over velocity
-rather than force. Against `Car.cpp` three things differ:
+| What | Measured | Why |
+| --- | --- | --- |
+| Opponents | Six of seven at 0 m/s for the whole run; two perched on two or three wheels | Every one has `accelerate=false, steer=±1`: the edge feeler sees a drop ahead and to both sides from where they spawn, so they sit turning the wheels, and the stuck timer reverses them for a second into the same answer |
+| Player, full throttle from spawn | 16.6 m/s at 2.5 s, over the roof edge at 3.0 s, rolled to 165 degrees, landed a tier down at 5.5 s, wedged at 0 m/s on full throttle from 8 s on | No wall at any edge, no auto-right, and a fall is the end of the run |
+| Camera | Inside the geometry for the last four seconds | The spring arm pivots on a car lying against a wall |
+| Rendering | 1 mesh, 0 materials, 0 textures, 9440 vertices, flat vertex colour on a flat sky | The `.TPC` texture banks are not decoded; 76 of the 325 mesh blocks fail to parse and are dropped, which is the holes in the aerial view |
 
-1. The first 0.025 s of a jump are at 0.62 of the held acceleration in RocketSim
-   (`JUMP_PRE_MIN_ACCEL_SCALE`); the port applies full `JUMP_ACCEL` from the first tick.
-2. Holding pitch against a dodge scales the dodge's pitch torque by `1 - |pitch|` (the flip cancel); the port
-   locks pitch for `FLIP_PITCHLOCK_TIME` but has no cancel.
-3. RocketSim applies air control and dodge torques through the inverse inertia tensor with
-   `CAR_TORQUE_SCALE`; the port adds them to angular velocity as accelerations. The published figures are
-   torques, so the resulting spin rate is only right if the scale happens to match; the check is how long a
-   full-stick pitch from rest takes to reach the 5.5 rad/s cap, which RocketSim can answer and the port can
-   be measured against.
+The README's known rough edges already say most of this. They are not rough edges; together they are
+why it cannot be played.
 
-The camera is a deliberate deviation (4.0 m back and 1.55 up against the 2.7 and 1.1 everyone plays with,
-"for the blockout"), and it is what you will notice first if you know the game.
+**What the game actually does**, from the manual, the Prima guide and the speedrun.com stat guide
+(no code exists: the decomp lists carry Twisted Metal 1, Black and Harbor City, not 2; the only TM2
+project is a static recompilation of the executable with a RAM map and no handling constants):
+
+- Pad: Square or D-pad up accelerates, Circle brakes and reverses, Triangle is turbo, Cross with the
+  D-pad is a hard turn, L1 and R1 cycle the pickups, L2 fires the pickup, R2 fires the machine guns and
+  is meant to be held ("hold the Machine Gun button down at all times"), and the Advanced Attacks are
+  D-pad sequences on an energy bar: freeze L R U, napalm R L U, jump U U L, shield U U R, mines R L D,
+  rear attack L R D, invisibility R D L U, Minion's attack U D U U fire. The demo has accelerate,
+  brake, turbo, fire and nothing else, on Space, Shift, Q and T.
+- Turbo: "instant acceleration to top speed for as long as you hold the Turbo button", rationed, and
+  "once you tap the turbo button you're at top speed". The demo ramps toward a higher ceiling.
+- Speeds and health: the speedrun guide's table (Roadkill 117/156, Twister 140/178, Minion 126/168
+  and so on, HP 85 to 230) is what `TwRoster` already carries; the executable keeps health on a 0 to
+  120 scale (`0x78` full), which no source reconciles with the per-car table.
+- Handling: Prima rates each car Sluggish, Intermediate, Tight or Ultra Tight and says nothing
+  numeric. Cars do not roll over in the game; a car that goes over an edge in New York dies.
+
+**What would make it a game.** Extract `FREEWAY` and call it Los Angeles (and `ROOF` New York), which
+needs the disc image again, and no `.bin` is on this machine any more: the only copy is
+`D:\Games\Sony (PSX) Playstation\ROMs\Sony - PlayStation (NTSC-U)\Twisted Metal 2.pkg`, a PS3 PSN
+package (`UP0001-SCUS94306`) with the disc encrypted inside it as a PS1 Classic. Decode the `.TPC`
+textures, or the level stays unreadable whichever one it is. Find the 76 dropped blocks. Give the car
+the game's pad and turbo. Keep it on its wheels. Los Angeles is flat, so the edge feeler stops
+mattering there.
+
+## Rocket League: the constants are right and the car is wrong
+
+The first read checked `RlConst` against `RLConst.h` and found it matching, which it does. It did
+not check what the car does with them. Measured in the demo with the pad scripted, against RocketSim's
+`Car.cpp` and `btVehicleRL.cpp` and Chip's notes (the smish.dev pages, via the Wayback Machine):
+
+| What | Measured | The game | Where it goes wrong |
+| --- | --- | --- | --- |
+| Full throttle from rest | 5 m/s at 2.3 s, 9.4 m/s at 5.8 s, never 10 in six seconds | 1410 uu/s (14.1 m/s) in 2.4 s: 1600 uu/s^2 at rest, 160 at 1400 | `THROTTLE_ACCEL` is 4.0 and its comment reads `THROTTLE_TORQUE_AMOUNT = CAR_MASS_BT * 400` as 400 uu/s^2. `Car.cpp:409-414` sets that same force on every one of the four wheels; the port splits 4 m/s^2 across them. The car has a quarter of its engine |
+| Boost from rest | 23 m/s at 2.4 s | about 1.7 s | the same quarter engine under the boost |
+| Turn radius, full lock | 3.8 m at 9.3 m/s; 1.8 to 2.9 m from 2 to 6.6 m/s | Chip's curvature table: 3.9 m at 930 uu/s, 1.75 to 2.9 m over that range | nothing: the steering curve and Godot's wheels reproduce the game's radii |
+| At rest | `wheels_down` reads 0 every other tenth of a second; the body moves through 11 cm | sits still | Godot's `damping_compression` is used raw (`force -= damping * vel`, `vehicle_body_3d.cpp:573`), so 0.55 against a stiffness of 220 is two percent of critical. The car bounces on its springs for ever |
+| After a jump landing | bounces for 1.5 s, `on_ground` flickering; a jump press in that window is lost | lands and stays | the same springs. This is the wobble, and it is why jumps and flips feel eaten |
+| Air pitch to the 5.5 rad/s cap | 0.04 s | 0.44 s (12.46 rad/s^2, RLBot wiki) | `_air_control` adds `AIR_CONTROL_TORQUE` 130/95/400 straight to angular velocity as rad/s^2. `Car.cpp:677` multiplies the torque by the inertia tensor and by `CAR_TORQUE_SCALE` 0.0959, so the real angular accelerations are 12.46, 9.11 and 38.35 and the damping rates 2.88, 1.92 and 4.79. Every air axis, the dodge torques 224/260, the auto-flip 50 and the auto-roll 80 are 10.4 times too strong |
+| Powerslide at 6 m/s | slip 138 degrees and 6 to 0.25 m/s in one second, on full throttle | lateral grip to a tenth, longitudinal to a half, the car keeps driving | Godot has one `wheel_friction_slip` that caps the lateral and the drive impulse together; cutting it to 0.1 cuts the drive to nothing |
+| Jump, first 25 ms | full `JUMP_ACCEL` | 0.62 of it (`JUMP_PRE_MIN_ACCEL_SCALE`, `Car.cpp:586`) | small, and known from the first read |
+
+Two of `UNSOURCED`'s entries are wrong. The suspension figures do transfer: RocketSim's spring is
+`(rest - length) * 500 - 25 * v` compression, `40` relaxation, times a per-wheel scale of 35.75
+front and 54.265 back (which sum to the car's 180), with no chassis mass in it; Godot's is the same
+Bullet formula with `* chassis_mass` in place of the scale. Stiffness and damping are per unit length
+and per unit time, so the unit of length cancels and they carry straight over as `500 * 35.75 / 180 =
+99.3` front and `150.7` back, damping `4.97 / 7.94` front and `7.54 / 12.06` back, rest length
+`38.755 - 12 = 26.755` uu front and `25.055` back, travel 12 uu, no force limit. And the surface
+normal is not unreported: Godot's wheels carry it as `get_contact_normal()` since 4.3.
+
+The friction model is the one real gap. RocketSim's lateral impulse is `-0.2 * v_axle / jacDiag *
+latFriction * 60 * dt` per wheel with no cap, where `latFriction` runs from 1.0 rolling to 0.2 sliding
+on the slip fraction and the handbrake multiplies it by 0.1; Godot's is the same bilateral `-0.2 *
+rel_vel`, capped by `suspension_force * dt * wheel_friction_slip`, with the drive impulse under the
+same cap. The radii above say the cap is not biting in a steered turn; the powerslide says it bites
+in a slide. Driving the throttle as a central force along the nose, which is what RocketSim's
+per-wheel engine impulses add up to, takes the drive out from under the cap and leaves
+`wheel_friction_slip` as the lateral grip alone, which the handbrake can then cut to a tenth.
+
+The camera: no source states the game's defaults. The RLBot page and RocketSim carry no camera
+figure, and the pro settings guides report 110 FOV, 270 distance, 90 to 110 height, -3 angle, 0.4 to
+0.5 stiffness and 5 to 7 swivel as what is played with. The demo's 4.0 m back and 1.55 up and the
+spring-arm follow that lags five per second and swings to the direction of travel are the addon's road
+car camera, not the game's, and ball cam is that camera pointed at the ball.
+
+Brake 3500, coasting 525, the stopping threshold, the boost figures, the jump and dodge constants, the
+bump curves and the sticky force check out against `Car.cpp` line by line.
+
+## The pad shows nothing on a controller
+
+`HumanDriver._apply_hud_visibility` sets `controls.visible` from
+`PlayerSettingsResource.hud_shown`, whose default answers true only for a touchscreen. So in all
+three battle demos a joypad gets no HUD at all, and the labels the cars write ("Jump" on A, "Boost"
+on B, "Accelerate" on RT) are never drawn. The player controller's own `Player.apply_hud_visibility`
+keeps the node visible and sets `controls.contextual_only = not shown`, which draws only the slots a
+label was written on; every slot the cars write is contextual, because the HUD scene's resting labels
+are blank. The driver has to do what the Player does.
 
 ## Recommendation, in order
 
-1. Rewrite `MkCar`'s movement on the game's integrator, with the human acceleration path, the loss
-   fraction, the turn-angle slide, the drift that cannot be straightened, the wiggle-charged mini turbo at
-   the source's 14 percent, and the game's own camera. Keep everything around it. This is the one demo that
-   is wrong in kind rather than in degree, and the one with the source to fix it from.
-2. Rocket League: the two small gaps, and measure the air torque scale.
-3. GTA: decide whether it is a port (then port re3 and get a handling line) or a car of its own (then say so).
-4. Twisted Metal: nothing.
+1. Rocket League: the engine to 1600, the suspension to RocketSim's, the air torques through
+   `CAR_TORQUE_SCALE`, the throttle as a central force so the powerslide keeps its drive, the jump
+   pre-minimum scale. All five are the source's own numbers. Then the camera, which is a judgement.
+2. The pad: `HumanDriver` draws the HUD the way the Player does.
+3. Twisted Metal: extract the right level. Textures and the dropped blocks after that, and the game's
+   pad, turbo and no-roll; none of it has a source beyond the manual and the Prima guide.
+4. GTA: decide whether it is a port (then port re3 and get a handling line) or a car of its own (then
+   say so). The road car's springs have the same two percent damping, 0.7 against 18.

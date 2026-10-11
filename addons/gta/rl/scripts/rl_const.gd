@@ -25,12 +25,10 @@ extends RefCounted
 
 ## What is not taken from a published source, and is a judgement call instead.
 const UNSOURCED: PackedStringArray = [
-	"suspension stiffness and damping in Godot's own units (RocketSim's Bullet figures do not transfer)",
-	"wheel friction slip: Godot's VehicleWheel3D has one grip scalar where Rocket League has separate lateral and longitudinal curves",
-	"the surface normal under a car, which Godot's wheels do not report, so one ray is cast from the chassis instead",
+	"wheel grip: Godot's VehicleWheel3D caps the lateral impulse at the suspension force times wheel_friction_slip where RocketSim damps it uncapped, so the slip figure is set to reproduce the turning radii Chip measured rather than read from a file",
 	"the match clock, which is a game rule rather than a physics constant",
 	"AI decision thresholds, which have no equivalent in the real game",
-	"the camera settings, which are a community standard rather than a published default",
+	"the camera: no published source states the game's defaults, so the settings the professional guides agree on are used, and how fast it swings behind the car is a judgement",
 	"the order the car and ball extra impulse is combined in, which is read off RocketSim rather than stated",
 ]
 
@@ -99,8 +97,15 @@ const CAR_RESPAWN_HEIGHT: float = 0.36 ## CAR_RESPAWN_Z 36 uu, dropped in slight
 const DRIVE_TORQUE_CURVE: Array[Vector2] = [
 	Vector2(0.0, 1.0), Vector2(14.0, 0.1), Vector2(14.1, 0.0),
 ]
-## THROTTLE_TORQUE_AMOUNT is CAR_MASS_BT * 400, so 400 uu/s^2 at full torque.
-const THROTTLE_ACCEL: float = 4.0
+## THROTTLE_TORQUE_AMOUNT is CAR_MASS_BT * 400, and [code]Car.cpp[/code] sets
+## that whole force on each of the four wheels rather than sharing it out, so
+## full torque on four wheels is 1600 uu/s^2, which is the figure Chip measured
+## in the game. Reading the 400 as the car's acceleration gave it a quarter of
+## its engine.
+const THROTTLE_ACCEL: float = 16.0
+## With fewer than three wheels down the drive is quartered (Car.cpp:406), and
+## only the wheels touching push, so two wheels on a wall give an eighth.
+const PARTIAL_CONTACT_DRIVE_SCALE: float = 0.25
 
 ## STEER_ANGLE_FROM_SPEED_CURVE, as forward speed in m/s against the steering
 ## lock in radians. A standing car turns 30.6 degrees, one at 15 m/s only 6.
@@ -114,7 +119,50 @@ const POWERSLIDE_STEER_CURVE: Array[Vector2] = [
 ]
 const POWERSLIDE_RISE_RATE: float = 5.0 ## POWERSLIDE_RISE_RATE, per second: the slide is analogue, not a switch.
 const POWERSLIDE_FALL_RATE: float = 2.0 ## POWERSLIDE_FALL_RATE, per second.
-const HANDBRAKE_LAT_FRICTION: float = 0.1 ## HANDBRAKE_LAT_FRICTION_FACTOR_CURVE at full slide.
+const HANDBRAKE_LAT_FRICTION: float = 0.1 ## HANDBRAKE_LAT_FRICTION_FACTOR_CURVE, a single point: a tenth of the grip across.
+## HANDBRAKE_LONG_FRICTION_FACTOR_CURVE: the drive and the brake along the car
+## through a powerslide, by how much of the wheel's motion is sideways.
+const HANDBRAKE_LONG_FRICTION_CURVE: Array[Vector2] = [
+	Vector2(0.0, 0.5), Vector2(1.0, 0.9),
+]
+## LAT_FRICTION_CURVE: the grip across the car, by the same slip fraction; a
+## wheel rolling straight keeps all of it and one sliding sideways a fifth.
+const LAT_FRICTION_CURVE: Array[Vector2] = [
+	Vector2(0.0, 1.0), Vector2(1.0, 0.2),
+]
+## The slip fraction is the sideways speed over the sideways plus the forward,
+## and counts as nothing under 5 uu/s sideways (Car.cpp:449).
+const LAT_SLIP_MIN: float = 0.05
+## The brake saturates once the wheel moves 23.1 uu/s against it
+## (BRAKE_TORQUE_AMOUNT over the 113.74 rolling friction scale) and is
+## proportional below that, which is what stops a braked car creeping.
+const BRAKE_SATURATION_SPEED: float = 0.231
+
+# ----------------------------------------------------------- suspension -----
+
+## RocketSim's spring (btVehicleRL.cpp updateSuspension): the force on a wheel
+## is [code](rest - length) * SUSPENSION_STIFFNESS - damping * v[/code], times a
+## per-wheel SUSPENSION_FORCE_SCALE of 35.75 in front and 54.265 behind, which
+## sum to the car's 180, and never pulls downward. Godot's VehicleWheel3D runs
+## the same Bullet formula with the chassis mass in place of that scale, and
+## uses its damping figure raw ([code]force -= damping * v[/code]), so each
+## wheel's numbers carry over divided by the mass and multiplied by its own
+## scale. Stiffness is per unit length and damping per unit time, so the unit
+## of length cancels and nothing else converts. [method wheel_stiffness] and the
+## two damping methods give what the scene's wheels carry, and the car test
+## holds the scene to them. The old guess (220 and 0.55) was two percent of
+## critical damping, and the car bounced on its springs at rest.
+const SUSPENSION_STIFFNESS: float = 500.0 ## BTVehicle::SUSPENSION_STIFFNESS.
+const SUSPENSION_DAMPING_COMPRESSION: float = 25.0 ## BTVehicle::WHEELS_DAMPING_COMPRESSION.
+const SUSPENSION_DAMPING_RELAXATION: float = 40.0 ## BTVehicle::WHEELS_DAMPING_RELAXATION.
+const SUSPENSION_FORCE_SCALE_FRONT: float = 35.75 ## BTVehicle::SUSPENSION_FORCE_SCALE_FRONT, 36 - 1/4.
+const SUSPENSION_FORCE_SCALE_BACK: float = 54.265 ## BTVehicle::SUSPENSION_FORCE_SCALE_BACK, 54 + 1/4 + 1.5/100.
+const SUSPENSION_TRAVEL: float = 0.12 ## BTVehicle::MAX_SUSPENSION_TRAVEL 12 uu, either side of rest.
+## Car.cpp takes the travel off the config's rest length before handing it to
+## Bullet, so the Octane's spring rests at 38.755 - 12 uu in front and
+## 37.055 - 12 behind, measured from the wheel's attachment at OCTANE_OFFSET_UP.
+const OCTANE_SPRING_REST_FRONT: float = 0.26755
+const OCTANE_SPRING_REST_BACK: float = 0.25055
 
 # ---------------------------------------------------------------- boost -----
 
@@ -137,6 +185,7 @@ const PAD_HEIGHT: float = 0.95 ## CYL_HEIGHT 95 uu: the pickup is a cylinder, no
 const JUMP_IMMEDIATE: float = 2.9166 ## JUMP_IMMEDIATE_FORCE 875/3 uu/s, applied the instant jump is pressed.
 const JUMP_ACCEL: float = 14.5833 ## JUMP_ACCEL 4375/3 uu/s^2, added for as long as jump is held.
 const JUMP_MIN_TIME: float = 0.025 ## JUMP_MIN_TIME: the shortest a jump can be held for.
+const JUMP_PRE_MIN_ACCEL_SCALE: float = 0.62 ## JUMP_PRE_MIN_ACCEL_SCALE: the held acceleration is 0.62 of itself through those first 25 ms.
 const JUMP_MAX_TIME: float = 0.2 ## JUMP_MAX_TIME: holding longer than this adds nothing.
 const DOUBLE_JUMP_MAX_DELAY: float = 1.25 ## DOUBLEJUMP_MAX_DELAY after the first jump finishes.
 const FLIP_TORQUE_TIME: float = 0.65 ## FLIP_TORQUE_TIME: how long a dodge keeps torquing.
@@ -154,7 +203,13 @@ const FLIP_BACKWARD_SCALE_X: float = 1.06666 ## FLIP_BACKWARD_IMPULSE_SCALE_X, 1
 ## exactly [constant FLIP_INITIAL_VEL] whichever way it is thrown and only a
 ## dodge at speed earns the bonus.
 const FLIP_DEADZONE_IS_A_SUM: bool = true ## |yaw| + |pitch| + |roll| is what the deadzone tests.
-const FLIP_Z_DAMP_START: float = 0.15 ## FLIP_Z_DAMP_START: downward velocity is killed through this window.
+## FLIP_Z_DAMP_120: from FLIP_Z_DAMP_START until the torque ends, the vertical
+## speed is multiplied by 1 - 0.35 every 120 Hz tick while it is downward, and
+## whichever way it points until FLIP_Z_DAMP_END. It is what keeps a dodge in
+## the air; the old reading killed the downward speed for 60 ms and let the car
+## drop onto its roof half way round.
+const FLIP_Z_DAMP_120: float = 0.35
+const FLIP_Z_DAMP_START: float = 0.15 ## FLIP_Z_DAMP_START.
 const FLIP_Z_DAMP_END: float = 0.21 ## FLIP_Z_DAMP_END.
 const FLIP_PITCHLOCK_TIME: float = 1.0 ## FLIP_PITCHLOCK_TIME: pitch is held through the dodge.
 const FLIP_DEADZONE: float = 0.5 ## Stick past this on either axis turns the second jump into a dodge.
@@ -203,11 +258,23 @@ const AUTOFLIP_ROLL_MIN: float = 2.8 ## CAR_AUTOFLIP_ROLL_THRESH, in radians: we
 
 # ------------------------------------------------------------ air play -----
 
+## CAR_TORQUE_SCALE, 2 pi / 65536 * 1000. Car.cpp applies the air control
+## torques as [code]inertia * (torque - damping) * CAR_TORQUE_SCALE[/code], and
+## the inertia cancels Bullet's division by it, so each published torque is an
+## angular acceleration in radians per second squared once it is multiplied by
+## this: 12.46 pitch, 9.11 yaw, 38.35 roll, the figures the RLBot wiki lists.
+## Adding them to the angular velocity unscaled, as this car used to, made
+## every air axis ten times too strong. The dodge (Car.cpp:631), the auto-flip
+## (827) and the auto-roll (867) go through the inertia without this scale,
+## so their figures are angular accelerations as published, which is why a
+## dodge is at the 5.5 rad/s cap inside 25 ms.
+const CAR_TORQUE_SCALE: float = 2.0 * PI / 65536.0 * 1000.0
 ## CAR_AIR_CONTROL_TORQUE, in pitch, yaw, roll order. Roll is by far the
 ## strongest axis, which is why air roll is the fast way to turn a car over.
 const AIR_CONTROL_TORQUE: Vector3 = Vector3(130.0, 95.0, 400.0)
 ## CAR_AIR_CONTROL_DAMPING, same order: the resistance that stops an input
-## spinning the car up without limit.
+## spinning the car up without limit. Pitch and yaw damping fade as the stick
+## is pushed; roll damping is always on (Car.cpp:670).
 const AIR_CONTROL_DAMPING: Vector3 = Vector3(30.0, 20.0, 50.0)
 const AIR_THROTTLE_ACCEL: float = 0.6666 ## THROTTLE_AIR_ACCEL 200/3 uu/s^2, barely anything without boost.
 
@@ -258,27 +325,21 @@ const OCTANE_SUSPENSION_BACK: float = 0.37055 ## BACK_WHEEL_SUS_REST[OCTANE] 37.
 # ----------------------------------------------------------- the camera -----
 
 ## Rocket League's camera is a big part of why the game reads the way it does.
-## The settings the community treats as standard are a 110 degree field of
-## view, 270 uu back, 110 uu up and 3 degrees down, and those are recorded here
-## as [constant CAMERA_FOV] and the three REFERENCE values below.
+## No published source states what the game ships with: RocketSim carries no
+## camera figure and nor does the RLBot wiki. What the professional settings
+## guides agree on is a 110 degree field of view, 270 uu back, 90 to 110 uu up
+## and 3 degrees down, and that is what is used, low and tight on a car only
+## 1.2 metres long. The old 4.0 m back and 1.55 up was the road car's framing
+## and was the first thing anyone who knew the game noticed.
 ##
-## The demo does not use all of them. The field of view is the one that matters
-## and is kept exactly: a battle car is only 1.2 metres long, and a narrow view
-## makes the pitch unreadable. The arm is pulled back and raised from there,
-## because this is an untextured blockout with no stadium detail to judge
-## distance against, and the real game's low tight camera leaves the car filling
-## the screen with nothing behind it to read speed from.
-##
-## All of these are a preference rather than a published constant, which is why
-## [constant UNSOURCED] lists them: sources disagree about what the game ships
-## with, and every player changes them anyway.
-const CAMERA_FOV: float = 110.0 ## FOV 110, kept exactly.
-const CAMERA_DISTANCE_REFERENCE: float = 2.70 ## Distance 270 uu.
-const CAMERA_HEIGHT_REFERENCE: float = 1.10 ## Height 110 uu.
-const CAMERA_ANGLE_REFERENCE: float = -3.0 ## Angle, in degrees below level.
-const CAMERA_DISTANCE: float = 4.00 ## Pulled back from the reference so the pitch reads.
-const CAMERA_HEIGHT: float = 1.55 ## And raised, for the same reason.
-const CAMERA_ANGLE: float = -8.0 ## Looking down harder, since it is higher up.
+## How fast the view swings round behind the car is a judgement; the game's own
+## stiffness and swivel settings have no published mapping onto a spring arm.
+## All of this is in [constant UNSOURCED].
+const CAMERA_FOV: float = 110.0 ## FOV 110.
+const CAMERA_DISTANCE: float = 2.70 ## Distance 270 uu.
+const CAMERA_HEIGHT: float = 1.00 ## Height 100 uu.
+const CAMERA_ANGLE: float = -3.0 ## Angle, in degrees below level.
+const CAMERA_FOLLOW_SPEED: float = 10.0 ## Per-second rate the view settles behind the car; a judgement.
 
 # ------------------------------------------------------------- spawning -----
 
@@ -335,6 +396,27 @@ static func to_godot(x: float, y: float, z: float) -> Vector3:
 ## is on negative z. The old subtraction faced every kickoff away from the ball.
 static func to_godot_yaw(yaw: float) -> float:
 	return yaw + PI * 0.5
+
+
+## The spring figure a wheel in [code]rl_car.tscn[/code] carries: RocketSim's
+## stiffness times the wheel's force scale, over the chassis mass Godot
+## multiplies back in. 99.3 in front, 150.7 behind.
+static func wheel_stiffness(front: bool) -> float:
+	return SUSPENSION_STIFFNESS * _suspension_scale(front) / CAR_MASS
+
+
+## The same for the damping while the spring compresses: 4.97 front, 7.54 back.
+static func wheel_damping_compression(front: bool) -> float:
+	return SUSPENSION_DAMPING_COMPRESSION * _suspension_scale(front) / CAR_MASS
+
+
+## And while it extends: 7.94 front, 12.06 back.
+static func wheel_damping_relaxation(front: bool) -> float:
+	return SUSPENSION_DAMPING_RELAXATION * _suspension_scale(front) / CAR_MASS
+
+
+static func _suspension_scale(front: bool) -> float:
+	return SUSPENSION_FORCE_SCALE_FRONT if front else SUSPENSION_FORCE_SCALE_BACK
 
 
 ## Reads one of the piecewise curves above. Rocket League stores these as

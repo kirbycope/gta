@@ -421,6 +421,7 @@ func _apply_auto_roll(delta: float) -> void:
 	var align: Vector3 = roof().cross(up)
 	if align.length_squared() < 0.000001:
 		return # already square with it
+	# through the inertia without CAR_TORQUE_SCALE (Car.cpp:867), so 80 is 80 rad/s^2 at full misalignment
 	angular_velocity += align * RlConst.AUTOROLL_TORQUE * delta
 	apply_central_force(-up * RlConst.AUTOROLL_FORCE * mass)
 
@@ -444,9 +445,15 @@ func _surface_hit() -> Dictionary:
 	return space.intersect_ray(query)
 
 
-## On the ground the wheels do the work. The throttle curve is handed to them
-## as an engine force and the steering curve as a steering angle, which is what
-## those two curves describe in the first place.
+## On the ground the wheels hold the car up and hold it across; the drive and
+## the brake go through the body. RocketSim puts the same engine force on every
+## wheel and the wheels turn it into an impulse along the surface at each
+## contact, and four of those add up to one force along the nose. Godot's
+## wheels could carry it too, but they cap the drive and the grip across under
+## the one [code]wheel_friction_slip[/code] figure, so a powerslide that cut
+## the grip to a tenth cut the drive with it and the car spun to a stop. Here
+## the wheels' grip figure is the grip across alone, and the engine pushes the
+## chassis.
 func _drive(delta: float) -> void:
 	var speed: float = linear_velocity.dot(nose())
 	var forward_speed: float = absf(speed)
@@ -458,32 +465,64 @@ func _drive(delta: float) -> void:
 		RlConst.curve(RlConst.POWERSLIDE_STEER_CURVE, forward_speed),
 		_slide)
 	steering = lock * _steer_axis
-	# a powerslide is lost grip, not a locked wheel: the rear end comes round.
-	# Coasting on a steep surface loses grip too, which is what drops a car off
-	# a wall the moment it stops driving.
-	var coasting: float = 1.0 if absf(_throttle) > RlConst.THROTTLE_DEADZONE \
+
+	# Rocket League's grip is two curves on one number: how much of the car's
+	# motion over the ground is sideways. Rolling straight keeps all the grip
+	# across; sliding keeps a fifth; a powerslide takes it to a tenth and takes
+	# the drive to between a half and nine tenths. Coasting on a steep surface
+	# loses grip too, which is what drops a car off a wall the moment it stops
+	# driving.
+	var slip: float = _lateral_slip_fraction()
+	var sticky: bool = absf(_throttle) > RlConst.THROTTLE_DEADZONE
+	var coasting: float = 1.0 if sticky \
 		else RlConst.curve(RlConst.NON_STICKY_FRICTION_CURVE, absf(_surface_up().y))
+	var lateral: float = RlConst.curve(RlConst.LAT_FRICTION_CURVE, slip) \
+		* lerpf(1.0, RlConst.HANDBRAKE_LAT_FRICTION, _slide) * coasting
+	var longitudinal: float = lerpf(1.0, RlConst.curve(RlConst.HANDBRAKE_LONG_FRICTION_CURVE, slip), _slide) * coasting
 	for wheel: VehicleWheel3D in wheels:
-		if wheel == null:
-			continue
-		wheel.wheel_friction_slip = _base_friction * coasting * lerpf(
-			1.0, RlConst.HANDBRAKE_LAT_FRICTION, _slide if not wheel.use_as_steering else _slide * 0.5)
+		if wheel != null:
+			wheel.wheel_friction_slip = _base_friction * lateral
+	apply_wheel_forces(0.0, 0.0)
 
 	var drive: float = 0.0
-	var stop: float = 0.0
-	if absf(_throttle) > RlConst.THROTTLE_DEADZONE:
+	var brake: float = 0.0
+	if sticky:
 		var torque_factor: float = RlConst.curve(RlConst.DRIVE_TORQUE_CURVE, forward_speed)
-		drive = mass * RlConst.THROTTLE_ACCEL * torque_factor * _throttle
+		# only the wheels touching push, and under three of them the drive is quartered
+		var contact: float = float(wheels_down) / float(maxi(wheels.size(), 1))
+		if wheels_down < RlConst.WHEELS_FOR_GROUND:
+			contact *= RlConst.PARTIAL_CONTACT_DRIVE_SCALE
+		drive = RlConst.THROTTLE_ACCEL * torque_factor * _throttle * contact
+	# with the handbrake down the throttle is the throttle and there is no brake
+	# at all (Car.cpp:381): a car that has slid past ninety degrees is still
+	# driving, not braking, which is what lets a powerslide carry its speed
+	if _powerslide:
+		pass
+	elif sticky:
 		# throttle against the direction of travel is a brake, not a reverse
 		if not is_zero_approx(speed) and signf(_throttle) != signf(speed) \
 				and forward_speed > RlConst.STOPPING_SPEED:
-			stop = mass * RlConst.BRAKE_ACCEL
+			brake = 1.0
 			drive = 0.0
 	else:
 		# coasting is a gentle brake, and becomes a full one once nearly stopped
-		stop = mass * (RlConst.BRAKE_ACCEL if forward_speed <= RlConst.STOPPING_SPEED
-			else RlConst.COAST_ACCEL)
-	apply_wheel_forces(drive, stop)
+		brake = 1.0 if forward_speed <= RlConst.STOPPING_SPEED else RlConst.COAST_ACCEL / RlConst.BRAKE_ACCEL
+	# the brake saturates once the car is moving against it and eases off below
+	# that, which is what stops a braked car creeping back and forth
+	brake *= minf(1.0, forward_speed / RlConst.BRAKE_SATURATION_SPEED)
+	var along: Vector3 = nose() * mass * longitudinal
+	apply_central_force(along * drive - along * RlConst.BRAKE_ACCEL * brake * signf(speed))
+
+
+## How much of the car's motion over the ground is sideways, nought to one:
+## the sideways speed over the sideways plus the forward, and nothing at all
+## under 5 uu/s sideways (Car.cpp:449). RocketSim reads it at each wheel; the
+## chassis is small enough that one reading at its centre serves all four.
+func _lateral_slip_fraction() -> float:
+	var sideways: float = absf(linear_velocity.dot(flank()))
+	if sideways <= RlConst.LAT_SLIP_MIN:
+		return 0.0
+	return sideways / (absf(linear_velocity.dot(nose())) + sideways)
 
 
 ## Off the ground the wheels are doing nothing, so the car is flown. Pitch, yaw
@@ -506,12 +545,16 @@ func _air_control(delta: float) -> void:
 		pitch_axis.dot(angular_velocity),
 		yaw_axis.dot(angular_velocity),
 		roll_axis.dot(angular_velocity))
+	# the published torques become angular accelerations through
+	# CAR_TORQUE_SCALE; pitch and yaw damping fade as their stick is pushed,
+	# roll damping is always on
 	var change: Vector3 = Vector3.ZERO
 	for axis: int in 3:
+		var fade: float = 1.0 if axis == 2 else 1.0 - absf(inputs[axis])
 		var accel: float = RlConst.AIR_CONTROL_TORQUE[axis] * inputs[axis] \
-			- RlConst.AIR_CONTROL_DAMPING[axis] * spin[axis] * (1.0 - absf(inputs[axis]))
+			- RlConst.AIR_CONTROL_DAMPING[axis] * spin[axis] * fade
 		change += axes[axis] * accel
-	angular_velocity += change * delta
+	angular_velocity += change * RlConst.CAR_TORQUE_SCALE * delta
 
 	if absf(_throttle) > RlConst.THROTTLE_DEADZONE:
 		apply_central_force(nose() * mass * RlConst.AIR_THROTTLE_ACCEL * _throttle)
@@ -525,9 +568,13 @@ func _tick_jump(delta: float, pressed: bool) -> void:
 
 	if _is_jumping:
 		_jump_time += delta
-		if _jump_held and _jump_time <= RlConst.JUMP_MAX_TIME:
+		# the first 25 ms are pushed whether or not the button is still down,
+		# and at 0.62 of the held acceleration (Car.cpp:586)
+		if _jump_time < RlConst.JUMP_MIN_TIME:
+			apply_central_force(up * mass * RlConst.JUMP_ACCEL * RlConst.JUMP_PRE_MIN_ACCEL_SCALE)
+		elif _jump_held and _jump_time <= RlConst.JUMP_MAX_TIME:
 			apply_central_force(up * mass * RlConst.JUMP_ACCEL)
-		elif _jump_time >= RlConst.JUMP_MIN_TIME:
+		else:
 			_is_jumping = false
 
 	if not pressed:
@@ -558,6 +605,7 @@ func _tick_jump(delta: float, pressed: bool) -> void:
 func _tick_autoflip(delta: float, pressed: bool) -> void:
 	if _autoflip_time > 0.0:
 		_autoflip_time -= delta
+		# added to the angular velocity directly, unscaled (Car.cpp:827)
 		angular_velocity += nose() * RlConst.AUTOFLIP_TORQUE * _autoflip_direction * delta
 		return
 	if not pressed or on_ground:
@@ -641,14 +689,18 @@ func _tick_flip(delta: float) -> void:
 		_flip_time = -1.0
 		return
 	# a forward dodge pitches the nose down and over, a side dodge rolls onto
-	# that flank, which is a turn about the nose
+	# that flank, which is a turn about the nose. The dodge torque goes through
+	# the inertia without CAR_TORQUE_SCALE (Car.cpp:631), so 224 is 224 rad/s^2
+	# and the car is at the 5.5 rad/s cap inside 25 ms, and there is no air
+	# damping while it torques
 	angular_velocity += (global_transform.basis.x * _flip_torque.x
 		+ global_transform.basis.z * _flip_torque.z) * delta
-	# through a short window the game kills downward speed, which is what keeps
-	# a dodge flat instead of driving the car into the floor
-	if _flip_time >= RlConst.FLIP_Z_DAMP_START and _flip_time <= RlConst.FLIP_Z_DAMP_END \
-			and linear_velocity.y < 0.0:
-		linear_velocity.y = 0.0
+	# from 0.15 s the game damps the downward speed every tick for as long as
+	# the torque runs (and upward too until 0.21 s), which is what holds a
+	# dodging car in the air long enough to come round (Car.cpp:787)
+	if _flip_time >= RlConst.FLIP_Z_DAMP_START \
+			and (linear_velocity.y < 0.0 or _flip_time < RlConst.FLIP_Z_DAMP_END):
+		linear_velocity.y *= pow(1.0 - RlConst.FLIP_Z_DAMP_120, delta * 120.0)
 
 
 ## Boost is a flat acceleration along the nose for as long as there is fuel,
@@ -742,15 +794,16 @@ func _on_body_entered(body: Node) -> void:
 	bumped.emit(other)
 
 
-## Rocket League's chase camera, which is wider and much closer than a road
-## car's. A battle car is only 1.2 metres long, so the camera sits back a few
-## metres rather than the five and a half a road car needs, and the 110 degree
-## field of view is what makes the pitch readable at all.
+## Rocket League's chase camera, which is wider, lower and much closer than a
+## road car's: 2.7 m back and 1 m up on a car 1.2 m long, with the 110 degree
+## field of view that makes the pitch readable at all, and quick to come round
+## behind the car.
 func _apply_rocket_camera() -> void:
 	if not is_instance_valid(chase_camera):
 		return
 	chase_camera.pivot_height = RlConst.CAMERA_HEIGHT
 	chase_camera.pitch = deg_to_rad(RlConst.CAMERA_ANGLE)
+	chase_camera.follow_speed = RlConst.CAMERA_FOLLOW_SPEED
 	var arm: SpringArm3D = chase_camera.get_node_or_null(^"SpringArm3D") as SpringArm3D
 	if arm != null:
 		arm.spring_length = RlConst.CAMERA_DISTANCE

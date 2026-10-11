@@ -195,3 +195,36 @@ func test_supersonic_is_held_below_the_speed_it_starts_at() -> void:
 func test_the_gaps_in_the_sourcing_are_written_down() -> void:
 	assert_gt(RlConst.UNSOURCED.size(), 0,
 		"Anything not taken from a published source belongs in UNSOURCED")
+	for gap: String in RlConst.UNSOURCED:
+		assert_false(gap.begins_with("suspension"),
+			"RocketSim's springs do transfer to Godot's wheels; the claim that they did not is gone")
+
+
+func test_the_throttle_is_the_sixteen_hundred_chip_measured() -> void:
+	# THROTTLE_TORQUE_AMOUNT is 400 per wheel on four wheels; the port used to
+	# read it as 400 for the whole car and had a quarter of its engine
+	assert_almost_eq(RlConst.THROTTLE_ACCEL, 16.0, 0.0001, "1600 uu/s^2 at rest")
+	assert_almost_eq(RlConst.THROTTLE_ACCEL * RlConst.curve(RlConst.DRIVE_TORQUE_CURVE, 14.0), 1.6, 0.0001,
+		"160 at 1400 uu/s, Chip's second point")
+
+
+func test_the_published_torques_scale_into_the_wiki_s_angular_accelerations() -> void:
+	# the RLBot wiki lists 12.46, 9.11 and 38.34 rad/s^2, which are the
+	# RocketSim torques times CAR_TORQUE_SCALE
+	var accel: Vector3 = RlConst.AIR_CONTROL_TORQUE * RlConst.CAR_TORQUE_SCALE
+	assert_almost_eq(accel.x, 12.46, 0.01, "Pitch")
+	assert_almost_eq(accel.y, 9.11, 0.01, "Yaw")
+	assert_almost_eq(accel.z, 38.35, 0.01, "Roll")
+
+
+func test_the_springs_carry_over_with_the_force_scale_in_place_of_the_chassis_mass() -> void:
+	assert_almost_eq(2.0 * RlConst.SUSPENSION_FORCE_SCALE_FRONT + 2.0 * RlConst.SUSPENSION_FORCE_SCALE_BACK,
+		RlConst.CAR_MASS, 0.1, "The four force scales sum to the car's mass, which is why the swap is exact")
+	assert_almost_eq(RlConst.wheel_stiffness(true), 99.306, 0.001)
+	assert_almost_eq(RlConst.wheel_stiffness(false), 150.736, 0.001)
+	assert_almost_eq(RlConst.wheel_damping_compression(true), 4.965, 0.001)
+	assert_almost_eq(RlConst.wheel_damping_relaxation(false), 12.059, 0.001)
+	# and the car as a whole is a 0.56 damped spring, not a 0.02 one
+	var k: float = 2.0 * RlConst.wheel_stiffness(true) + 2.0 * RlConst.wheel_stiffness(false)
+	var c: float = 2.0 * RlConst.wheel_damping_compression(true) + 2.0 * RlConst.wheel_damping_compression(false)
+	assert_almost_eq(c / (2.0 * sqrt(k)), 0.56, 0.01, "Damping ratio in compression")
