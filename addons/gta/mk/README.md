@@ -130,27 +130,41 @@ shells, 10 fake boxes, 10 mushrooms and five each of bunches, triple greens, red
 last place is 30 stars, 20 triple reds, 20 lightning, 15 blue shells, 10 super mushrooms and 5 triple
 mushrooms.
 
-## The course is one path
+## The course is Mario Raceway
 
-`addons/gta/mk/scenes/sunset_circuit.tscn` is the addon's own circuit, not a converted one. It is a
-919 m lap built around a single `Path3D`: the road, kerbs and walls are one `CSGPolygon3D` extruded
-along it, and that same path is the racing line the computer drivers follow and the ruler the lap
-counting measures against. Drag a point of it in the editor and all three move together.
+`addons/gta/mk/scenes/mario_raceway.tscn` is Mario Raceway, laid out from the game's own data. Its
+racing line is the course's track path out of `courses/mario_raceway/course_data.c` in the public
+[decompilation](https://github.com/n64decomp/mk64), 499 points that come to a 1107 m lap at a ninth
+of a metre a unit; its fifteen item boxes, 27 trees and ten piranha plants stand where that file puts
+them. What the decompilation does not publish as numbers is the road itself, so that is measured on a
+rip of the course: the road's centre line and its 11 m width, the fences, the grandstand and the
+warp pipe. Two things come of it:
 
-Two things about it are load bearing rather than decorative, and both were learned the hard way:
+- **The primitive course**, committed. A flat slab extruded along the road's centre line, boxes
+  where the fences stand, cylinders and spheres for the trees, a box for the grandstand and a
+  hollow cylinder for the warp pipe the road runs through. The collision is the shape of the real
+  course; only the dressing is primitive, and it is what a fresh clone races on.
+- **The ripped course**, `addons/gta/mk/assets/courses/mario_raceway.glb`, git-ignored. The textured
+  model converted to metres and the game's axes, with collision-only nodes for the road, the grass,
+  the sand and the solid things. `MkCourse` swaps it in for the primitives when it is there and tags
+  its grass and sand for the kart's surface tables; the racing line, the grid and the item boxes are
+  the scene's either way.
 
-- **The minimum curve radius is 37 m against a 7 m road half width.** A polygon extruded along a path
-  folds itself inside out wherever the path bends tighter than the profile is wide, and the resulting
-  collision throws anything resting on it. A hand placed hairpin here once came to an 8.2 m radius and
-  launched the entire grid on the first physics frame. The course is generated from a parametric
-  centre line with the radius checked, rather than placed by eye.
-- **A CSG road does not have its collision on the first frame.** `MkRace` holds the karts frozen
-  until a ray through the grid finds ground. Karts released into that window fall into the road slab
-  and are flung out of it when the collision appears.
+Both are written by one script from your own rip of the course, the Blender export on The Models
+Resource (`Mario Raceway.obj` with its textures beside it):
 
-The karts, the start grid and every item box are nodes placed in the demo scene, so all of them can
-be selected and moved in the editor, and each kart's livery is a material on the kart you can edit in
-the inspector.
+```powershell
+python tools/mk64_course.py "Nintendo 64 - Mario Kart 64 - Courses - Mario Raceway.zip"
+```
+
+It fetches the course data from the decompilation into `.addon_cache/mk64/` the first time, lays the
+game's path over the rip's road until it runs down the middle of it, and prints the scale it read
+(971 game units to the rip's unit) rather than assuming one. The racing line is what the computer
+drivers follow and what the lap counting measures against; the road follows its own centre line,
+because the game's path is a racing line and hugs the inside of bends. `MkRace` holds the karts
+until a ray through the grid finds the road, since a CSG slab has no collision on the first frame,
+and its off-course margin is 18 m here, the road's half width plus how far the line strays from the
+road's centre.
 
 ## The computer drivers
 

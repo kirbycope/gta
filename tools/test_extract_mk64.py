@@ -112,11 +112,15 @@ class SceneTest(unittest.TestCase):
     def _manifest(self) -> dict:
         poses = {pose: {"files": [f"{pose}_{i:02d}.png" for i in range(35)]} for pose in mk.SPRITE_KART_POSES}
         poses["ring_level"] = {"files": [f"ring_level_{i:02d}.png" for i in range(20)]}
-        return {"size": {"pixel_size_as_game": 0.025424}, "poses": poses}
+        return {"size": {"pixel_size_as_game": 0.025424}, "rows_drawn_by_game": 59, "frame_size": [64, 64], "poses": poses}
 
     def test_scene_lists_every_frame_once_at_the_games_own_size(self) -> None:
         text = mk.kart_scene_text(self._manifest(), "res://k/toad", "res://s/mk_sprite_kart.gd", "uid://abc")
-        self.assertIn("[gd_scene load_steps=337 format=3]", text)
+        self.assertIn("[gd_scene load_steps=341 format=3]", text)
+        self.assertIn("rows_drawn = 59", text)
+        self.assertIn('[node name="Shadow" type="MeshInstance3D" parent="."]', text)
+        # the blob lies 0.02 m above the ground, which is (59 - 32) rows below the frame's centre
+        self.assertIn("0, -1, 0, 0, -0.6664, 0)", text)
         self.assertEqual(text.count('type="Texture2D"'), 9 * 35 + 20)
         self.assertIn('uid="uid://abc" path="res://s/mk_sprite_kart.gd"', text)
         self.assertIn('[node name="MkSpriteKart" type="Sprite3D"]', text)

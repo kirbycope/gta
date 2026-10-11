@@ -1,5 +1,5 @@
 extends Node3D
-## The Mario Kart demo: eight karts, three laps of Sunset Circuit, and items.
+## The Mario Kart demo: eight karts, three laps of Mario Raceway, and items.
 ##
 ## The third of the addon's battle demos, and put together the same way. There is
 ## no [Player] here: a [HumanDriver] under your kart fills the same virtual pad
@@ -17,12 +17,11 @@ extends Node3D
 ## scene file: telling the HUD which of the eight karts is yours, and saying so
 ## when the item odds are the stand in ones rather than the real tables.
 ##
-## [b]The course[/b] is [code]scenes/mk/sunset_circuit.tscn[/code], an original
-## circuit rather than a converted one, and it is one [Path3D] with the road
-## extruded along it. Drag a point of that path in the editor and the road, the
-## racing line the AI drives and the lap counting all move together.
-## [code]tools/extract_mk64.py[/code] converts a course out of your own copy of
-## Mario Kart 64 if you would rather race one of those; see the addon README.
+## [b]The course[/b] is [code]scenes/mario_raceway.tscn[/code], Mario Raceway
+## laid out from the game's own path, item box and tree data with a primitive
+## road and walls in the shape of the real ones; see [MkCourse]. When
+## [code]tools/mk64_course.py[/code] has built the ripped course into the
+## git-ignored assets folder, the real thing stands in for the primitives.
 
 @export var player_kart: NodePath = ^"Karts/Kart1" ## Which kart you drive.
 

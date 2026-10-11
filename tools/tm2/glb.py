@@ -59,7 +59,7 @@ def write_glb(path, verts, colors, tris, name='Mesh'):
 MESH_SURFACE_LIMIT = 200  # under Godot's 256 surfaces per mesh, with room
 
 
-def write_glb_textured(path, primitives, name='Mesh', colonly=()):
+def write_glb_textured(path, primitives, name='Mesh', colonly=(), wrap='clamp'):
     """[param primitives] is a list of dicts, one per material:
         verts   [(x, y, z)]
         colors  [(r, g, b, a)]  0..1
@@ -165,7 +165,9 @@ def write_glb_textured(path, primitives, name='Mesh', colonly=()):
     if images:
         gl['images'] = images
         gl['textures'] = textures
-        # nearest filtering and clamping: a PlayStation texel is a hard square
-        gl['samplers'] = [{'magFilter': 9728, 'minFilter': 9728, 'wrapS': 33071, 'wrapT': 33071}]
+        # nearest filtering: a PlayStation or N64 texel is a hard square. TM2 clamps, since its
+        # UVs stay inside a texture page; an N64 course tiles its road and grass, so it repeats.
+        mode = 10497 if wrap == 'repeat' else 33071
+        gl['samplers'] = [{'magFilter': 9728, 'minFilter': 9728, 'wrapS': mode, 'wrapT': mode}]
     _pack(path, gl, blob)
     return nv, nt

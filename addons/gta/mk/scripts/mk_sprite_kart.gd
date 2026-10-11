@@ -44,6 +44,12 @@ extends Sprite3D
 @export var nose_down_10: Array[Texture2D] = []
 ## The spin out ring: twenty frames nine degrees apart.
 @export var spin_ring: Array[Texture2D] = []
+## How many rows of the frame the game puts on screen, counted from the top:
+## its upper tile shows 31 texels and its lower 28, so 59 of the 64, and the
+## last of them is on the ground. The frame stands so that row is at the
+## kart's origin, which keeps the wheels on the road rather than the blank
+## rows under them.
+@export var rows_drawn: int = 59
 
 ## The pitch bands of [code]func_80029200[/code], in degrees of slope with
 ## nose down positive, each the lower edge of a pose from nose_up_7 on.
@@ -64,9 +70,19 @@ func _ready() -> void:
 	texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	centered = true
+	# the game draws no shadow off the sprite; a flat blob under the kart is
+	# the drop-in scene's, and a vertical quad's own shadow is a smear
+	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	if not level.is_empty() and level[0] != null:
-		# stand on the kart's origin, which the kart keeps on the ground
-		position.y = level[0].get_height() * pixel_size * 0.5
+		position.y = standing_height(level[0].get_height())
+
+
+## Where the frame's centre sits so that the last row the game draws is on the
+## kart's origin, which the kart keeps on the ground: the frame is centred, so
+## its bottom edge is half its height below the centre, and the rows under the
+## drawn ones hang below the ground.
+func standing_height(frame_height_px: int) -> float:
+	return (float(rows_drawn) - frame_height_px * 0.5) * pixel_size
 
 
 func _process(_delta: float) -> void:

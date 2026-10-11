@@ -761,13 +761,38 @@ def kart_scene_text(manifest: dict, frames_res_dir: str, script_res: str, script
     properties.append(f"spin_ring = Array[Texture2D]([{refs}])")
 
     uid = f' uid="{script_uid}"' if script_uid else ""
-    lines = [f"[gd_scene load_steps={len(ext) + 2} format=3]", "",
+    pixel_size = manifest["size"]["pixel_size_as_game"]
+    rows_drawn = manifest["rows_drawn_by_game"]
+    frame_height = manifest["frame_size"][1]
+    # the frame stands with the last drawn row on the ground (MkSpriteKart.standing_height), and
+    # the blob shadow lies on that ground: the game draws a dark ellipse under every kart
+    standing = (rows_drawn - frame_height * 0.5) * pixel_size
+    shadow = [
+        '[sub_resource type="Gradient" id="Gradient_shadow"]',
+        "offsets = PackedFloat32Array(0, 0.55, 1)",
+        "colors = PackedColorArray(0, 0, 0, 0.55, 0, 0, 0, 0.35, 0, 0, 0, 0)", "",
+        '[sub_resource type="GradientTexture2D" id="GradientTexture2D_shadow"]',
+        'gradient = SubResource("Gradient_shadow")', "width = 64", "height = 64", "fill = 1",
+        "fill_from = Vector2(0.5, 0.5)", "fill_to = Vector2(0.5, 0)", "",
+        '[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shadow"]',
+        "transparency = 1", "shading_mode = 0", "albedo_color = Color(0, 0, 0, 1)",
+        'albedo_texture = SubResource("GradientTexture2D_shadow")', "",
+        '[sub_resource type="QuadMesh" id="QuadMesh_shadow"]',
+        'material = SubResource("StandardMaterial3D_shadow")', "size = Vector2(1.3, 1.0)", "",
+    ]
+    lines = [f"[gd_scene load_steps={len(ext) + 6} format=3]", "",
              f'[ext_resource type="Script"{uid} path="{script_res}" id="1_script"]',
-             *ext, "",
+             *ext, "", *shadow,
              '[node name="MkSpriteKart" type="Sprite3D"]',
-             f"pixel_size = {manifest['size']['pixel_size_as_game']}",
+             f"pixel_size = {pixel_size}",
              'script = ExtResource("1_script")',
-             *properties, ""]
+             f"rows_drawn = {rows_drawn}",
+             *properties, "",
+             '[node name="Shadow" type="MeshInstance3D" parent="."]',
+             # a quad faces +Z; laid flat on its back it faces up, just off the ground under the kart
+             f"transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, {-standing + 0.02:.4f}, 0)",
+             "cast_shadow = 0",
+             'mesh = SubResource("QuadMesh_shadow")', ""]
     return "\n".join(lines)
 
 

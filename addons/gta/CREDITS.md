@@ -8,5 +8,5 @@ Third-party work in this repository: who made it, where it came from, its licenc
 | `gta/assets/cgtrader/honda_crv/` | Wheel | Not recorded - fill in |
 | `assets/gravitysound/Car Sound Effects/` | [Gravity Sound](https://gravity-sound.itch.io/car-sound-effects) | Not recorded - fill in |
 | `materials/burned.tres` | Made for this addon | CC0 |
-| `mk/scenes/mk_kart.tscn`, `mk/scenes/sunset_circuit.tscn` | Made for this addon | CC0 |
-| `mk/assets/` | Built from your own ROM by `tools/extract_mk64.py`, git-ignored | Not redistributed |
+| `mk/scenes/mk_kart.tscn`, `mk/scenes/mario_raceway.tscn` | Made for this addon; the course's path, item box, tree and piranha plant placements are from the [mk64 decompilation](https://github.com/n64decomp/mk64) | CC0 |
+| `mk/assets/` | Built from your own ROM by `tools/extract_mk64.py` and from your own rip of Mario Raceway (The Models Resource, Nintendo's art) by `tools/mk64_course.py`, git-ignored | Not redistributed |

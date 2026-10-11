@@ -82,6 +82,20 @@ func test_the_view_angle_counts_the_kart_s_slide_and_defaults_to_behind() -> voi
 	assert_almost_eq(sprite.view_angle_degrees(camera), 90.0, 0.5, "The kart's left is the stored half")
 
 
+func test_the_frame_stands_with_the_last_drawn_row_on_the_ground() -> void:
+	# an 8 row frame of which the game draws 6: the centre sits 2 rows up, and the 2 blank rows hang below
+	sprite.pixel_size = 0.1
+	sprite.rows_drawn = 6
+	assert_almost_eq(sprite.standing_height(8), 0.2, 0.0001)
+	var standing: MkSpriteKart = MkSpriteKart.new()
+	standing.pixel_size = 0.1
+	standing.rows_drawn = 6
+	standing.level = _blank(35)
+	add_child_autofree(standing)
+	assert_almost_eq(standing.position.y, 0.2, 0.0001, "set on entering the tree")
+	assert_eq(standing.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "no smear off the quad")
+
+
 func test_without_frames_it_draws_nothing_and_says_so_once() -> void:
 	sprite._process(0.016)
 	sprite._process(0.016)

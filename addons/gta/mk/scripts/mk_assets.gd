@@ -25,6 +25,7 @@ extends RefCounted
 ##   sounds/engine.ogg       the engine loop
 ##   sounds/boost.ogg        a boost or mini turbo firing
 ##   sounds/drift.ogg        the drift
+##   courses/mario_raceway.glb   the real course, in place of the primitive one
 ## [/codeblock]
 ##
 ## A kart entry may be a [code].tscn[/code] rather than a mesh: that is what
@@ -47,6 +48,7 @@ const ROOT: String = "res://addons/gta/mk/assets"
 const KART_DIR: String = ROOT + "/karts"
 const DRIVER_DIR: String = ROOT + "/drivers"
 const SOUND_DIR: String = ROOT + "/sounds"
+const COURSE_DIR: String = ROOT + "/courses"
 
 ## The name a file takes to stand in for every driver without one of their own.
 const DEFAULT_NAME: String = "default"
@@ -73,6 +75,17 @@ static func kart_model(driver: StringName) -> PackedScene:
 ## Just the figure in the seat for [param driver], or null.
 static func driver_model(driver: StringName) -> PackedScene:
 	return _load_scene(DRIVER_DIR, String(driver))
+
+
+## The real course called [param course_name] ("mario_raceway"), written by
+## [code]tools/mk64_course.py[/code] from your own rip, or null when there is
+## none and the primitive course should be raced. No default stands in here:
+## a course is one place, not a kind of thing.
+static func course_model(course_name: String) -> PackedScene:
+	var path: String = _find(COURSE_DIR, course_name, MODEL_EXTENSIONS)
+	if path.is_empty():
+		return null
+	return load(path) as PackedScene
 
 
 ## A named sound, or null. [param sound_name] is the bare name: "engine",

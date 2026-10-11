@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_demo.gd" id="1_demo"]
 [ext_resource type="Script" path="res://addons/gta/mk/scripts/mk_race.gd" id="2_race"]
-[ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/sunset_circuit.tscn" id="3_course"]
+[ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/mario_raceway.tscn" id="3_course"]
 [ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/mk_kart.tscn" id="4_kart"]
 [ext_resource type="PackedScene" path="res://addons/gta/mk/scenes/mk_ui.tscn" id="5_ui"]
 [ext_resource type="PackedScene" path="res://addons/gta/scenes/car_controls.tscn" id="6_controls"]
@@ -89,14 +89,14 @@ shadow_enabled = true
 [node name="Karts" type="Node3D" parent="."]
 
 [node name="Kart1" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.857327, 0, -0.514773, 0, 1, 0, 0.514773, 0, 0.857327, 135.775, 6.56321, -3.26459)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.2, 0.6, -13.7778)
 driver = &"rook"
 
 [node name="Chassis" parent="Karts/Kart1" index="1"]
 surface_material_override/0 = SubResource("StandardMaterial3D_rook")
 
 [node name="Kart2" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.857327, 0, -0.514773, 0, 1, 0, 0.514773, 0, 0.857327, 140.748, 6.56321, -6.25027)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.2, 0.6, -11.7778)
 driver = &"pip"
 
 [node name="Chassis" parent="Karts/Kart2" index="1"]
@@ -106,7 +106,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_pip")
 enabled = true
 
 [node name="Kart3" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.825206, 0, -0.564832, 0, 1, 0, 0.564832, 0, 0.825206, 132.915, 6.26436, -7.71767)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.2, 0.6, -9.2778)
 driver = &"dozer"
 
 [node name="Chassis" parent="Karts/Kart3" index="1"]
@@ -116,7 +116,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_dozer")
 enabled = true
 
 [node name="Kart4" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.825206, 0, -0.564832, 0, 1, 0, 0.564832, 0, 0.825206, 137.701, 6.26436, -10.9937)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.2, 0.6, -7.2778)
 driver = &"fennec"
 
 [node name="Chassis" parent="Karts/Kart4" index="1"]
@@ -126,7 +126,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_fennec")
 enabled = true
 
 [node name="Kart5" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.793228, 0, -0.608925, 0, 1, 0, 0.608925, 0, 0.793228, 129.816, 5.96011, -11.9877)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.2, 0.6, -4.7778)
 driver = &"vesper"
 
 [node name="Chassis" parent="Karts/Kart5" index="1"]
@@ -136,7 +136,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_vesper")
 enabled = true
 
 [node name="Kart6" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.793228, 0, -0.608925, 0, 1, 0, 0.608925, 0, 0.793228, 134.416, 5.96011, -15.5195)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.2, 0.6, -2.7778)
 driver = &"brack"
 
 [node name="Chassis" parent="Karts/Kart6" index="1"]
@@ -146,7 +146,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_brack")
 enabled = true
 
 [node name="Kart7" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.758404, 0, -0.651785, 0, 1, 0, 0.651785, 0, 0.758404, 126.396, 5.64081, -16.2026)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2.2, 0.6, -0.2778)
 driver = &"sprig"
 
 [node name="Chassis" parent="Karts/Kart7" index="1"]
@@ -156,7 +156,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_sprig")
 enabled = true
 
 [node name="Kart8" parent="Karts" instance=ExtResource("4_kart")]
-transform = Transform3D(0.758404, 0, -0.651785, 0, 1, 0, 0.651785, 0, 0.758404, 130.795, 5.64081, -19.983)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.2, 0.6, 1.7222)
 driver = &"tusk"
 
 [node name="Chassis" parent="Karts/Kart8" index="1"]
@@ -168,6 +168,7 @@ enabled = true
 [node name="MkRace" type="Node" parent="."]
 script = ExtResource("2_race")
 course = NodePath("../Course/RacingLine")
+off_course_distance = 18.0
 projectile_scene = ExtResource("7_shot")
 hazard_scene = ExtResource("8_hazard")
 decoy_scene = ExtResource("9_decoy")

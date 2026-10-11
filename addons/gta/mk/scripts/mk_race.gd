@@ -149,9 +149,10 @@ func kart_ahead_of(kart: MkCar) -> MkCar:
 	return order[index - 1]
 
 
-## Which lap [param kart] is on, one based while racing.
+## Which lap [param kart] is on, one based while racing; the grid, behind the
+## line, is still the first lap.
 func lap_of(kart: MkCar) -> int:
-	return int(_lap_by_kart.get(kart, 0)) + 1
+	return maxi(1, int(_lap_by_kart.get(kart, 0)) + 1)
 
 
 ## Where [param kart] finished, or 0 if they have not.
@@ -263,6 +264,13 @@ func _collect_karts() -> void:
 		karts.append(kart)
 		_lap_by_kart[kart] = 0
 		_progress_by_kart[kart] = 0.0
+		if _curve != null and _curve_length > 0.0:
+			# a grid sits behind the line, which on a closed curve is the end of
+			# the lap, so the first crossing is the start and not a lap completed
+			var offset: float = _curve.get_closest_offset(_path.to_local(kart.global_position))
+			_progress_by_kart[kart] = offset
+			if offset > _curve_length * 0.75:
+				_lap_by_kart[kart] = -1
 		var slot: MkItemSlot = kart.get_node_or_null(^"ItemSlot") as MkItemSlot
 		if slot != null:
 			slot.item_fired.connect(_on_item_fired.bind(kart))
