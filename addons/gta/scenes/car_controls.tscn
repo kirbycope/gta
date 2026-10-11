@@ -7,7 +7,7 @@
 script = ExtResource("2_script")
 action_button_0 = &"action"
 action_button_1 = &"sprint"
-action_button_2 = &""
+action_button_2 = &"attack"
 action_button_3 = &"jump"
 action_button_4 = &""
 action_button_6 = &""

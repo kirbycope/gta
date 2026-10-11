@@ -165,12 +165,15 @@ func _steer_towards(goal: Vector3) -> void:
 		return
 
 	var speed: float = _vehicle.linear_velocity.length()
-	# The arena is a set of rooftops with nothing between them, so the one
+	# New York is a set of rooftops with nothing between them, so the one
 	# thing an opponent must not do is hold the throttle over an edge.
 	var avoid: float = _edge_avoidance(speed)
 	if not is_nan(avoid):
-		# ease off and turn towards whichever side still has roof under it
-		_vehicle.set_drive_input(false, speed > EDGE_CRAWL, false, avoid)
+		# brake, and turn towards whichever side still has roof under it; at a standstill the
+		# brake is reverse, which backs the car off the edge instead of leaving it sat there
+		# turning its wheels with no drive, which is where a field of six used to spend a round
+		var backing: bool = speed <= EDGE_CRAWL
+		_vehicle.set_drive_input(false, true, false, -avoid if backing else avoid)
 		return
 
 	# published top speed for this car, eased down for how hard it is turning

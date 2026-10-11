@@ -213,13 +213,15 @@ project is a static recompilation of the executable with a RAM map and no handli
 - Handling: Prima rates each car Sluggish, Intermediate, Tight or Ultra Tight and says nothing
   numeric. Cars do not roll over in the game; a car that goes over an edge in New York dies.
 
-**What would make it a game.** Extract `FREEWAY` and call it Los Angeles (and `ROOF` New York), which
-needs the disc image again, and no `.bin` is on this machine any more: the only copy is
+**What would make it a game.** Extract `FREEWAY` and call it Los Angeles (and `ROOF` New York). The
+disc image had to be rebuilt first: the only copy on this machine was
 `D:\Games\Sony (PSX) Playstation\ROMs\Sony - PlayStation (NTSC-U)\Twisted Metal 2.pkg`, a PS3 PSN
-package (`UP0001-SCUS94306`) with the disc encrypted inside it as a PS1 Classic. Decode the `.TPC`
-textures, or the level stays unreadable whichever one it is. Find the 76 dropped blocks. Give the car
-the game's pad and turbo. Keep it on its wheels. Los Angeles is flat, so the edge feeler stops
-mattering there.
+package (`UP0001-SCUS94306`) holding a PSOne Classic `EBOOT.PBP`, which psxtract on the Mac turned
+back into a MODE2 `.bin`; and the PS1 disc keeps its levels as `/DMD/*.DMD` with `/TMS/*.TMS`
+texture banks rather than the PC release's `/LEVELDB/*.DPC`, so the extractor needed a PS1 reader,
+which is also where the textures came from. Find the dropped blocks (they were gouraud and
+untextured records the old reader refused). Give the car the game's pad and turbo. Keep it on its
+wheels. Los Angeles is flat, so the edge feeler stops mattering there.
 
 ## Rocket League: the constants are right and the car is wrong
 

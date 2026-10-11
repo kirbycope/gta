@@ -19,7 +19,7 @@ extends Controls
 ## The actions the battle cars read that have a key or mouse button behind them. The bindings come from
 ## the player controller's own table so a person moving between the demos meets nothing new.
 const CAR_ACTIONS: Array[StringName] = [
-	&"jump", &"sprint", &"action", &"crouch", &"ability", &"throw", &"shoot", &"focus",
+	&"jump", &"sprint", &"action", &"attack", &"crouch", &"ability", &"throw", &"shoot", &"focus",
 	&"reload", ## Resets the Rocket League match; no button on the HUD, the way the player controller has it.
 ]
 

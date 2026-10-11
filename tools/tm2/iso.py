@@ -1,7 +1,10 @@
-"""Read files out of a Twisted Metal 2 (PC) disc image.
+"""Read files out of a Twisted Metal 2 disc image, PC or PlayStation.
 
-Accepts either a 2048-byte-per-sector .iso or a raw MODE1/2352 .bin track,
-which is what a Redump dump of the disc is; the track is converted in memory.
+Accepts a 2048-byte-per-sector .iso or a raw 2352-byte .bin track, which is
+what a Redump dump of the disc is; the track is converted in memory. The PC
+disc is MODE1 (user data 16 bytes into the sector) and the PlayStation disc
+MODE2 form 1 (24 bytes in, after the subheader); the volume descriptor in
+sector 16 tells which.
 """
 import os
 import struct
@@ -10,7 +13,13 @@ import struct
 class Iso:
     def __init__(self, path):
         self.f = open(path, 'rb')
-        self.raw = os.path.getsize(path) % 2352 == 0 and not self._is_iso()
+        self.skip = None            # None for an .iso, else bytes before user data
+        if os.path.getsize(path) % 2352 == 0 and not self._is_iso():
+            for skip in (16, 24):
+                self.f.seek(16 * 2352 + skip)
+                if self.f.read(6)[1:6] == b'CD001':
+                    self.skip = skip
+                    break
         self.files = {}
         self._read_tree()
 
@@ -21,8 +30,8 @@ class Iso:
     def sector(self, n, count=1):
         out = b''
         for k in range(count):
-            if self.raw:
-                self.f.seek((n + k) * 2352 + 16)
+            if self.skip is not None:
+                self.f.seek((n + k) * 2352 + self.skip)
                 out += self.f.read(2048)
             else:
                 self.f.seek((n + k) * 2048)

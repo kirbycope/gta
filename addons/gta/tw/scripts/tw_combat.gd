@@ -112,13 +112,24 @@ func cycle_weapon() -> void:
 
 
 ## Fire the selected pickup forward, or the machine gun when nothing is selected.
-## Mirrors [code]FireMissiles[/code].
+## Mirrors [code]FireMissiles[/code]; the AI's one trigger.
 func fire_forward(target: Node3D = null) -> bool:
 	if is_dead:
 		return false
 	var count: int = int(inventory.get(selected, 0))
 	if selected == &"" or count <= 0:
-		return _fire_machine_gun()
+		return fire_machine_gun()
+	return fire_pickup(target)
+
+
+## Fire the selected pickup forward and nothing else: the game's L2, which does nothing with an empty
+## bay. The machine gun is R2 and its own button.
+func fire_pickup(target: Node3D = null) -> bool:
+	if is_dead:
+		return false
+	var count: int = int(inventory.get(selected, 0))
+	if selected == &"" or count <= 0:
+		return false
 	inventory[selected] = count - 1
 	_spawn(selected, true, target)
 	fired.emit(selected, true)
@@ -158,8 +169,10 @@ func fire_special(target: Node3D = null) -> bool:
 	return true
 
 
-func _fire_machine_gun() -> bool:
-	if _gun_cooldown > 0.0:
+## One round of the machine gun, on its own cooldown: the game's R2, held down. Prima: "Your Machine
+## Guns won't overheat in Twisted Metal 2, so hold the Machine Gun button down at all times."
+func fire_machine_gun() -> bool:
+	if is_dead or _gun_cooldown > 0.0:
 		return false
 	_gun_cooldown = MACHINE_GUN_INTERVAL
 	_spawn(&"machine_gun", true, null)

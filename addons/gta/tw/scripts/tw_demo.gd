@@ -31,13 +31,20 @@ const OPPONENTS: Array[StringName] = [
 ]
 
 const SPAWN_HEIGHT: float = 2.0 ## Drop the cars in just above the roof.
+const SPAWN_CLEARANCE: Vector3 = Vector3(6.0, 3.0, 8.0) ## The box a spawn point has to have empty around it.
+const SPAWN_SPACING: float = 15.0 ## Metres between one car's spawn point and the next.
 const RAY_TOP: float = 150.0 ## How far above a waypoint to start looking for the roof.
 const RAY_BOTTOM: float = 150.0 ## And how far below it to give up.
 const OPPONENT_SPACING: int = 9 ## Rooftop waypoints between one car and the next.
 const FELL_OUT_MARGIN: float = 40.0 ## How far under the arena a car has to be to count as lost.
+const FENCE_DISTANCE: float = 120.0 ## How far from the AI path a car may stray before it is outside the arena; a turbo run covers it in two seconds.
+const FLOOR_HEIGHT: float = -4.0 ## The invisible floor, just under Los Angeles's lowest street (-2.5 m).
+const WEDGED_SPEED: float = 0.5 ## Slower than this on the throttle or the brake is not moving.
+const WEDGED_SECONDS: float = 6.0 ## How long a car may ask for speed and get none before it is put back.
 const BACKDROP_RATIO: float = 8.0 ## A mesh this many times wider than its neighbours is scenery, not arena.
 const BACKDROP_TALLNESS: float = 0.15 ## And it only counts as scenery if it rises this much of its own width.
-const ROOF_TIER_BAND: float = 30.0 ## How far off the median height still counts as the rooftops.
+const SPAWN_TIER_BAND: float = 3.0 ## Height bins the AI path is sorted into; the field starts on the fullest one, give or take a bin.
+const SPAWN_STEP: float = 0.4 ## The most the ground may vary under a spawning car's four corners, in metres.
 const SAMPLE_STEPS: int = 26 ## Grid resolution across the widest side when sampling a level.
 const SAMPLE_MIN_SPACING: float = 3.0
 const SAMPLE_MAX_SPACING: float = 30.0
@@ -58,6 +65,9 @@ var waypoints: TwWaypoints
 var player_car: TwCar
 
 var _roof: PackedInt32Array = PackedInt32Array() ## Indices on the rooftop tier.
+var _spawned_at: Array[Vector3] = [] ## Where the field has started, so no two cars share a point.
+var _floor: StaticBody3D ## The invisible floor under the level; see [method _give_floor].
+var _stuck_for: Dictionary = {} ## Car to seconds it has asked for speed and got none.
 var _fell_out_y: float = -INF ## Set from the arena's own bounds once it is loaded.
 
 
@@ -87,8 +97,25 @@ func _prepare_level() -> bool:
 		return false
 	_strip_backdrop(arena)
 	_give_collision(arena)
+	_give_floor()
 	_fell_out_y = _arena_bounds(arena).position.y - FELL_OUT_MARGIN
 	return true
+
+
+## An invisible floor at street level under the whole level. The drawn arena has gaps where the
+## kerbs between the plateau and the streets would be: the original game's ground is a height
+## lookup from the TERRAIN files, not the drawn polygons, so its cars never fell through them, and
+## those tables do not land on the drawn surface closely enough to be used as collision here. A car
+## that drops through a gap lands on the street instead of leaving the world.
+func _give_floor() -> void:
+	_floor = StaticBody3D.new()
+	_floor.name = "Floor"
+	var shape: CollisionShape3D = CollisionShape3D.new()
+	var plane: WorldBoundaryShape3D = WorldBoundaryShape3D.new()
+	plane.plane = Plane(Vector3.UP, FLOOR_HEIGHT)
+	shape.shape = plane
+	_floor.add_child(shape)
+	add_child(_floor)
 
 
 ## Both of these maps paint their distant scenery as a handful of enormous
@@ -177,19 +204,25 @@ func _sample_waypoints() -> TwWaypoints:
 	return result
 
 
-## Los Angeles is two tiers, the rooftops and the street far below. Everyone
-## starts on the rooftops, which is where Twisted Metal opens the round.
+## The waypoints on the level's main tier: the height most of the AI path runs at, give or take
+## [constant SPAWN_TIER_BAND]. New York is two tiers, the rooftops and the street far below, and
+## everyone starts on the rooftops, which is where Twisted Metal opens the round; Los Angeles is a
+## plateau with streets a few metres below round its edge, and the field starts on the plateau.
 func _roof_waypoints() -> PackedInt32Array:
 	var out: PackedInt32Array = PackedInt32Array()
 	if waypoints == null or waypoints.points.is_empty():
 		return out
-	var heights: Array[float] = []
+	var bins: Dictionary = {}
 	for p: Vector3 in waypoints.points:
-		heights.append(p.y)
-	heights.sort()
-	var median: float = heights[heights.size() / 2]
+		var bin: int = floori(p.y / SPAWN_TIER_BAND)
+		bins[bin] = int(bins.get(bin, 0)) + 1
+	var fullest: int = 0
+	for bin: int in bins:
+		if int(bins[bin]) > int(bins.get(fullest, 0)):
+			fullest = bin
+	var tier: float = (float(fullest) + 0.5) * SPAWN_TIER_BAND
 	for i: int in waypoints.points.size():
-		if absf(waypoints.points[i].y - median) <= ROOF_TIER_BAND:
+		if absf(waypoints.points[i].y - tier) <= SPAWN_TIER_BAND:
 			out.append(i)
 	return out
 
@@ -240,6 +273,9 @@ func _ground_waypoints(flat: TwWaypoints) -> TwWaypoints:
 	for point: Vector3 in flat.points:
 		var query := PhysicsRayQueryParameters3D.create(
 			point + Vector3.UP * RAY_TOP, point + Vector3.DOWN * RAY_BOTTOM)
+		# the invisible floor is not the arena: a point with only that under it is over a gap
+		if _floor != null:
+			query.exclude = [_floor.get_rid()]
 		var hit: Dictionary = space.intersect_ray(query)
 		if not hit.is_empty():
 			grounded.append(hit["position"] as Vector3)
@@ -252,30 +288,102 @@ func _ground_waypoints(flat: TwWaypoints) -> TwWaypoints:
 ## plane, so the roof under each one is found by dropping a ray onto it.
 ## [param slot] counts along the rooftop waypoints, spaced out so the field
 ## does not start in a heap. The points are already on the level, so this only
-## lifts the car clear of it.
+## lifts the car clear of it. A point with something standing on it is passed
+## over: Los Angeles's first waypoint is the arena's origin, which is inside a
+## building, and seven cars spawned into it sat there wedged for the whole round.
 func _spawn_point(slot: int) -> Vector3:
 	if waypoints == null or waypoints.points.is_empty():
 		return Vector3(0.0, SPAWN_HEIGHT, 0.0)
-	if _roof.is_empty():
-		var any: Vector3 = waypoints.points[slot % waypoints.points.size()]
-		return any + Vector3.UP * SPAWN_HEIGHT
-	var index: int = _roof[(slot * OPPONENT_SPACING) % _roof.size()]
-	return waypoints.points[index] + Vector3.UP * SPAWN_HEIGHT
+	var ring: PackedInt32Array = _roof
+	if ring.is_empty():
+		ring = PackedInt32Array(range(waypoints.points.size()))
+	var start: int = (slot * OPPONENT_SPACING) % ring.size()
+	# a spot of its own first; failing that any clear spot; failing that the slot's own point
+	for apart: bool in [true, false]:
+		for step: int in ring.size():
+			var point: Vector3 = waypoints.points[ring[(start + step) % ring.size()]] + Vector3.UP * SPAWN_HEIGHT
+			if _is_clear(point) and (not apart or _is_apart(point)):
+				_spawned_at.append(point)
+				return point
+	return waypoints.points[ring[start]] + Vector3.UP * SPAWN_HEIGHT
+
+
+## Whether a car-sized box at [param at] touches nothing and stands over level ground: the arena's
+## outskirts are slabs at different heights, and a car dropped across a step sits on two wheels.
+func _is_clear(at: Vector3) -> bool:
+	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	var query := PhysicsShapeQueryParameters3D.new()
+	var box := BoxShape3D.new()
+	box.size = SPAWN_CLEARANCE
+	query.shape = box
+	# the box stands on the ground the car will land on, a little above it, so a kerb or a prop
+	# under the car's belly is seen as well as a wall at its roof
+	query.transform = Transform3D(Basis(), at - Vector3.UP * (SPAWN_HEIGHT - 0.3 - SPAWN_CLEARANCE.y * 0.5))
+	if not space.intersect_shape(query, 1).is_empty():
+		return false
+	var lowest: float = INF
+	var highest: float = -INF
+	for corner: Vector3 in [Vector3(1.0, 0.0, 2.0), Vector3(-1.0, 0.0, 2.0), Vector3(1.0, 0.0, -2.0), Vector3(-1.0, 0.0, -2.0)]:
+		var ray := PhysicsRayQueryParameters3D.create(at + corner, at + corner + Vector3.DOWN * (SPAWN_HEIGHT + 2.0))
+		if _floor != null:
+			ray.exclude = [_floor.get_rid()]
+		var hit: Dictionary = space.intersect_ray(ray)
+		if hit.is_empty():
+			return false
+		lowest = minf(lowest, hit["position"].y)
+		highest = maxf(highest, hit["position"].y)
+	return highest - lowest <= SPAWN_STEP
+
+
+## Whether [param at] is its own spot rather than one the field already started on: with the
+## origin blocked, every car walked the ring to the same first clear point and the field spawned
+## in a heap.
+func _is_apart(at: Vector3) -> bool:
+	for taken: Vector3 in _spawned_at:
+		if taken.distance_to(at) < SPAWN_SPACING:
+			return false
+	return true
 
 
 ## Anything that leaves the arena is put back on it. Twisted Metal drops a car
-## that falls out of the world back into play rather than losing it.
-func _physics_process(_delta: float) -> void:
+## that falls out of the world back into play rather than losing it, and its
+## arenas are fenced: a car that has driven further from the AI path than any
+## part of the course lies is outside the fence this port does not have, and is
+## put back the same way.
+func _physics_process(delta: float) -> void:
 	if waypoints == null or waypoints.points.is_empty():
 		return
 	for node: Node in get_tree().get_nodes_in_group(&"tw_cars"):
 		var car: TwCar = node as TwCar
-		if car == null or car.global_position.y > _fell_out_y:
+		if car == null:
 			continue
+		# under the level, or on the invisible floor in a pocket between a plateau's skirt and the
+		# street, or outside the fence, or wedged (asking for speed and getting none for a while,
+		# the same test MkRace uses): back onto the course
+		var lost: bool = car.global_position.y <= maxf(_fell_out_y, FLOOR_HEIGHT + 1.0) \
+			or not _is_near_the_course(car.global_position)
+		if not lost:
+			var trying: bool = (car._accelerate or car._brake or car.is_turbo_engaged) and not car.is_wrecked
+			if trying and car.linear_velocity.length() < WEDGED_SPEED:
+				_stuck_for[car] = float(_stuck_for.get(car, 0.0)) + delta
+				lost = float(_stuck_for[car]) >= WEDGED_SECONDS
+			else:
+				_stuck_for[car] = 0.0
+		if not lost:
+			continue
+		_stuck_for[car] = 0.0
 		car.linear_velocity = Vector3.ZERO
 		car.angular_velocity = Vector3.ZERO
 		car.global_position = _spawn_point(randi())
 		car.global_rotation = Vector3.ZERO
+
+
+## Whether [param at] is within [constant FENCE_DISTANCE] of the AI path, measured flat.
+func _is_near_the_course(at: Vector3) -> bool:
+	var nearest: float = INF
+	for p: Vector3 in waypoints.points:
+		nearest = minf(nearest, Vector2(p.x - at.x, p.z - at.z).length())
+	return nearest <= FENCE_DISTANCE
 
 
 ## Put a person on the pad of Roadkill: a [HumanDriver] under it, the way the
@@ -289,4 +397,5 @@ func _hand_over_the_wheel() -> void:
 	player_car.add_child(driver)
 	if is_instance_valid(ui):
 		ui.watch(player_car)
-	hint.text = "Twisted Metal 2 - %s\nSpace accelerates, Shift brakes, Q is turbo." % level_name
+	hint.text = ("Twisted Metal 2 - %s\nSpace accelerates, Shift brakes, Q is turbo, Ctrl with the stick is a hard turn.\n"
+		+ "Left click fires the machine gun, right click the pickup, T cycles pickups.") % level_name

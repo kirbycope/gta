@@ -21,7 +21,9 @@ func before_each() -> void:
 	var ground: StaticBody3D = StaticBody3D.new()
 	var shape: CollisionShape3D = CollisionShape3D.new()
 	var box: BoxShape3D = BoxShape3D.new()
-	box.size = Vector3(600.0, 1.0, 600.0)
+	# and a big one: Roadkill at its published top speed covers 280 m in six seconds, which took
+	# it off the end of a 600 m floor before the seven second test was over
+	box.size = Vector3(2000.0, 1.0, 2000.0)
 	shape.shape = box
 	ground.add_child(shape)
 	ground.position = Vector3(0.0, -0.5, 0.0)
@@ -32,7 +34,8 @@ func before_each() -> void:
 	(car.get_node(^"TwAi") as TwAi).enabled = false
 	add_child_autofree(car)
 	car.position = Vector3(0.0, 0.5, 0.0)
-	await wait_physics_frames(4)
+	# landed and settled, so every test starts with four wheels on the floor
+	await wait_physics_frames(24)
 
 
 ## Holds the throttle for [param frames] and gives back the speed along the nose.
@@ -93,6 +96,65 @@ func test_turbo_raises_the_ceiling_to_the_published_turbo_speed() -> void:
 	assert_almost_eq(car.speed_limit(), TwRoster.top_speed(&"roadkill", true), 0.01,
 		"The turbo ceiling is the published turbo speed")
 	assert_gt(car.speed_limit(), TwRoster.top_speed(&"roadkill"), "which is faster than the ordinary one")
+
+
+func test_turbo_puts_a_slow_car_at_its_top_speed_at_once() -> void:
+	# Prima: "Turbo from a full stop immediately accelerates you to top speed"
+	assert_lt(absf(car.forward_speed()), 0.5, "Starts still")
+	car.set_drive_input(false, false, true, 0.0)
+	await wait_physics_frames(2)
+	assert_gt(car.forward_speed(), TwRoster.top_speed(&"roadkill") * 0.9, "At the published top speed inside two frames")
+	# and holding it carries on past the top speed toward the turbo speed, throttle or no throttle
+	var speed: float = await _drive_forward(120, true)
+	assert_gt(speed, TwRoster.top_speed(&"roadkill") * 1.05, "Past the ordinary ceiling")
+	assert_lt(speed, TwRoster.top_speed(&"roadkill", true) * 1.1, "but not past the turbo one")
+
+
+func test_the_hard_turn_turns_harder_than_the_stick_alone() -> void:
+	for _i: int in 30:
+		car.set_drive_input(false, false, false, 1.0)
+		await wait_physics_frames(1)
+	var stick: float = car.steering
+	for _i: int in 30:
+		car.set_drive_input(false, false, false, 1.0, true)
+		await wait_physics_frames(1)
+	assert_gt(car.steering, stick * 1.2, "Cross with the stick is the game's hard turn")
+	assert_almost_eq(rad_to_deg(car.steering), car.hard_turn_lock, 1.0)
+
+
+func test_a_car_thrown_in_the_air_comes_down_on_its_wheels() -> void:
+	# Twisted Metal's cars do not roll over: tipped most of the way onto its side in the air, this
+	# one is turned back level before it lands rather than landing on its side
+	car.global_position = Vector3(0.0, 6.0, 0.0)
+	car.global_rotation = Vector3(0.0, 0.0, deg_to_rad(70.0))
+	car.linear_velocity = Vector3.ZERO
+	car.angular_velocity = Vector3.ZERO
+	await wait_physics_frames(60)
+	assert_gt(car.global_transform.basis.y.y, 0.9, "Level again within a second of air")
+	# and one found on its roof is rolled back over
+	car.global_position = Vector3(0.0, 6.0, 0.0)
+	car.global_rotation = Vector3(0.0, 0.0, PI)
+	car.linear_velocity = Vector3.ZERO
+	car.angular_velocity = Vector3.ZERO
+	await wait_physics_frames(90)
+	assert_gt(car.global_transform.basis.y.y, 0.0, "Off its roof")
+
+
+func test_the_pad_is_the_game_s_layout() -> void:
+	# Square accelerates, Circle brakes, Triangle is turbo, Cross is the hard turn, the bumpers
+	# cycle, L2 fires the pickup and R2 the machine gun: X, B, Y, A, LB and RB, LT and RT here
+	assert_eq(car.pad_accelerate_action, &"attack", "X, the left face button")
+	assert_eq(car.pad_brake_action, &"sprint", "B, the right face button")
+	assert_eq(car.pad_turbo_action, &"jump", "Y, the top face button")
+	assert_eq(car.pad_hard_turn_action, &"action", "A, the bottom face button")
+	assert_eq(car.pad_fire_action, &"focus", "the left trigger")
+	assert_eq(car.pad_machine_gun_action, &"shoot", "the right trigger")
+	assert_eq(car.pad_cycle_action, &"throw", "the right bumper")
+	assert_eq(car.pad_cycle_back_action, &"ability", "and the left")
+	var pad: Dictionary = car.get_contextual_controls(Controls.InputType.MICROSOFT)
+	assert_eq(pad["joypad_button_2"], "Accelerate")
+	assert_eq(pad["joypad_axis_5_plus"], "Machine Gun")
+	assert_eq(pad["joypad_axis_4_plus"], "Fire")
 
 
 func test_the_turbo_meter_drains_while_it_is_held() -> void:

@@ -22,6 +22,11 @@ const UNSOURCED: PackedStringArray = [
 	"how long a full turbo meter lasts and how long it takes to refill; the meter is documented"
 		+ " as refilling on its own over time, but neither rate is published",
 	"the turbo pickups the real arenas carry, which this demo has no pickups of any kind for",
+	"the push from the top speed on to the turbo speed while turbo is held; that the button puts a"
+		+ " car at its top speed at once is the Prima guide's, the rate past it is not",
+	"how much harder the hard turn (Cross with the stick) turns than the stick alone",
+	"the turn that brings an airborne car down on its wheels; that the game's cars land on them is"
+		+ " how they play, the rate is a judgement",
 	"the friction and bounce of a car against the world",
 ]
 

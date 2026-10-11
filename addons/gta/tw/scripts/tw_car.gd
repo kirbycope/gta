@@ -1,6 +1,6 @@
 class_name TwCar
 extends Vehicle
-## A Twisted Metal 2 car: arcade handling, a turbo, and a wreck state.
+## A Twisted Metal 2 car: arcade handling, a turbo, the game's pad, and a wreck state.
 ##
 ## Built on [Vehicle] like the addon's other two cars, and deliberately not on [GtaCar]. Twisted
 ## Metal is not a driving game with weapons bolted on, it is a shooter where the floor moves: the
@@ -14,15 +14,28 @@ extends Vehicle
 ## saying so and each is listed in [constant TwRoster.UNSOURCED] rather than dressed up as a fact.
 ##
 ## [b]Which way is forward.[/b] This chassis drives along [b]+Z[/b], not Godot's usual -Z. That was
-## measured rather than assumed: an opponent rolling on four wheels in the Los Angeles arena travels
-## along its own [code]basis.z[/code] with a mean dot product of 0.99. The model, the seat, the
-## camera and both muzzles are all arranged around that, and [method forward] is the single place it
-## is written down, so nothing else has to repeat the decision.
+## measured rather than assumed: an opponent rolling on four wheels in the arena travels along its
+## own [code]basis.z[/code] with a mean dot product of 0.99. The model, the seat, the camera and
+## both muzzles are all arranged around that, and [method forward] is the single place it is
+## written down, so nothing else has to repeat the decision.
 ##
-## [b]The turbo.[/b] Twisted Metal 2's turbo meter sits above the weapon bay and refills on its own
-## over time, which is what [member turbo] models here. The real game also drops turbo pickups in its
-## arenas; this demo has no pickups of any kind, so that half is missing rather than wrong. How fast
-## the real meter refills is not published, so [member turbo_recharge_time] is a judgement.
+## [b]The pad is the game's.[/b] Twisted Metal 2's standard layout, from the manual and the Prima
+## guide: Square accelerates, Circle brakes and reverses, Triangle is turbo, Cross with the stick is
+## a hard turn, L1 and R1 cycle the pickups, L2 fires the pickup and R2 fires the machine guns, which
+## are meant to be held. Those sit on the same positions here (X, B, Y, A, the bumpers and the
+## triggers), and a keyboard gets Space, Shift, Q, Ctrl, T and the mouse buttons.
+##
+## [b]The turbo.[/b] Prima: "Turbos provide instant acceleration to top speed for as long as you
+## hold the Turbo button", so pressing it from a standstill puts the car at its published top speed
+## at once, and holding it pushes on to the published turbo speed. The meter sits above the weapon
+## bay and refills on its own over time, which is what [member turbo] models here; the real game
+## also drops turbo pickups in its arenas, and this demo has no pickups of any kind, so that half is
+## missing rather than wrong. How fast the meter refills is not published, so
+## [member turbo_recharge_time] is a judgement.
+##
+## [b]On its wheels.[/b] Twisted Metal's cars do not roll over: a car thrown into the air comes down
+## on its wheels. [member upright_torque] is the turn that does that here, applied while no wheel
+## touches anything, and a car found on its roof is rolled back over.
 ##
 ## [b]The wreck.[/b] [TwCombat] owns the health; when it runs out its [signal TwCombat.died] is
 ## wired in the scene to [method on_died] and the car stops answering the controls and rolls to a
@@ -39,24 +52,47 @@ signal wrecked() ## Health ran out; the car no longer answers the controls.
 ## per-car stat screens on the disc are pictures rather than tables, so every one of them is a
 ## judgement chosen to feel like the game, and every one is named in [constant TwRoster.UNSOURCED].
 @export var drive_force: float = 9000.0 ## Total drive force at the wheels, split across them once.
+@export var turbo_force: float = 18000.0 ## The push from the top speed on to the turbo speed while turbo is held.
 @export var reverse_force: float = 4500.0 ## Backing up is slower than going forward, as in the game.
 @export var brake_force: float = 260.0 ## Per-car brake, split across the wheels by the chassis.
 @export var reverse_speed: float = 9.0 ## How fast it will go backwards, in metres per second.
 ## Steering lock in degrees, and it does not shrink with speed. Twisted Metal's cars turn as hard at
 ## full tilt as they do at a crawl, which is most of why the game feels the way it does.
 @export var steering_lock: float = 32.0
+## The lock while the hard turn button is held with the stick: the game's "X pressed with the
+## D-button allows you to perform a hard turn". How much harder is not published.
+@export var hard_turn_lock: float = 48.0
 @export var steering_speed: float = 7.0 ## Radians per second the wheels turn toward the stick.
+## How hard the car turns back onto its wheels in the air, in radians per second squared per radian
+## of lean. The game's cars land on their wheels; the figure is a judgement.
+@export var upright_torque: float = 20.0
 
 @export_group("Turbo")
 @export var turbo_seconds: float = 3.0 ## A full meter is this long held down.
 @export var turbo_recharge_time: float = 12.0 ## Empty to full, with the button off.
 
-@export_group("Turbo Actions")
-## Twisted Metal 2 puts turbo on Triangle. There is no Triangle in this addon's action set, and
-## brake already has shift, so it sits on the addon's spare "ability" action instead: Q on a
-## keyboard, the left bumper on a pad.
+@export_group("Twisted Metal Actions")
+## Triangle in the game, so the top face button here: the "jump" action, which is Space on a
+## keyboard, so a keyboard gets Q.
 @export var keyboard_turbo_action: StringName = &"ability"
-@export var pad_turbo_action: StringName = &"ability"
+@export var pad_turbo_action: StringName = &"jump"
+## Cross with the stick in the game, so the bottom face button: the "action" action. Ctrl on a keyboard.
+@export var keyboard_hard_turn_action: StringName = &"crouch"
+@export var pad_hard_turn_action: StringName = &"action"
+## R2 in the game, the right trigger here, and the left mouse button; meant to be held.
+@export var keyboard_machine_gun_action: StringName = &"shoot"
+@export var pad_machine_gun_action: StringName = &"shoot"
+## L2 in the game, the left trigger here, and the right mouse button: fires the selected pickup.
+@export var keyboard_fire_action: StringName = &"focus"
+@export var pad_fire_action: StringName = &"focus"
+## L1 and R1 in the game, the bumpers here, both of which step to the next pickup; T on a keyboard.
+@export var keyboard_cycle_action: StringName = &"throw"
+@export var pad_cycle_action: StringName = &"throw"
+@export var pad_cycle_back_action: StringName = &"ability"
+
+const ROOF_DOWN: float = -0.5 ## The roof's up component below which the car counts as on its roof.
+const UPRIGHT_TIPPED: float = 0.5 ## The roof's up component below which a car is righted even with a wheel touching.
+const UPRIGHT_DEADBAND: float = 0.02 ## Lean below this is the suspension's to settle, not the torque's.
 
 var turbo: float = 1.0: set = _set_turbo ## The meter, nought to one.
 var is_wrecked: bool = false ## Health ran out; the controls do nothing.
@@ -65,12 +101,15 @@ var is_turbo_engaged: bool = false ## The button is down and there is meter left
 var _accelerate: bool = false
 var _brake: bool = false
 var _turbo_held: bool = false
+var _hard_turn: bool = false
+var _turbo_kicked: bool = false ## This press of the turbo has already put the car at its top speed.
 var _steer: float = 0.0 ## Positive is left, matching the project's own move axis.
 var _top_speed: float = 0.0 ## Published, from the roster.
 var _turbo_speed: float = 0.0 ## Published, from the roster.
 
 @onready var sfx_engine: AudioStreamPlayer3D = get_node_or_null(^"SFXEngine")
 @onready var sfx_turbo: AudioStreamPlayer3D = get_node_or_null(^"SFXTurbo")
+@onready var combat: TwCombat = get_node_or_null(^"TwCombat") as TwCombat ## The weapons, when the scene carries them.
 
 
 func _ready() -> void:
@@ -90,11 +129,12 @@ func forward() -> Vector3:
 ## The whole virtual control pad, and the only way into the handling model. A seated [Player] fills
 ## it from [method ride] and an [TwAi] fills it directly, exactly as Twisted Metal's own
 ## [code]AICarUpdateControlPad[/code] does; the drivetrain below cannot tell the two apart.
-func set_drive_input(accelerate: bool, brake_pressed: bool, turbo_pressed: bool, steer: float) -> void:
+func set_drive_input(accelerate: bool, brake_pressed: bool, turbo_pressed: bool, steer: float, hard_turn: bool = false) -> void:
 	_accelerate = accelerate
 	_brake = brake_pressed
 	_turbo_held = turbo_pressed
 	_steer = steer
+	_hard_turn = hard_turn
 
 
 ## Health ran out. Wired to [signal TwCombat.died] in the scene.
@@ -121,6 +161,7 @@ func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	_tick_turbo(delta)
+	_keep_upright(delta)
 	if is_wrecked:
 		apply_wheel_forces(0.0, brake_force)
 		steering = move_toward(steering, 0.0, steering_speed * delta)
@@ -129,9 +170,19 @@ func _physics_process(delta: float) -> void:
 
 
 ## The meter drains while the button is down and there is something to spend, and fills again
-## whenever it is not. The real game's meter refills on its own the same way.
+## whenever it is not. The real game's meter refills on its own the same way. The moment it lights,
+## a car under its top speed is put at its top speed: "Turbo from a full stop immediately accelerates
+## you to top speed" (Prima).
 func _tick_turbo(delta: float) -> void:
 	var wants: bool = _turbo_held and not is_wrecked and turbo > 0.0
+	if wants and not _turbo_kicked and wheels_in_contact() > 0:
+		# the kick waits for a wheel on the ground: a turbo in the air gains nothing (Prima)
+		_turbo_kicked = true
+		var along: float = forward_speed()
+		if along < _top_speed:
+			linear_velocity += forward() * (_top_speed - maxf(along, 0.0))
+	if not wants:
+		_turbo_kicked = false
 	is_turbo_engaged = wants
 	if wants:
 		turbo = maxf(0.0, turbo - delta / maxf(turbo_seconds, 0.01))
@@ -142,6 +193,28 @@ func _tick_turbo(delta: float) -> void:
 			sfx_turbo.play()
 		elif not wants and sfx_turbo.playing:
 			sfx_turbo.stop()
+
+
+## Twisted Metal's cars come down on their wheels. With no wheel on the ground the car is turned back
+## toward level, and one found on its roof, where a lean of a hundred and eighty degrees gives that
+## turn nothing to push on, is rolled over about its nose. With any wheel down the suspension is left
+## to it: a torque that also ran with a wheel lifted under hard acceleration fought the springs and
+## cost the car eight metres a second over seven seconds.
+func _keep_upright(delta: float) -> void:
+	var roof: Vector3 = global_transform.basis.y
+	# a wheel on the ground with the car near level is the suspension's business; a car on its
+	# side with a wheel against a wall is not
+	if wheels_in_contact() > 0 and roof.y > UPRIGHT_TIPPED:
+		return
+	if roof.y < ROOF_DOWN:
+		angular_velocity += forward() * upright_torque * delta
+		return
+	var lean: Vector3 = roof.cross(Vector3.UP)
+	if lean.length() > UPRIGHT_DEADBAND:
+		# a spring on the lean with its critical damping on the roll and pitch, so the car settles
+		# level rather than rocking; the yaw about its own roof is left alone
+		var spin: Vector3 = angular_velocity - roof * angular_velocity.dot(roof)
+		angular_velocity += (lean * upright_torque - spin * 2.0 * sqrt(upright_torque)) * delta
 
 
 ## Arcade handling in one function: push until the published ceiling, brake to a stop and then
@@ -157,6 +230,10 @@ func _drive(delta: float) -> void:
 	elif _brake:
 		# stopped or already rolling back, so it is reverse
 		drive = -reverse_force if speed > -reverse_speed else 0.0
+	elif is_turbo_engaged:
+		# the turbo is held: on past the top speed toward the turbo speed, whether or not the
+		# throttle is down, the way the game's turbo drives the car by itself
+		drive = turbo_force if speed < speed_limit() else 0.0
 	elif _accelerate:
 		drive = drive_force if speed < speed_limit() else 0.0
 	elif absf(speed) > 0.1:
@@ -165,7 +242,8 @@ func _drive(delta: float) -> void:
 
 	apply_wheel_forces(drive, stop)
 
-	var target: float = deg_to_rad(steering_lock) * clampf(_steer, -1.0, 1.0)
+	var lock: float = hard_turn_lock if _hard_turn else steering_lock
+	var target: float = deg_to_rad(lock) * clampf(_steer, -1.0, 1.0)
 	steering = move_toward(steering, target, steering_speed * delta)
 	_update_engine_sound()
 
@@ -192,33 +270,52 @@ func ride(rider: Player, _delta: float) -> void:
 
 ## The pad, off the buttons. A seated [Player] and a [HumanDriver] both come through here, and the AI
 ## calls [method set_drive_input] directly; the drivetrain cannot tell which of the three filled it.
-## [member Vehicle.input_type] says which bindings to read.
+## [member Vehicle.input_type] says which bindings to read. The weapons are read here too, straight
+## into [member combat], the way the AI fires it: the machine gun for as long as its trigger is held,
+## the pickup and the cycle on the press.
 func read_controls() -> void:
 	set_drive_input(
 		Input.is_action_pressed(_action(keyboard_accelerate_action, pad_accelerate_action)),
 		Input.is_action_pressed(_action(keyboard_brake_action, pad_brake_action)),
 		Input.is_action_pressed(_action(keyboard_turbo_action, pad_turbo_action)),
-		Input.get_axis("move_right", "move_left"))
+		Input.get_axis("move_right", "move_left"),
+		Input.is_action_pressed(_action(keyboard_hard_turn_action, pad_hard_turn_action)))
+	if combat == null or is_wrecked:
+		return
+	if Input.is_action_pressed(_action(keyboard_machine_gun_action, pad_machine_gun_action)):
+		combat.fire_machine_gun()
+	if Input.is_action_just_pressed(_action(keyboard_fire_action, pad_fire_action)):
+		combat.fire_pickup()
+	if Input.is_action_just_pressed(_action(keyboard_cycle_action, pad_cycle_action)) \
+			or (input_type != Controls.InputType.KEYBOARD_MOUSE and Input.is_action_just_pressed(pad_cycle_back_action)):
+		combat.cycle_weapon()
 
 
-## Rideable contract: label names on the Player's controls to their text while driving.
+## Rideable contract: label names on the Player's controls to their text while driving. Each label
+## sits on the slot that carries the action the car reads for that device, and the slot faces are
+## fixed: on a keyboard Y is the Space key, B is Shift, A is E, LB is Q, RB is T, LS is Ctrl, LT and
+## RT are the mouse buttons; on a pad they are the game's own positions.
 func get_contextual_controls(input_type_: int) -> Dictionary:
 	var controls: Dictionary = {
 		"left_joystick": "Steer",
 		"right_joystick": "Camera",
+		"joypad_axis_5_plus": "Machine Gun",
+		"joypad_axis_4_plus": "Fire",
+		"joypad_button_10": "Next Weapon",
 	}
 	if input_type_ == Controls.InputType.KEYBOARD_MOUSE:
 		controls["joypad_button_3"] = "Accelerate"
-		controls["joypad_button_1"] = "Reverse"
+		controls["joypad_button_1"] = "Brake"
+		controls["joypad_button_9"] = "Turbo"
+		controls["joypad_button_7"] = "Hard Turn"
 		if player != null:
 			controls["joypad_button_0"] = "Exit"
 	else:
-		controls["joypad_axis_5_plus"] = "Accelerate"
-		controls["joypad_axis_4_plus"] = "Reverse"
-		if player != null:
-			controls["joypad_button_3"] = "Exit"
-	# the left bumper, which is where the "ability" action sits on the HUD
-	controls["joypad_button_9"] = "Turbo"
+		controls["joypad_button_2"] = "Accelerate"
+		controls["joypad_button_1"] = "Brake"
+		controls["joypad_button_3"] = "Turbo"
+		controls["joypad_button_0"] = "Hard Turn"
+		controls["joypad_button_9"] = "Last Weapon"
 	return controls
 
 

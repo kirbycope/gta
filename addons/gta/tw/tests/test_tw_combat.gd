@@ -93,6 +93,19 @@ func test_firing_spends_a_round_and_drops_the_weapon_when_it_runs_out() -> void:
 	assert_eq(combat.selected, &"", "Nothing is selected once the last one is spent")
 
 
+func test_the_pickup_trigger_fires_only_pickups_and_the_gun_trigger_only_the_gun() -> void:
+	# the game's L2 does nothing with an empty bay, and R2 is the machine gun whatever is selected
+	watch_signals(combat)
+	assert_false(combat.fire_pickup(), "Nothing in the bay, nothing fired")
+	assert_signal_not_emitted(combat, "fired")
+	combat.pick_up(&"fire_missile", 1)
+	assert_true(combat.fire_machine_gun(), "The machine gun fires with a pickup selected")
+	assert_signal_emitted_with_parameters(combat, "fired", [&"machine_gun", true])
+	assert_true(combat.fire_pickup(), "and the pickup trigger spends the pickup")
+	assert_signal_emitted_with_parameters(combat, "fired", [&"fire_missile", true])
+	assert_false(combat.fire_pickup(), "Spent")
+
+
 func test_the_machine_gun_fires_when_there_is_no_pickup_selected() -> void:
 	watch_signals(combat)
 	assert_true(combat.fire_forward(), "The gun always has something to give")
