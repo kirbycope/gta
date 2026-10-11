@@ -135,11 +135,16 @@ func test_a_pad_plugged_in_at_the_start_puts_the_hud_on_the_pad_set() -> void:
 	if accelerate != null:
 		assert_eq(accelerate.text, "Accelerate", "and the pad's words are on the pad's buttons: the right trigger accelerates")
 	assert_eq(controls.action_label(car.pad_jump_action).text, "Jump", "A jumps")
-	# a keyboard driver leaves a touch HUD alone, since there is nothing better to tell it
+	# a keyboard driver on a screen that cannot be touched tells the HUD that too, so the keyboard's
+	# words sit on drawn keys rather than on pad glyphs
 	controls.current_input_type = Controls.InputType.TOUCH
 	driver.input_type = Controls.InputType.KEYBOARD_MOUSE
 	driver._tell_the_hud_the_device()
-	assert_eq(controls.current_input_type, Controls.InputType.TOUCH)
+	if DisplayServer.is_touchscreen_available():
+		assert_eq(controls.current_input_type, Controls.InputType.TOUCH, "A real touchscreen is the HUD's to judge")
+	else:
+		assert_eq(controls.current_input_type, Controls.InputType.KEYBOARD_MOUSE)
+		assert_eq(controls.action_label(car.keyboard_accelerate_action).text, "Accelerate", "Space accelerates")
 
 
 func test_disabled_leaves_the_pad_alone_but_still_hears_the_toggles() -> void:

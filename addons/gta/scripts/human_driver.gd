@@ -48,12 +48,13 @@ func _ready() -> void:
 		_apply_hud_visibility()
 
 
-## A pad plugged in before anything is pressed: the HUD assumes touch until it hears a device, and
-## drew pad glyphs with the keyboard's words on them (Accelerate on Y, Jump on the stick) until the
-## first button. The driver already knows there is a pad, so the HUD is told, and its own change
-## signal then puts the pad's words on the pad's buttons.
+## The HUD assumes touch until it hears a device, and on a desk with nothing pressed yet it drew
+## pad glyphs with the keyboard's words on them (Accelerate on Y, Jump on the stick) until the first
+## key or button. A screen that cannot be touched is not a touch device, and the driver already
+## knows whether there is a pad, so the HUD is told; its own change signal then puts that device's
+## words on that device's buttons. A real touchscreen is left to the HUD.
 func _tell_the_hud_the_device() -> void:
-	if controls == null or input_type == Controls.InputType.KEYBOARD_MOUSE:
+	if controls == null or DisplayServer.is_touchscreen_available():
 		return
 	if controls.current_input_type == Controls.InputType.TOUCH:
 		controls.current_input_type = input_type as Controls.InputType
@@ -117,11 +118,13 @@ func _apply_input_type() -> void:
 
 
 ## The car names its buttons by the HUD label they sit on, "joypad_button_0": "Boost"; the HUD wants
-## the label nodes, so each name is looked up on it, exactly as the Riding state does.
+## the label nodes, so each name is looked up on it, exactly as the Riding state does. The words are
+## asked for by the device the HUD is drawing, so they can never sit on another device's glyphs; a
+## touch HUD gets the pad's words, since its buttons are the pad's.
 func _apply_labels() -> void:
 	if controls == null or not is_instance_valid(_car) or not _car.has_method(&"get_contextual_controls"):
 		return
-	var named: Dictionary = _car.call(&"get_contextual_controls", input_type)
+	var named: Dictionary = _car.call(&"get_contextual_controls", controls.current_input_type)
 	var labels: Dictionary = {}
 	for label_name: String in named:
 		var label: Variant = controls.get(label_name + "_label")
